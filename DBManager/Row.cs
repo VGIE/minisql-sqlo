@@ -16,6 +16,8 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
+            ColumnDefinitions = columnDefinitions
+            Values = values;
 
             
         }
@@ -23,26 +25,33 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-
+            GetColumnByName(columnName).value=value;
             
         }
 
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-
+            return GetColumnByName(columnName).name;
             
-            return null;
+            
             
         }
-
+        public columnDefinition GetColumnByName(string columnName){
+            //Given a name, returns the columnsDefinition object. Returns null if not found
+            foreach(ColumnDefinition cd in columnDefinitions){
+                if(cd.name.equals(columnName)){
+                    return cd;
+                }
+            }
+            return null;
+        }
         public bool IsTrue(Condition condition)
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            
-            return false;
+            return condition.IsTrue();
             
         }
 
