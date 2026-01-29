@@ -9,7 +9,11 @@ namespace OurTests
         [Fact]
         public void Test1()
         {
-            ColumnDefinition columnDefinition = new ColumnDefinition()
+            ColumnDefinition cdInt = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            ColumnDefinition cdString = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            ColumnDefinition cdDouble = new ColumnDefinition(ColumnDefinition.DataType.Double, "Salary");
+            String testEncode = "HolaCarambola";
+            Assert.Equal("", Encode(testEncode));
         }
         
     }

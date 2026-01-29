@@ -28,7 +28,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
             value.Replace(Delimiter,DelimiterEncoded);
-            return null;
+            return value;
             
         }
 
