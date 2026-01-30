@@ -16,24 +16,53 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
+            ColumnDefinitions = columnDefinitions;
+            Values = values;
 
             
         }
-
+        public ColumnDefinition GetColumnByName(string name)
+        {
+            foreach(ColumnDefinition cd in ColumnDefinitions)
+            {
+                if (cd.Name.Equals(name))
+                {
+                    return cd;
+                    break;
+                }
+            }
+            return null;
+        }
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-
+            int posi = 0;
+            foreach(ColumnDefinition cd in ColumnDefinitions)
+            {
+                if (cd.Name.Equals(columnName))
+                {
+                    break;
+                }
+                posi++;
+            }
+            Values[posi] = value;
             
         }
 
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-
-            
-            return null;
-            
+            int posi = 0;
+            foreach (ColumnDefinition cd in ColumnDefinitions)
+            {
+                if (cd.Name.Equals(columnName))
+                {
+                    
+                    break;
+                }
+                posi++;
+            }
+            return Values[posi];
         }
 
         public bool IsTrue(Condition condition)
@@ -42,8 +71,8 @@ namespace DbManager
             //for this row. Check Condition.IsTrue method
 
             
-            return false;
-            
+            return condition.IsTrue(condition.LiteralValue, GetColumnByName(condition.ColumnName).Type);
+
         }
 
         private const string Delimiter = ":";
