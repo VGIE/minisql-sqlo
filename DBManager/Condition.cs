@@ -32,7 +32,7 @@ namespace DbManager
             //9 < 10
             //Convert first the strings to the appropriate type and then compare (depending on the operator of the condition)
             if (value == null || type == null) { return false; }
-            if (type is String)
+            if (type == ColumnDefinition.DataType.String)
             {
                 switch (Operator)
                 {
@@ -42,10 +42,10 @@ namespace DbManager
 
                 }
             }
-            else if (type is int)
+            else if (type == ColumnDefinition.DataType.Int)
             {
                 int valor = Int32.Parse(value);
-                int valor2 = Int32.Parse(value);
+                int valor2 = Int32.Parse(LiteralValue);
                 switch (Operator)
                 {
                     case "<": if (valor < valor2) { return true; } return false; ;
@@ -54,7 +54,7 @@ namespace DbManager
 
                 }
             }
-            else if (type is double)
+            else if (type == ColumnDefinition.DataType.Double)
             {
                 double valor = Double.Parse(value);
                 double valor2 = Double.Parse(LiteralValue);
