@@ -63,9 +63,15 @@ namespace DbManager
         public int ColumnIndexByName(string columnName)
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-            
-            return -1;
-            
+
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                if (Name.Equals(columnName))
+                {
+                    return i;
+                }
+            }
+            return 0;
         }
 
 
@@ -85,38 +91,84 @@ namespace DbManager
         public void DeleteIthRow(int row)
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            
+            Rows.Remove(Rows[row]);
         }
 
         private List<int> RowIndicesWhereConditionIsTrue(Condition condition)
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
-            
-            return null;
-            
+            List<int> filas = new List<int>();
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                if (Rows[i].IsTrue(condition))
+                {
+                    filas.Add(i);
+                }
+            }
+            return filas;
         }
 
         public void DeleteWhere(Condition condition)
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
-            
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                if (Rows[i].IsTrue(condition))
+                {
+                    Rows.Remove(Rows[i]);
+                }
+            }
         }
 
         public Table Select(List<string> columnNames, Condition condition)
         {
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
-            
-            return null;
-            
+            List<ColumnDefinition> columnasResultado = new List<ColumnDefinition>();
+            for (int i = 0; i<ColumnDefinitions.Count; i++) {
+                for (int j = 0; j<columnNames.Count; j++) {
+                    if (Name.Equals(columnNames[j])) {
+                        columnasResultado.Add(ColumnDefinitions[i]);
+                    }
+                }
+            }
+            List<Row> filasResultado = new List<Row>();
+            if (condition == null)
+            {
+                for (int i = 0; i < Rows.Count; i++)
+                {
+                    filasResultado.Add(Rows[i]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Rows.Count; i++)
+                {
+                    if (Rows[i].IsTrue(condition))
+                    {
+                        filasResultado.Add(Rows[i]);
+                    }
+                }
+            }
+            //preguntar a Borja qué hacer con filasResultado ya que lo que hay que devolver es una tabla y no las filas
+            Table Result = new Table("Result", columnasResultado);
+            return Result;
         }
 
         public bool Insert(List<string> values)
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-            
-            return false;
-            
+            Row nuevaFila = new Row(ColumnDefinitions, values);
+            Rows.Add(nuevaFila);
+            //preguntar a Borja si el número de values no es correcto se sigue insertando igualmente o no
+            if (values.Count != ColumnDefinitions.Count)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public bool Update(List<SetValue> setValues, Condition condition)
@@ -124,7 +176,14 @@ namespace DbManager
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true
             
-            return false;
+            if (condition == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
             
         }
 
