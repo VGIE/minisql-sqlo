@@ -145,7 +145,7 @@ namespace DbManager
 
                 for(int col=0; col<ColumnDefinitions.Count;col++)
                 {
-                    result+= "'" + Rows[] + "'";
+                    result+= "'" + Rows[row].Values[col] + "'";
 
                     if(col<ColumnDefinitions.Count-1)
                     {
@@ -167,15 +167,10 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
 
-            int a = 0;
-                if(row>=0 || row<Rows.Count)
+            
+                if(row>=0 && row<Rows.Count)
                 {
-                    foreach(Row r in Rows)
-                    {
-                    if (a==row) { Rows.Remove(r);}
-                    a++;
-                    }
-                    
+                    Rows.RemoveAt(row);
 
                 }    
         }
@@ -235,12 +230,16 @@ namespace DbManager
             {
                 if(condition == null || Rows[i].IsTrue(condition))
                 {
-                    Row newRow= new Row(newC,values);
-                    for(int c=0; c<newC.Count; c++)
+                    List<string> newValues= new List<string>();
+
+                    foreach(ColumnDefinition col in newC)
                     {
-                        int originalI= ColumnIndexByName(newC[c].Name);
-                        newRow.SetValue(newC[c].Name, [originalI]);
+                        
+                        int originalI= ColumnIndexByName(col.Name);
+                        newValues.Add(Rows[i].Values[originalI]);
+
                     }
+                    Row newRow= new Row(newC, newValues);
                     Result.AddRow(newRow);
 
                 }
@@ -259,38 +258,40 @@ namespace DbManager
                 return false; 
  
             }
-            Row newRow= new Row(ColumnDefinitions,values);
+            Row newRow= new Row(ColumnDefinitions, values);
 
             AddRow(newRow);
 
             return true; 
 
         }
-
         public bool Update(List<SetValue> setValues, Condition condition)
         {
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true
 
-            if(condition==null)
+
+            bool update=false;
+
+            if(condition==null || setValues==null || setValues.Count==0)
             {
                 return false;
             }
 
             for(int i=0; i<Rows.Count; i++)
             {
-                foreach(SetValue set in setValues)
+                if (Rows[i].IsTrue(condition))
                 {
-                    int colInd= ColumnIndexByName(set.ColumnName);
-                    if(colInd>=0)
+                    for(int j=0; j<setValues.Count; j++)
                     {
-                        Rows[i].SetValue(set);
+                        Rows[i].SetValue(setValues[j].ColumnName, setValues[j].Value);
                     }
-                }
+                    update= true; 
+            }
             }
         
 
-    return true;
+    return update;
             
  }
 
