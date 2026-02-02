@@ -78,7 +78,21 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            
+            Table table = TableByName(tableName);
+            if (TableByName(tableName) == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return null;
+            }
+            foreach (String c in columns)
+            {
+                if (table.ColumnByName(c) == null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return null;
+                }
+            }
+
             return null;
             
         }
