@@ -35,7 +35,7 @@ namespace OurTests
 
         }
         [Fact]
-        public void SetValue()
+        public void SetValueTest()
         {
             List<ColumnDefinition> columns = new List<ColumnDefinition>()
             {
@@ -66,6 +66,34 @@ namespace OurTests
             Assert.NotEqual("37", testRow.GetValue("age"));
             Assert.NotEqual("maider", testRow.GetValue("years_Worked"));
             Assert.NotEqual("36859.23", testRow.GetValue("salary"));
+        }
+        [Fact]
+        public void IsTrueTest()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "age"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "years_Worked"),
+                new ColumnDefinition(ColumnDefinition.DataType.Double, "salary")
+            };
+
+            List<string> rowValues = new List<string>()
+            {
+                "jacinto","37","5","36859.23"
+            };
+            Row testRow = new Row(columns, rowValues);
+
+            Assert.True(testRow.IsTrue(new Condition("name", "=", "jacinto")));
+            Assert.True(testRow.IsTrue(new Condition("age", "<", "65")));
+            Assert.True(testRow.IsTrue(new Condition("years_Worked", "=", "5")));
+            Assert.True(testRow.IsTrue(new Condition("salary", ">", "30000")));
+            
+            Assert.False(testRow.IsTrue(new Condition("name", "=", "Jacinto")));
+            Assert.False(testRow.IsTrue(new Condition("age", ">", "65")));
+            Assert.False(testRow.IsTrue(new Condition("years_Worked", "=", "500")));
+            Assert.False(testRow.IsTrue(new Condition("salary", "<", "30000")));
+            
         }
 
     }

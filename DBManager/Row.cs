@@ -71,7 +71,7 @@ namespace DbManager
             //for this row. Check Condition.IsTrue method
 
             
-            return condition.IsTrue(condition.LiteralValue, GetColumnByName(condition.ColumnName).Type);
+            return condition.IsTrue(GetValue(condition.ColumnName), GetColumnByName(condition.ColumnName).Type);
 
         }
 
@@ -82,7 +82,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-            
+           
             return null;
             
         }
