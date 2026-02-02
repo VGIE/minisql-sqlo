@@ -9,11 +9,21 @@ namespace OurTests
         [Fact]
         public void Test1()
         {
-            ColumnDefinition cdInt = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
-            ColumnDefinition cdString = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
-            ColumnDefinition cdDouble = new ColumnDefinition(ColumnDefinition.DataType.Double, "Salary");
-            String testEncode = "HolaCarambola";
-            Assert.Equal("", Encode(testEncode));
+            ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            string expected = "Name->String";
+            string result = column.AsText();
+            Assert.Equal(expected, result);
+
+            column = new ColumnDefinition(ColumnDefinition.DataType.Double, "Total->Price");
+            expected = "Total[ARROW]Price->Double";
+            result = column.AsText();
+            Assert.Equal(expected, result);
+
+            
+            string input = "Salary->Double";
+            ColumnDefinition result1 = ColumnDefinition.Parse(input);
+            Assert.Equal("Salary", result1.Name);
+            Assert.Equal(ColumnDefinition.DataType.Double, result1.Type);
         }
         
     }
