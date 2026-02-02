@@ -83,9 +83,41 @@ namespace DbManager
             //"['Name','Age']{'Adolfo','23'}{'Jacinto','24'}" <- two columns, two rows
             //"" <- no columns, no rows
             //"['Name']" <- one column, no rows
-            
-            return null;
-            
+
+            String tabla = "";
+            if (ColumnDefinitions.Count == 0)
+            {
+                return tabla;
+            }
+            else
+            {
+                tabla = "[";
+                String columnas = "";
+                foreach (ColumnDefinition columna in ColumnDefinitions)
+                {
+                    columnas = columnas + "'" + columna.Name + "',";
+                }
+                tabla = tabla + columnas +"]";
+            }
+
+            if (Rows.Count == 0)
+            {
+                return tabla;
+            }
+            else
+            {
+                tabla = tabla + "{";
+                String filas = "";
+                foreach (ColumnDefinition columna in ColumnDefinitions)
+                {
+                    foreach (Row fila in Rows)
+                    {
+                        filas = filas + "'" + fila.GetValue(columna.Name) + "',";
+                    }
+                }
+                tabla = tabla + filas + "}";
+            }
+            return tabla;
         }
 
         public void DeleteIthRow(int row)
@@ -125,23 +157,26 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
             List<ColumnDefinition> columnasResultado = new List<ColumnDefinition>();
-            for (int i = 0; i<ColumnDefinitions.Count; i++) {
-                for (int j = 0; j<columnNames.Count; j++) {
-                    if (Name.Equals(columnNames[j])) {
-                        columnasResultado.Add(ColumnDefinitions[i]);
+            foreach (ColumnDefinition columna in ColumnDefinitions) {
+                for (int i = 0; i<columnNames.Count; i++) {
+                    if (columna.Name.Equals(columnNames[i])) {
+                        columnasResultado.Add(columna);
                     }
                 }
             }
-            List<Row> filasResultado = new List<Row>();
+            Table Result = new Table("Result", columnasResultado);
+
             if (condition == null)
             {
-                for (int i = 0; i < Rows.Count; i++)
+                foreach (Row fila in Rows)
                 {
-                    filasResultado.Add(Rows[i]);
+                    Result.AddRow(fila);
                 }
+                return Result;
             }
             else
             {
+                List<Row> filasResultado = new List<Row>();
                 for (int i = 0; i < Rows.Count; i++)
                 {
                     if (Rows[i].IsTrue(condition))
@@ -150,23 +185,21 @@ namespace DbManager
                     }
                 }
             }
-            //preguntar a Borja qué hacer con filasResultado ya que lo que hay que devolver es una tabla y no las filas
-            Table Result = new Table("Result", columnasResultado);
             return Result;
         }
 
         public bool Insert(List<string> values)
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-            Row nuevaFila = new Row(ColumnDefinitions, values);
-            Rows.Add(nuevaFila);
-            //preguntar a Borja si el número de values no es correcto se sigue insertando igualmente o no
+            
             if (values.Count != ColumnDefinitions.Count)
             {
                 return false;
             }
             else
             {
+                Row nuevaFila = new Row(ColumnDefinitions, values);
+                Rows.Add(nuevaFila);
                 return true;
             }
         }
@@ -175,13 +208,22 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true
-            
+
             if (condition == null)
             {
                 return false;
             }
             else
             {
+                foreach (Row fila in Rows) {
+                    if (fila.IsTrue(condition)) {
+                        foreach (ColumnDefinition columna in ColumnDefinitions) {
+                            foreach (SetValue valor in setValues) {
+                                fila.SetValue(columna.Name, valor.ToString());
+                            }
+                        }
+                    }
+                }
                 return true;
             }
             
