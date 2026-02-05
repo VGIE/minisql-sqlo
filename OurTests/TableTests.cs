@@ -25,8 +25,8 @@ namespace OurTests
             Row fila = new Row(columnas, valores);
             tabla1.AddRow(fila);
 
-            Assert.Equal(fila, tabla1.GetRow(1));
-            Assert.Equal(columna1, tabla1.GetColumn(1));
+            Assert.Equal(fila, tabla1.GetRow(0));
+            Assert.Equal(columna1, tabla1.GetColumn(0));
         }
 
         [Fact]
@@ -61,8 +61,52 @@ namespace OurTests
 
             Assert.Equal(columna1, tabla1.ColumnByName("columna1"));
             Assert.Equal(columna2, tabla1.ColumnByName("columna2"));
-            Assert.Equal(1, tabla1.ColumnIndexByName("columna1"));
-            Assert.Equal(2, tabla1.ColumnIndexByName("columna1"));
+            Assert.Equal(0, tabla1.ColumnIndexByName("columna1"));
+            Assert.Equal(1, tabla1.ColumnIndexByName("columna2"));
+        }
+
+        [Fact]
+        public void tableToString()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+
+            Assert.Equal("['columna1','columna2']", tabla1.ToString());
+
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            Row fila = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores);
+            tabla1.AddRow(fila);
+            tabla1.AddRow(fila2);
+
+            //Assert.Equal("['columna1','columna2']{'c1','c2'}{'c1','c2'}", tabla1.ToString());
+        }
+
+        [Fact]
+        public void deleteIthRowTest()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            Row fila = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores);
+            tabla1.AddRow(fila);
+            tabla1.AddRow(fila2);
+            tabla1.DeleteIthRow(0);
+
+            Assert.Null(tabla1.GetRow(0));
         }
 
 

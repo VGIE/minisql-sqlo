@@ -21,7 +21,15 @@ namespace DbManager
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
-            return Rows[i];
+            if (Rows != null && i<Rows.Count && i>=0)
+            {
+                return Rows[i];
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
         public void AddRow(Row row)
@@ -51,27 +59,41 @@ namespace DbManager
         public ColumnDefinition ColumnByName(string column)
         {
             //TODO DEADLINE 1.A: Return the number of columns
-            for (int i = 0; i<ColumnDefinitions.Count; i++) {
-                if (Name.Equals(column))
+            if (ColumnDefinitions != null && column != null)
+            {
+                for (int i = 0; i < ColumnDefinitions.Count; i++)
                 {
-                    return ColumnDefinitions[i];
+                    if (ColumnDefinitions[i].Name.Equals(column))
+                    {
+                        return ColumnDefinitions[i];
+                    }
                 }
+                return null;
             }
-            return null;
-            
+            else
+            {
+                return null;
+            }
         }
         public int ColumnIndexByName(string columnName)
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-
-            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            if (ColumnDefinitions != null && columnName != null)
             {
-                if (Name.Equals(columnName))
+                for (int i = 0; i < ColumnDefinitions.Count; i++)
                 {
-                    return i;
+                    if (ColumnDefinitions[i].Name.Equals(columnName))
+                    {
+                        return i;
+                    }
                 }
+                return -1;
             }
-            return 0;
+            else
+            {
+                return -1;
+            }
+            
         }
 
 
@@ -93,9 +115,16 @@ namespace DbManager
             {
                 tabla = "[";
                 String columnas = "";
-                foreach (ColumnDefinition columna in ColumnDefinitions)
+                for (int i = 0; i<ColumnDefinitions.Count; i++)
                 {
-                    columnas = columnas + "'" + columna.Name + "',";
+                    if (ColumnDefinitions.Count == i + 1)
+                    {
+                        columnas = columnas + "'" + ColumnDefinitions[i].Name + "'";
+                    }
+                    else
+                    {
+                        columnas = columnas + "'" + ColumnDefinitions[i].Name + "',";
+                    }
                 }
                 tabla = tabla + columnas +"]";
             }
@@ -110,12 +139,21 @@ namespace DbManager
                 String filas = "";
                 foreach (ColumnDefinition columna in ColumnDefinitions)
                 {
-                    foreach (Row fila in Rows)
+                    for (int i = 0; i<Rows.Count; i++)
                     {
-                        filas = filas + "'" + fila.GetValue(columna.Name) + "',";
+                        if (Rows.Count == i + 1)
+                        {
+                            filas = filas + "'" + Rows[i].GetValue(columna.Name) + "'";
+                        }
+                        else
+                        {
+                            filas = filas + "'" + Rows[i].GetValue(columna.Name) + "',";
+                        }
+                        
                     }
+                    filas = filas + "}";
                 }
-                tabla = tabla + filas + "}";
+                tabla = tabla + filas;
             }
             return tabla;
         }
