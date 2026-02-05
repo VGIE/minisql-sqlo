@@ -78,32 +78,45 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            Table table = TableByName(tableName);
-            if (TableByName(tableName) == null)
+
+            Table t = TableByName(tableName);
+            if (t == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return null;
             }
             foreach (String c in columns)
             {
-                if (table.ColumnByName(c) == null)
+                if (t.ColumnByName(c) == null)
                 {
                     LastErrorMessage = Constants.ColumnDoesNotExistError;
                     return null;
                 }
             }
-
-            return null;
-            
+            return t.Select(columns, condition);
         }
+
+
+
 
         public bool DeleteWhere(string tableName, Condition columnCondition)
         {
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-
-            return false;
+            Table t = TableByName(tableName);
+            if (t == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+                if ((t.ColumnByName(columnCondition.ColumnName)) == null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return false;
+                }
+            }
+            t.DeleteWhere(columnCondition);
+            return true;
 
         }
 
