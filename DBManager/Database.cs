@@ -125,8 +125,19 @@ namespace DbManager
             //DEADLINE 1.B: Update in the given table all the rows where the condition is true using the SetValues
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-
-            return false;
+            Table t = TableByName(tableName);
+            if (t == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+                if ((t.ColumnByName(columnCondition.ColumnName)) == null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return false;
+                }
+            }
+            t.Update(columnNames, columnCondition);
+            return true;
 
         }
 
