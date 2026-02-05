@@ -19,11 +19,11 @@ namespace DbManager
             ColumnDefinitions = columnDefinitions;
             Values = values;
 
-            
+
         }
         public ColumnDefinition GetColumnByName(string name)
         {
-            foreach(ColumnDefinition cd in ColumnDefinitions)
+            foreach (ColumnDefinition cd in ColumnDefinitions)
             {
                 if (cd.Name.Equals(name))
                 {
@@ -37,7 +37,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
             int posi = 0;
-            foreach(ColumnDefinition cd in ColumnDefinitions)
+            foreach (ColumnDefinition cd in ColumnDefinitions)
             {
                 if (cd.Name.Equals(columnName))
                 {
@@ -46,7 +46,7 @@ namespace DbManager
                 posi++;
             }
             Values[posi] = value;
-            
+
         }
 
         public string GetValue(string columnName)
@@ -57,7 +57,7 @@ namespace DbManager
             {
                 if (cd.Name.Equals(columnName))
                 {
-                    
+
                     break;
                 }
                 posi++;
@@ -70,7 +70,7 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            
+
             return condition.IsTrue(GetValue(condition.ColumnName), GetColumnByName(condition.ColumnName).Type);
 
         }
@@ -82,33 +82,46 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-           
-            return null;
-            
+            return value.Replace(Delimiter, DelimiterEncoded);
+
         }
 
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
-            
+
+            return value.Replace(DelimiterEncoded, Delimiter); ;
+
         }
 
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
-            
+            string churro = "";
+            foreach (string v in Values)
+            {
+                if (!Values.Last().Equals(v)) //if its not the last value we use the delimiter
+                {
+                    churro = churro + "";
+                }
+
+            }
+            return churro;
+
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            
-            return null;
-            
+            string[] valuesToArray = Decode(value).Split(Delimiter);
+            List<string> val = new List<string>();
+
+            for(int i=0;i<valuesToArray.Length;i++)
+            {
+                val.Add(valuesToArray[i]);
+            }
+            return new Row(columns, val);
+
         }
     }
 }
