@@ -85,7 +85,7 @@ namespace OurTests
             tabla1.AddRow(fila);
             tabla1.AddRow(fila2);
 
-            //Assert.Equal("['columna1','columna2']{'c1','c2'}{'c1','c2'}", tabla1.ToString());
+            Assert.Equal("['columna1','columna2']{'c1','c2'}{'c1','c2'}", tabla1.ToString());
         }
 
         [Fact]
@@ -106,7 +106,64 @@ namespace OurTests
             tabla1.AddRow(fila2);
             tabla1.DeleteIthRow(0);
 
-            Assert.Null(tabla1.GetRow(0));
+            Assert.Equal(fila2, tabla1.GetRow(0));
+        }
+
+        [Fact]
+        public void RowIndicesWhereConditionIsTrueTest()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            Row fila = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores);
+            tabla1.AddRow(fila);
+            tabla1.AddRow(fila2);
+            Condition condicion = new Condition("columna1", "=", "c1");
+            List<int> index = new List<int>();
+            for (int i = 0; i < tabla1.NumRows(); i++)
+            {
+                if (tabla1.GetRow(i).IsTrue(condicion))
+                {
+                    index.Add(i);
+                }
+            }
+            Assert.Equal(index, tabla1.RowIndicesWhereConditionIsTrue(condicion));
+        }
+
+        [Fact]
+        public void selectTest()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            List<string> valores2 = new List<string>();
+            valores.Add("c3");
+            valores.Add("c4");
+            Row fila = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores2);
+            tabla1.AddRow(fila);
+            tabla1.AddRow(fila2);
+            Condition condicion = new Condition("columna1", "=", "c1");
+            Table tablaResultado = new Table("tablaResultado", columnas);
+            tablaResultado.AddRow(fila);
+            List<string> columnasNombres = new List<string>();
+            columnasNombres.Add("columna1");
+            columnasNombres.Add("columna2");
+
+            Assert.Equal(tablaResultado, tabla1.Select(columnasNombres, condicion));
         }
 
 

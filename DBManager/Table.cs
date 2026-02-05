@@ -135,21 +135,20 @@ namespace DbManager
             }
             else
             {
-                tabla = tabla + "{";
                 String filas = "";
-                foreach (ColumnDefinition columna in ColumnDefinitions)
+                for (int i = 0; i<Rows.Count; i++)
                 {
-                    for (int i = 0; i<Rows.Count; i++)
+                    filas = filas + "{";
+                    for (int j = 0; j < ColumnDefinitions.Count; j++)
                     {
-                        if (Rows.Count == i + 1)
+                        if (ColumnDefinitions.Count == j + 1)
                         {
-                            filas = filas + "'" + Rows[i].GetValue(columna.Name) + "'";
+                            filas = filas + "'" + Rows[i].GetValue(ColumnDefinitions[j].Name) + "'";
                         }
                         else
                         {
-                            filas = filas + "'" + Rows[i].GetValue(columna.Name) + "',";
+                            filas = filas + "'" + Rows[i].GetValue(ColumnDefinitions[j].Name) + "',";
                         }
-                        
                     }
                     filas = filas + "}";
                 }
@@ -164,7 +163,7 @@ namespace DbManager
             Rows.Remove(Rows[row]);
         }
 
-        private List<int> RowIndicesWhereConditionIsTrue(Condition condition)
+        public List<int> RowIndicesWhereConditionIsTrue(Condition condition)
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
             List<int> filas = new List<int>();
@@ -195,15 +194,19 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
             List<ColumnDefinition> columnasResultado = new List<ColumnDefinition>();
-            foreach (ColumnDefinition columna in ColumnDefinitions) {
-                for (int i = 0; i<columnNames.Count; i++) {
-                    if (columna.Name.Equals(columnNames[i])) {
+            foreach (ColumnDefinition columna in ColumnDefinitions)
+            {
+                for (int i = 0; i<columnNames.Count; i++)
+                {
+                    if (columna.Name.Equals(columnNames[i]))
+                    {
                         columnasResultado.Add(columna);
                     }
                 }
             }
-            Table Result = new Table("Result", columnasResultado);
 
+            Table Result = new Table("Result", columnasResultado);
+            List<Row> filasResultado = new List<Row>();
             if (condition == null)
             {
                 foreach (Row fila in Rows)
@@ -214,14 +217,18 @@ namespace DbManager
             }
             else
             {
-                List<Row> filasResultado = new List<Row>();
                 for (int i = 0; i < Rows.Count; i++)
                 {
-                    if (Rows[i].IsTrue(condition))
-                    {
-                        filasResultado.Add(Rows[i]);
+                    if (Rows[i] != null && i>=0) {
+                        if (Rows[i].IsTrue(condition))
+                        {
+                            filasResultado.Add(Rows[i]);
+                        }
                     }
                 }
+            }
+            for (int i = 0; i<filasResultado.Count; i++) {
+                Result.AddRow(filasResultado[i]);
             }
             return Result;
         }
@@ -253,10 +260,14 @@ namespace DbManager
             }
             else
             {
-                foreach (Row fila in Rows) {
-                    if (fila.IsTrue(condition)) {
-                        foreach (ColumnDefinition columna in ColumnDefinitions) {
-                            foreach (SetValue valor in setValues) {
+                foreach (Row fila in Rows)
+                {
+                    if (fila.IsTrue(condition))
+                    {
+                        foreach (ColumnDefinition columna in ColumnDefinitions)
+                        {
+                            foreach (SetValue valor in setValues)
+                            {
                                 fila.SetValue(columna.Name, valor.ToString());
                             }
                         }
