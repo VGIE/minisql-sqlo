@@ -1,14 +1,23 @@
 namespace OurTests
 {
-    public class UnitTest1
+    public class DatabaseTests
     {
         //TODO DEADLINE 1B : Create your own tests for Database
+
         
         [Fact]
-        public void Test1()
+        public void SelectTest()
+        {
+           
+        }
+        public void DeleteWhere()
+        {
+           
+        }
+        public void UpdateTest()
         {
 
         }
-        
+
     }
 }
