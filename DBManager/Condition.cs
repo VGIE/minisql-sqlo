@@ -32,19 +32,35 @@ namespace DbManager
             //9 < 10
             //Convert first the strings to the appropriate type and
             //then compare (depending on the operator of the condition)
-
+            bool esIg=false;
+            bool esMa=false;
+            bool esMe = false;
             switch (type) {
                 case ColumnDefinition.DataType.String:
-
+                    esIg=string.Compare(LiteralValue, value)==0;
+                    esMa=string.Compare(LiteralValue,value)<0;
+                    esMe= string.Compare(LiteralValue, value)>0;
+                    break;
                 case ColumnDefinition.DataType.Int:
                     int v = int.Parse(value);
+                    int tab=int.Parse(LiteralValue);
+                    esIg = v == tab;
+                    esMa=v > tab;
+                    esMe=v < tab;
                     break;
                 case ColumnDefinition.DataType.Double:
                     double v2 = double.Parse(value);
+                    double tab2 = double.Parse(LiteralValue);
+                    double dif = v2 - tab2;
+                    esIg=((dif < 0.0000000000000001) && (-dif < 0.0000000000000001));
+                    esMa=(dif> 0.0000000000000001);
+                    esMe=(-dif > 0.0000000000000001);
                     break;
             }
-                
-            
+            if (Operator == "=") { return esIg; }
+            if (Operator == ">") { return esMa; }
+            if (Operator == "<") { return esMe; }
+
             return false;
             
         }
