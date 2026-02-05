@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace DbManager
 {
@@ -16,50 +17,94 @@ namespace DbManager
 
         public string LastErrorMessage { get; private set; }
 
-        public Manager SecurityManager { get; private set; }
+        public Manager SecurityManager
+         { 
+            get; 
+            private set; 
+        }
 
         //This constructor should only be used from Load (without needing to set a password for the user). It cannot be used from any other class
         private Database()
         {
+            
         }
 
         public Database(string adminUsername, string adminPassword)
         {
             //DEADLINE 1.B: Initalize the member variables
+           m_username= adminUsername;
+
             
         }
 
         public bool AddTable(Table table)
         {
             //DEADLINE 1.B: Add a new table to the database
-            
-            return false;
+            Tables.Add(table);
+
+            return true;
             
         }
 
         public Table TableByName(string tableName)
         {
             //DEADLINE 1.B: Find and return the table with the given name
+            for(int i=0; i<Tables.Count; i++)
+            {
+                if(Tables[i].Name==tableName)
+                {
+                    return Tables[i];
+                }
+            }
             
-            return null;
-            
+            return null;  
         }
 
         public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
         {
-            //DEADLINE 1.B: Create and new table with the given name and columns. If there is already a table with that name,
+            //DEADLINE 1.B: Create a new table with the given name and columns. If there is already a table with that name,
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
+
+            for (int i= 0; i<Tables.Count; i++){
+
+                if (Tables[i].Name == tableName)
+                {
+                    LastErrorMessage= Constants.TableAlreadyExistsError;
+                    return false; 
+                }
+                else if(ColumnDefinition==null)
+                {
+                    LastErrorMessage= Constants.TableAlreadyExistsError;
+                    return false; 
+                }
+                else
+                {
+                    Table newTable= new Table(tableName, ColumnDefinition);
+
+                }
+
+            }
             
             return false;
-            
         }
 
         public bool DropTable(string tableName)
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
+            for(int i= 0; i<Tables.Count; i++)
+            {
+                if(Tables[i].Name==tableName)
+                {
+                    Tables.Remove(Tables[i]);
+                }
+                
+            }
+
+
+
             
             return false;
         }
