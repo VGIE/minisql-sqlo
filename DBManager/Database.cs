@@ -98,12 +98,26 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            if (TableByName(tableName)==null) 
+            Table Tabla = TableByName(tableName);
+            if (Tabla==null) 
             {
             LastErrorMessage= Constants.TableDoesNotExistError;
             return false;
             }
-            
+            if (values.Count() == Tabla.NumColumns()) 
+            {
+                List<ColumnDefinition> Columnas = new List<ColumnDefinition>();
+                for (int i= 0;i < Tabla.NumColumns(); i++)
+                {
+                    Columnas.Add(Tabla.GetColumn(i));
+                } 
+                {
+
+                }
+                Tabla.AddRow(new Row(Columnas,values));
+                LastErrorMessage=Constants.InsertSuccess;
+                return true;
+            }
             return false;
             
         }
