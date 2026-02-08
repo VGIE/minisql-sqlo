@@ -32,7 +32,7 @@ namespace DbManager
                 {
                      Values[i]=value;
                 }
-                i = i++;
+                i++;
             }
 
         }
@@ -46,7 +46,7 @@ namespace DbManager
                 if (item.Name == columnName) {
                     return Values[i];
                 }
-                i = i++;
+                i++;
             }
 
             return null;
@@ -103,7 +103,7 @@ namespace DbManager
             foreach (var item in Values)
             {
                 row = row + Values[i] +Delimiter;
-                i = i++;
+                i++;
             }
             return row;
             
