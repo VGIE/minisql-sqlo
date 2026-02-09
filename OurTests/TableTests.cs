@@ -1,4 +1,5 @@
 using DbManager;
+using DbManager.Parser;
 using Xunit;
 
 namespace OurTests
@@ -137,7 +138,7 @@ namespace OurTests
             Assert.Equal(index, tabla1.RowIndicesWhereConditionIsTrue(condicion));
         }
 
-        /*[Fact]
+        [Fact]
         public void selectTest()
         {
             ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
@@ -150,8 +151,8 @@ namespace OurTests
             valores.Add("c1");
             valores.Add("c2");
             List<string> valores2 = new List<string>();
-            valores.Add("c3");
-            valores.Add("c4");
+            valores2.Add("c3");
+            valores2.Add("c4");
             Row fila = new Row(columnas, valores);
             Row fila2 = new Row(columnas, valores2);
             tabla1.AddRow(fila);
@@ -162,12 +163,67 @@ namespace OurTests
             List<string> columnasNombres = new List<string>();
             columnasNombres.Add("columna1");
             columnasNombres.Add("columna2");
+            Table tablaResultado2 = new Table("tablaResultado2", columnas);
+            tablaResultado2.AddRow(fila);
+            tablaResultado2.AddRow(fila2);
 
-            Assert.Equal(tablaResultado, tabla1.Select(columnasNombres, condicion));
-        }*/
+            Assert.Equal(tablaResultado.ToString(), tabla1.Select(columnasNombres, condicion).ToString());
+            Assert.Equal(tablaResultado2.ToString(), tabla1.Select(columnasNombres, null).ToString());
+        }
 
+        [Fact]
+        public void insertTest()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            tabla1.Insert(valores);
+            Table tablaResultado = new Table("tablaResultado", columnas);
+            Row fila = new Row(columnas, valores);
+            tablaResultado.AddRow(fila);
 
+            List<string> valoresMal = new List<string>();
+            valoresMal.Add("mal1");
+            valoresMal.Add("mal2");
+            valoresMal.Add("mal3");
 
-         
+            Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
+            Assert.False(tabla1.Insert(valoresMal));
+        }
+
+        [Fact]
+        public void updateTest()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            tabla1.Insert(valores);
+            List<SetValue> nuevosValores = new List<SetValue>();
+            SetValue valor1 = new SetValue("columna1", "actualizado1");
+            SetValue valor2 = new SetValue("columna2", "actualizado2");
+            nuevosValores.Add(valor1);
+            nuevosValores.Add(valor2);
+            Condition condicion = new Condition("columna2", "=", "c2");
+            tabla1.Update(nuevosValores, condicion);
+            Table tablaResultado = new Table("tablaResultado", columnas);
+            List<string> valores2 = new List<string>();
+            valores2.Add("actualizado1");
+            valores2.Add("actualizado2");
+            tablaResultado.Insert(valores2);
+
+            Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
+        }
     }
 }

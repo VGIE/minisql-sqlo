@@ -264,12 +264,9 @@ namespace DbManager
                 {
                     if (fila.IsTrue(condition))
                     {
-                        foreach (ColumnDefinition columna in ColumnDefinitions)
+                        foreach (SetValue valor in setValues)
                         {
-                            foreach (SetValue valor in setValues)
-                            {
-                                fila.SetValue(columna.Name, valor.ToString());
-                            }
+                            fila.SetValue(valor.ColumnName, valor.Value);
                         }
                     }
                 }
