@@ -38,7 +38,21 @@ public class DatabaseTests
     public void SelectTest()
     {
         Database db = CrearDb();
+        Condition c = new Condition("Alumnos", "=", "Cortinsen");
+        List<String> columnsTest = new List<String>();
+        columnsTest.Add("Apellido");
         
+
+        ColumnDefinition nombre = new(ColumnDefinition.DataType.String, "Nombre");
+        ColumnDefinition apellido = new(ColumnDefinition.DataType.String, "Apellido");
+        ColumnDefinition edad = new(ColumnDefinition.DataType.Int, "Edad");
+        List<ColumnDefinition> columns = new List<ColumnDefinition>();
+        Table resultado = new Table("Alumnos", columns);
+        List<String> fila1 = new List<string>();
+        string a = "Cortinsen";
+        Row r = new(columns, fila1);
+        Assert.Equal(resultado,db.Select("Alumnos", columnsTest, c));
+
     }
     [Fact]
     public void DeleteWhere()
