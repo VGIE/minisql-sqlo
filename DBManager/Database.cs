@@ -27,7 +27,6 @@ namespace DbManager
         {
             //DEADLINE 1.B: Initalize the member variables
             this.m_username = adminUsername;
-            
         }
 
         public bool AddTable(Table table)
@@ -35,12 +34,14 @@ namespace DbManager
             //DEADLINE 1.B: Add a new table to the database
             Tables.Add(table);
             return true;
-            
+      
         }
 
         public Table TableByName(string tableName)
         {
             //DEADLINE 1.B: Find and return the table with the given name
+
+
             Table tablaGanadora = null;
             foreach (Table table in Tables)
             {
@@ -59,6 +60,7 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
+
             if(TableByName(tableName)!=null)
             {
                 LastErrorMessage=Constants.TableAlreadyExistsError;
@@ -72,7 +74,7 @@ namespace DbManager
             Tables.Add(new Table(tableName,ColumnDefinition));
             LastErrorMessage = Constants.CreateTableSuccess;
             return true;
-            
+          
         }
 
         public bool DropTable(string tableName)
@@ -90,8 +92,6 @@ namespace DbManager
                 return false;
             }
              
-            
-            
         }
 
         public bool Insert(string tableName, List<string> values)
@@ -116,7 +116,6 @@ namespace DbManager
                 return true;
             }
             return false;
-
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition)
