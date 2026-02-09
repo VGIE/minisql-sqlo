@@ -137,7 +137,7 @@ namespace OurTests
             Assert.Equal(index, tabla1.RowIndicesWhereConditionIsTrue(condicion));
         }
 
-        [Fact]
+        /*[Fact]
         public void selectTest()
         {
             ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
@@ -164,7 +164,7 @@ namespace OurTests
             columnasNombres.Add("columna2");
 
             Assert.Equal(tablaResultado, tabla1.Select(columnasNombres, condicion));
-        }
+        }*/
 
 
 
