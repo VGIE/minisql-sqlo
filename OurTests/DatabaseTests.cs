@@ -1,13 +1,10 @@
 namespace OurTests;
 
 using DbManager;
-{
-    public class DatabaseTests
+public class DatabaseTests
 {
     //TODO DEADLINE 1B : Create your own tests for Database
-
-    [Fact]
-    public void SelectTest()
+    public Database CrearDb()
     {
         Database db = new("farlop", "farlop");
         ColumnDefinition nombre = new(ColumnDefinition.DataType.String, "Nombre");
@@ -17,7 +14,8 @@ using DbManager;
         columns.Add(nombre);
         columns.Add(apellido);
         columns.Add(edad);
-        Table t = new("Alumnos", columns);
+        db.CreateTable("Alumnos", columns);
+
 
         List<String> fila1 = new List<string>();
         string n1 = "Naigel";
@@ -32,19 +30,24 @@ using DbManager;
         int e2 = 22;
 
         Row r2 = new(columns, fila2);
-        
-        t.AddRow(r1);
-        t.AddRow(r2);
-        db.AddTable(t);
+        db.TableByName("Alumnos").AddRow(r1);
+        db.TableByName("Alumnos").AddRow(r2);
+        return db;
     }
+    [Fact]
+    public void SelectTest()
+    {
+        Database db = CrearDb();
+        
+    }
+    [Fact]
     public void DeleteWhere()
     {
-
+        Database db = CrearDb();
     }
+    [Fact]
     public void UpdateTest()
     {
-
+        Database db = CrearDb();
     }
-
-}
 }
