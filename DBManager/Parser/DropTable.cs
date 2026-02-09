@@ -12,6 +12,7 @@ namespace DbManager
         public DropTable(string table)
         {
             //TODO DEADLINE 2: Initialize member variables
+            Table= table; 
             
         }
 
@@ -19,8 +20,14 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //DropTableSuccess or the last error in the database
+            database.DropTable(Table);
+             if(database.LastErrorMessage!=null)
+            {
+                return database.LastErrorMessage;
+            }
             
-            return null;
+            
+            return "DropTableSuccess";
             
         }
     }

@@ -15,14 +15,25 @@ namespace DbManager
         public Revoke(string privilegeName, string tableName, string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
+            PrivilegeName= privilegeName;
+            TableName=tableName;
+            ProfileName=profileName; 
             
         }
         public string Execute(Database database)
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
+
+            database.SecurityManager.RevokePrivilege(PrivilegeName, TableName, PrivilegeUtils.FromPrivilegeName(ProfileName));
+
+            if(database.LastErrorMessage!=null)
+            {
+                return database.LastErrorMessage;
+
+            }
             
-            return null;
+            return "RevokePrivilageSuccess";
             
         }
 

@@ -12,6 +12,8 @@ namespace DbManager.Parser
         public Delete(string table, Condition where)
         {
             //TODO DEADLINE 2: Initialize member variables
+            Table= table;
+            Where= where;
             
         }
 
@@ -19,8 +21,15 @@ namespace DbManager.Parser
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //DeleteSuccess or the last error in the database
+            database.DeleteWhere(Table, Where);
+
+
+              if(database.LastErrorMessage!=null)
+            {
+                return database.LastErrorMessage;
+            }
             
-            return null;
+            return "DeleteSuccess";
             
         }
     }

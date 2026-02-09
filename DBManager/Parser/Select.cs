@@ -15,14 +15,24 @@ namespace DbManager
         public Select(string table, List<string> columns, Condition condition=null)
         {
             //TODO DEADLINE 2: Initialize member variables
-            
+            Table= table;
+            Columns= columns;
+            Where= condition;
+
         }
 
         public string Execute(Database database)
         {
             //TODO DEADLINE 3: Run the query and return the table as a string (or the last error in the database)
+            Table result= database.Select(Table, Columns, Where);
+
+             if(database.LastErrorMessage!=null)
+            {
+             return database.LastErrorMessage;
+
+            }
             
-            return null;
+            return result.ToString();
             
         }
     }
