@@ -41,11 +41,14 @@ namespace DbManager
             {
                 if (cd.Name.Equals(columnName))
                 {
+                    
+                    Values[posi] = value;
                     break;
                 }
                 posi++;
             }
-            Values[posi] = value;
+            
+            
 
         }
 
@@ -57,12 +60,13 @@ namespace DbManager
             {
                 if (cd.Name.Equals(columnName))
                 {
-
+                    return Values[posi];
                     break;
                 }
                 posi++;
             }
-            return Values[posi];
+            return null;
+            
         }
 
         public bool IsTrue(Condition condition)
@@ -100,10 +104,8 @@ namespace DbManager
             string churro = "";
             foreach (string v in Values)
             {
-                if (!Values.Last().Equals(v)) //if its not the last value we use the delimiter
-                {
-                    churro = churro + "";
-                }
+                
+                    churro = churro +Decode(v);
 
             }
             return churro;
@@ -118,7 +120,11 @@ namespace DbManager
 
             for(int i=0;i<valuesToArray.Length;i++)
             {
-                val.Add(valuesToArray[i]);
+                if (!valuesToArray[valuesToArray.Length-1].Equals(valuesToArray[i]))
+                {
+                    val.Add(Encode(valuesToArray[i] + Delimiter));
+                }
+                val.Add(Encode(valuesToArray[i]));
             }
             return new Row(columns, val);
 
