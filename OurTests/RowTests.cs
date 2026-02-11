@@ -39,7 +39,7 @@ namespace OurTests
             List<String> valores = new List<String> { "Noa:", "1", "0.5" };
             Row r = new Row(columns, valores);
             string prue = r.AsText();
-            string resultado = "Noa::1:0.5";
+            string resultado = "Noa[SEPARATOR]:1:0.5";
             Assert.Equal(resultado, prue);
         }
 

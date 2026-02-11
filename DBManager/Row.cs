@@ -18,25 +18,24 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Initialize member variables
             ColumnDefinitions = columnDefinitions;
-            foreach (var i in values)
+            Values = new List<string>();
+
+            for (int i = 0; i < values.Count; i++)
             {
-                Encode(i);
+                Values.Add(Encode(values[i]));
             }
-            Values = values;
-            
+
         }
 
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            int i = 0;
-            foreach (var item in ColumnDefinitions)
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
-                if (item.Name == columnName)
+                if (ColumnDefinitions[i].Name == columnName)
                 {
-                     Values[i]=Encode(value);
+                    Values[i] = Encode(value);
                 }
-                i++;
             }
 
         }
@@ -59,11 +58,23 @@ namespace DbManager
 
         public bool IsTrue(Condition condition)
         {
-            
-            string comprobar = condition.LiteralValue;
-            string nombreCol= condition.ColumnName;
-            ColumnDefinition.DataType type = DataTypeUtils.FromMiniTypeName(comprobar);
+
+            string nombreCol = condition.ColumnName;
             string a = GetValue(nombreCol);
+
+            if (a == null)
+                return false;
+            
+            ColumnDefinition.DataType type = ColumnDefinition.DataType.String;
+            
+            for(int i=0; i<ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name == nombreCol)
+                {
+                    type = ColumnDefinitions[i].Type;
+                    break;
+                }
+            }
 
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
@@ -102,19 +113,21 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            int i = 0;
-            String row = Values[i];
-            foreach (var item in Values)
+
+            if (Values == null || Values.Count == 0)
+                return "";
+
+            string row = "";
+            for (int i = 0; i < Values.Count; i++)
             {
-                if (i > 0)
+                row += Values[i]; 
+                if (i < Values.Count - 1)
                 {
-                    row = row + Delimiter + Encode(Values[i]);
+                    row += Delimiter;
                 }
-                i++;
             }
             return row;
-            
+
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
@@ -126,9 +139,9 @@ namespace DbManager
             ret = value.Split(Delimiter);
 
             List<String> rows = new List<String>();
-            for (int i = 0; i < ret.Count(); i++) 
+            for (int i = 0; i < ret.Length && i < columns.Count; i++) 
             {
-                rows.Add(Decode(ret[i]));
+                rows.Add(ret[i]);
             }
             return new Row(columns,rows);
             

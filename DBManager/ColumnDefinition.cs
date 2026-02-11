@@ -55,7 +55,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Return the column as a string with the name and the type separated by the delimiter
 
-                String res = Name + Delimiter + Type;
+                String res = Encode(Name) + Delimiter + Type;
                 return res;
                         
         }
@@ -66,7 +66,7 @@ namespace DbManager
             
             String[] div = value.Split(Delimiter);
 
-            String name = div[0];
+            String name = Decode(div[0]);
             DataType type = DataTypeUtils.FromMiniTypeName(div[1]);
 
 

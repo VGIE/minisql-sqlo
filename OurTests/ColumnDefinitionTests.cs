@@ -28,26 +28,26 @@ namespace OurTests
         [Fact]
         public void TestAsText()
         {
-            ColumnDefinition columnString = new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre");
-            ColumnDefinition columnInt = new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero");
-            ColumnDefinition columnDouble = new ColumnDefinition(ColumnDefinition.DataType.Double, "Precio");
+            ColumnDefinition columnString = new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre->Juan");
+            ColumnDefinition columnInt = new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero->10");
+            ColumnDefinition columnDouble = new ColumnDefinition(ColumnDefinition.DataType.Double, "Precio->5.2");
 
             string textString = columnString.AsText();
             string textInt = columnInt.AsText();
             string textDouble = columnDouble.AsText();
 
-            Assert.Equal("Nombre->String", textString);
-            Assert.Equal("Numero->Int", textInt);
-            Assert.Equal("Precio->Double", textDouble);
+            Assert.Equal("Nombre[ARROW]Juan->String", textString);
+            Assert.Equal("Numero[ARROW]10->Int", textInt);
+            Assert.Equal("Precio[ARROW]5.2->Double", textDouble);
 
         }
 
         [Fact]
         public void TestParse()
         {
-            ColumnDefinition columnString = new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre");
-            ColumnDefinition columnInt = new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero");
-            ColumnDefinition columnDouble = new ColumnDefinition(ColumnDefinition.DataType.Double, "Precio");
+            ColumnDefinition columnString = new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre->Juan");
+            ColumnDefinition columnInt = new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero->10");
+            ColumnDefinition columnDouble = new ColumnDefinition(ColumnDefinition.DataType.Double, "Precio->5.2");
 
             string textString = columnString.AsText();
             string textInt = columnInt.AsText();
@@ -58,13 +58,13 @@ namespace OurTests
             ColumnDefinition parseDouble = ColumnDefinition.Parse(textDouble);
 
             Assert.Equal(ColumnDefinition.DataType.String, parseString.Type);
-            Assert.Equal("Nombre", parseString.Name);
+            Assert.Equal("Nombre->Juan", parseString.Name);
 
             Assert.Equal(ColumnDefinition.DataType.Int, parseInt.Type);
-            Assert.Equal("Numero", parseInt.Name);
+            Assert.Equal("Numero->10", parseInt.Name);
 
             Assert.Equal(ColumnDefinition.DataType.Double, parseDouble.Type);
-            Assert.Equal("Precio", parseDouble.Name);
+            Assert.Equal("Precio->5.2", parseDouble.Name);
 
         }
 
