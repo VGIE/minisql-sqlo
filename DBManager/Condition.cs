@@ -58,7 +58,8 @@ namespace DbManager
             {
                 double valor = Double.Parse(value);
                 double valor2 = Double.Parse(LiteralValue);
-                switch (Operator) {
+                switch (Operator) 
+                {
                     case "<": if (valor<valor2) { return true; } return false; ;
                     case "=": if (valor == valor2) { return true; } return false; ;
                     case ">": if (valor > valor2) { return true; } return false; ;
