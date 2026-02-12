@@ -80,15 +80,25 @@ public class DatabaseTests
 
 
     }
-    /*[Fact]
+    [Fact]
     public void DeleteWhere()
     {
         Database db = CrearDb();
+
+        //Condition to delete
+        Condition c = new Condition("Apellido", "=", "Cortinsen");
+
+        Assert.True(db.DeleteWhere("Alumnos", c));
+        Assert.False(db.DeleteWhere("NoExiste", c));
+
+        c = new Condition("ColumnaNoExiste", "=", "Cortinsen");
+        Assert.False(db.DeleteWhere("Alumnos", c));
     }
+    /*
     [Fact]
     public void UpdateTest()
     {
         Database db = CrearDb();
     }
-    */
+*/    
 }
