@@ -26,22 +26,30 @@ namespace DbManager
         public Database(string adminUsername, string adminPassword)
         {
             //DEADLINE 1.B: Initalize the member variables
+            this.m_username = adminUsername;
             
         }
 
         public bool AddTable(Table table)
         {
             //DEADLINE 1.B: Add a new table to the database
-            
-            return false;
+            Tables.Add(table);
+            return true;
             
         }
 
         public Table TableByName(string tableName)
         {
             //DEADLINE 1.B: Find and return the table with the given name
-            
-            return null;
+            Table winnerTable = null;
+            foreach (Table table in Tables)
+            {
+                if(table.Name.Equals(tableName))
+                {
+                    winnerTable = table;
+                }
+            }
+            return winnerTable;
             
         }
 
@@ -51,8 +59,19 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
+            if(TableByName(tableName)!=null)
+            {
+                LastErrorMessage=Constants.TableAlreadyExistsError;
+                return false;
+            }
+            if (ColumnDefinition.Count()==0)
+            {
+                LastErrorMessage = Constants.DatabaseCreatedWithoutColumnsError;
+                return false;
+            }
+            Tables.Add(new Table(tableName,ColumnDefinition));
+            LastErrorMessage = Constants.CreateTableSuccess;
+            return true;
             
         }
 
@@ -60,15 +79,44 @@ namespace DbManager
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
+            if (TableByName(tableName) != null) 
+            {
+                Tables.Remove(TableByName(tableName));
+                LastErrorMessage=Constants.DropTableSuccess;
+                return true;
+            }
+            else
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+             
             
-            return false;
+            
         }
 
         public bool Insert(string tableName, List<string> values)
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
+            Table table = TableByName(tableName);
+            if (table==null) 
+            {
+            LastErrorMessage= Constants.TableDoesNotExistError;
+            return false;
+            }
+            if (values == null) { return false;}
+            if (values.Count() == table.NumColumns()) 
+            {
+                List<ColumnDefinition> Columns = new List<ColumnDefinition>();
+                for (int i= 0;i < table.NumColumns(); i++)
+                {
+                    Columns.Add(table.GetColumn(i));
+                } 
+                table.AddRow(new Row(Columns,values));
+                LastErrorMessage=Constants.InsertSuccess;
+                return true;
+            }
             return false;
             
         }

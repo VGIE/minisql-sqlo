@@ -56,9 +56,10 @@ namespace DbManager
             }
             else if (type == ColumnDefinition.DataType.Double)
             {
-                double valor = Double.Parse(value);
-                double valor2 = Double.Parse(LiteralValue);
-                switch (Operator) {
+                double valor = Double.Parse(value,System.Globalization.CultureInfo.InvariantCulture);
+                double valor2 = Double.Parse(LiteralValue, System.Globalization.CultureInfo.InvariantCulture);
+                switch (Operator) 
+                {
                     case "<": if (valor<valor2) { return true; } return false; ;
                     case "=": if (valor == valor2) { return true; } return false; ;
                     case ">": if (valor > valor2) { return true; } return false; ;

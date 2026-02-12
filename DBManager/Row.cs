@@ -56,16 +56,23 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
             int posi = 0;
-            foreach (ColumnDefinition cd in ColumnDefinitions)
+            if (posi < Values.Count && posi >= 0)
             {
-                if (cd.Name.Equals(columnName))
+                foreach (ColumnDefinition cd in ColumnDefinitions)
                 {
-                    return Values[posi];
-                    break;
+                    if (cd.Name.Equals(columnName))
+                    {
+
+                        break;
+                    }
+                    posi++;
                 }
-                posi++;
+                return Values[posi];
             }
-            return null;
+            else
+            {
+                return null;
+            }
             
         }
 
