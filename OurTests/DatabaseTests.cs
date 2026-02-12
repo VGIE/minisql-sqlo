@@ -23,7 +23,7 @@ namespace OurTests
         }
         
         [Fact]
-        public void Test1()
+        public void CreateTableAndTableByNameTest()
         {
             Database db = CreateTestDatabase();
             Assert.NotNull(db.TableByName("tabla"));
