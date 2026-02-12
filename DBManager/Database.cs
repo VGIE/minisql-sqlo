@@ -175,12 +175,13 @@ namespace DbManager
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
-                if ((t.ColumnByName(columnCondition.ColumnName)) == null)
-                {
-                    LastErrorMessage = Constants.ColumnDoesNotExistError;
-                    return false;
-                }
             }
+            if ((t.ColumnByName(columnCondition.ColumnName)) == null)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+
             t.Update(columnNames, columnCondition);
             return true;
 

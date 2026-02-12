@@ -1,6 +1,8 @@
 namespace OurTests;
 
 using DbManager;
+using DbManager.Parser;
+
 public class DatabaseTests
 {
     //TODO DEADLINE 1B : Create your own tests for Database
@@ -81,7 +83,7 @@ public class DatabaseTests
 
     }
     [Fact]
-    public void DeleteWhere()
+    public void DeleteWhereTest()
     {
         Database db = CrearDb();
 
@@ -94,11 +96,18 @@ public class DatabaseTests
         c = new Condition("ColumnaNoExiste", "=", "Cortinsen");
         Assert.False(db.DeleteWhere("Alumnos", c));
     }
-    /*
+
     [Fact]
     public void UpdateTest()
     {
         Database db = CrearDb();
-    }
-*/    
+        List<String> columnsSearch = new List<String>();
+        columnsSearch.Add("Apellido");
+
+        Condition c = new Condition("Apellido", "=", "Cortinsen");
+        List<SetValue> sv = new
+
+        Assert.True();
+        Assert.False(db.Update("NoExiste", columnsSearch, c));
+    }  
 }
