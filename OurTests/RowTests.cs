@@ -95,6 +95,63 @@ namespace OurTests
             Assert.False(testRow.IsTrue(new Condition("salary", "<", "30000")));
             
         }
+        /*
+        [Fact]
+        public void AsTextTest()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "age"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "years_Worked"),
+                new ColumnDefinition(ColumnDefinition.DataType.Double, "salary")
+            };
+
+            List<string> rowValues = new List<string>()
+            {
+                "jacinto","37","5","36859.23"
+            };
+            List<ColumnDefinition> columns2 = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
+                
+            };
+
+            List<string> rowValues2 = new List<string>()
+            {
+                "maider"
+            };
+            Row testRow = new Row(columns, rowValues);
+            Row testRow2 = new Row(columns2, rowValues2);
+
+            Assert.Equal("jacinto:37:5:36859.23",testRow.AsText());
+            Assert.Equal("maider", testRow2.AsText());
+
+            Assert.NotEqual("jacinto:37:5:36859.23", testRow2.AsText());
+            Assert.NotEqual("maider", testRow.AsText());
+
+        }
+        
+        [Fact]
+        public void ParseTest()
+        {
+
+            List<ColumnDefinition> columns = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "age"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "years_Worked"),
+                new ColumnDefinition(ColumnDefinition.DataType.Double, "salary")
+            };
+
+            List<string> rowValues = new List<string>()
+            {
+                "jacinto","37","5","36859.23"
+            };
+            Row testRow = new Row(columns, rowValues);
+
+            Assert.Equal(testRow.AsText(), Row.Parse(columns,rowValues).AsText());
+        }*/
 
     }
 }
