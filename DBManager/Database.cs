@@ -41,15 +41,15 @@ namespace DbManager
         public Table TableByName(string tableName)
         {
             //DEADLINE 1.B: Find and return the table with the given name
-            Table tablaGanadora = null;
+            Table winnerTable = null;
             foreach (Table table in Tables)
             {
                 if(table.Name.Equals(tableName))
                 {
-                    tablaGanadora = table;
+                    winnerTable = table;
                 }
             }
-            return tablaGanadora;
+            return winnerTable;
             
         }
 
@@ -99,20 +99,21 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            Table tabla = TableByName(tableName);
-            if (tabla==null) 
+            Table table = TableByName(tableName);
+            if (table==null) 
             {
             LastErrorMessage= Constants.TableDoesNotExistError;
             return false;
             }
-            if (values.Count() == tabla.NumColumns()) 
+            if (values == null) { return false;}
+            if (values.Count() == table.NumColumns()) 
             {
-                List<ColumnDefinition> Columnas = new List<ColumnDefinition>();
-                for (int i= 0;i < tabla.NumColumns(); i++)
+                List<ColumnDefinition> Columns = new List<ColumnDefinition>();
+                for (int i= 0;i < table.NumColumns(); i++)
                 {
-                    Columnas.Add(tabla.GetColumn(i));
+                    Columns.Add(table.GetColumn(i));
                 } 
-                tabla.AddRow(new Row(Columnas,values));
+                table.AddRow(new Row(Columns,values));
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
             }
