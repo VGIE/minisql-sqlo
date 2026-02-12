@@ -27,7 +27,9 @@ namespace OurTests
             tabla1.AddRow(fila);
 
             Assert.Equal(fila, tabla1.GetRow(0));
+            Assert.Null(tabla1.GetRow(3));
             Assert.Equal(columna1, tabla1.GetColumn(0));
+            Assert.Null(tabla1.GetColumn(3));
         }
 
         [Fact]
@@ -62,6 +64,7 @@ namespace OurTests
 
             Assert.Equal(columna1, tabla1.ColumnByName("columna1"));
             Assert.Equal(columna2, tabla1.ColumnByName("columna2"));
+            Assert.Null(tabla1.ColumnByName(null));
             Assert.Equal(0, tabla1.ColumnIndexByName("columna1"));
             Assert.Equal(1, tabla1.ColumnIndexByName("columna2"));
         }
@@ -85,8 +88,16 @@ namespace OurTests
             Row fila2 = new Row(columnas, valores);
             tabla1.AddRow(fila);
             tabla1.AddRow(fila2);
+            List<ColumnDefinition> columnas2 = new List<ColumnDefinition>();
+            Table tabla2 = new Table("tabla2", columnas2);
+            List<ColumnDefinition> columnas3 = new List<ColumnDefinition>();
+            columnas3.Add(columna1);
+            columnas3.Add(columna2);
+            Table tabla3 = new Table("tabla3", columnas3);
 
             Assert.Equal("['columna1','columna2']{'c1','c2'}{'c1','c2'}", tabla1.ToString());
+            Assert.Equal("", tabla2.ToString());
+            Assert.Equal("['columna1','columna2']", tabla3.ToString());
         }
 
         [Fact]
@@ -136,6 +147,30 @@ namespace OurTests
                 }
             }
             Assert.Equal(index, tabla1.RowIndicesWhereConditionIsTrue(condicion));
+        }
+
+        [Fact]
+        public void deleteWhereTest()
+        {
+            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(columna1);
+            columnas.Add(columna2);
+            Table tabla1 = new Table("tabla1", columnas);
+            List<string> valores = new List<string>();
+            valores.Add("c1");
+            valores.Add("c2");
+            Row fila = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores);
+            tabla1.AddRow(fila);
+            tabla1.AddRow(fila2);
+            Condition condicion = new Condition("columna2", "=", "c2");
+            tabla1.DeleteWhere(condicion);
+            Table tablaResultado = new Table("tablaResultado", columnas);
+            tablaResultado.AddRow(fila2);
+
+            Assert.Equal(tablaResultado.ToString(),tabla1.ToString());
         }
 
         [Fact]
@@ -195,6 +230,7 @@ namespace OurTests
 
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
             Assert.False(tabla1.Insert(valoresMal));
+            Assert.True(tabla1.Insert(valores));
         }
 
         [Fact]
@@ -223,6 +259,7 @@ namespace OurTests
             valores2.Add("actualizado2");
             tablaResultado.Insert(valores2);
 
+            Assert.False(tabla1.Update(nuevosValores, null));
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
         }
     }

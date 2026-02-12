@@ -47,7 +47,14 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            return ColumnDefinitions[i];
+            if (ColumnDefinitions != null && i<ColumnDefinitions.Count && i >= 0)
+            {
+                return ColumnDefinitions[i];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public int NumColumns()
@@ -93,7 +100,6 @@ namespace DbManager
             {
                 return -1;
             }
-            
         }
 
 
