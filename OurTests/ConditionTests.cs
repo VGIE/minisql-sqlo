@@ -36,12 +36,12 @@ namespace OurTests
         Assert.True(cond3s.IsTrue("PPPP", ColumnDefinition.DataType.String));
         Assert.False(cond3s.IsTrue("a", ColumnDefinition.DataType.String));
 
-        Assert.True(cond1d.IsTrue("15,5", ColumnDefinition.DataType.Double));
-        Assert.False(cond1d.IsTrue("55,5", ColumnDefinition.DataType.Double));
-        Assert.True(cond2d.IsTrue("20,00", ColumnDefinition.DataType.Double));
-        Assert.False(cond2d.IsTrue("25,53", ColumnDefinition.DataType.Double));
-        Assert.True(cond3d.IsTrue("55,5", ColumnDefinition.DataType.Double));
-        Assert.False(cond3d.IsTrue("15,5", ColumnDefinition.DataType.Double));
+        Assert.True(cond1d.IsTrue("15.5", ColumnDefinition.DataType.Double));
+        Assert.False(cond1d.IsTrue("55.5", ColumnDefinition.DataType.Double));
+        Assert.True(cond2d.IsTrue("20.0", ColumnDefinition.DataType.Double));
+        Assert.False(cond2d.IsTrue("25.53", ColumnDefinition.DataType.Double));
+        Assert.True(cond3d.IsTrue("55.5", ColumnDefinition.DataType.Double));
+        Assert.False(cond3d.IsTrue("15.5", ColumnDefinition.DataType.Double));
         }
         
     }
