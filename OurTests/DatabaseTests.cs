@@ -44,31 +44,43 @@ public class DatabaseTests
     public void SelectTest()
     {
         Database db = CrearDb();
-        Condition c = new Condition("Apellido", "=", "Cortinsen");
-        List<String> columnsTest = new List<String>();
-        columnsTest.Add("Apellido");
-        
 
-        ColumnDefinition nombre = new(ColumnDefinition.DataType.String, "Nombre");
+        //Condition
+        Condition c = new Condition("Apellido", "=", "Cortinsen");
+
+
+        //List of Columns to search for in select
+        List<String> columnsSearch = new List<String>();
+        columnsSearch.Add("Apellido");
+        
+        //Table to compare to
         ColumnDefinition apellido = new(ColumnDefinition.DataType.String, "Apellido");
-        ColumnDefinition edad = new(ColumnDefinition.DataType.Int, "Edad");
+        
         List<ColumnDefinition> columns = new List<ColumnDefinition>();
-        columns.Add(nombre);
         columns.Add(apellido);
-        columns.Add(edad);
+        
+        List<String> row1 = new List<string>();
+        row1.Add("Cortinsen");
+        Row r = new(columns, row1);
+
         Table resultado = new Table("Alumnos", columns);
-        List<String> fila = new List<string>();
-        string n = "Tijicius";
-        fila.Add(n);
-        string a = "Cortinsen";
-        fila.Add(a);
-        string e = "22";
-        fila.Add(e);
-        Row r = new(columns, fila);
-        Assert.Equal(resultado,db.Select("Alumnos", columnsTest, c));
+        resultado.AddRow(r);
+        
+        //Correct functioning
+        Assert.Equal(resultado.ToString(),db.Select("Alumnos", columnsSearch, c).ToString());
+
+        //Table doesn't exist
+        Assert.Null(db.Select("Comidas", columnsSearch, c));
+
+        //Columna doesn't exist
+        columnsSearch.Clear();
+        columnsSearch.Add("Empleo");
+        Assert.Null(db.Select("Alumnos", columnsSearch, c));
+
+
 
     }
-    [Fact]
+    /*[Fact]
     public void DeleteWhere()
     {
         Database db = CrearDb();
@@ -78,4 +90,5 @@ public class DatabaseTests
     {
         Database db = CrearDb();
     }
+    */
 }
