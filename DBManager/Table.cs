@@ -166,7 +166,10 @@ namespace DbManager
         public void DeleteIthRow(int row)
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            Rows.Remove(Rows[row]);
+            if ((row < Rows.Count) && row>=0) {
+                Rows.Remove(Rows[row]);
+            }
+            
         }
 
         public List<int> RowIndicesWhereConditionIsTrue(Condition condition)
@@ -200,13 +203,13 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
             List<ColumnDefinition> columnasResultado = new List<ColumnDefinition>();
-            foreach (ColumnDefinition columna in ColumnDefinitions)
+            foreach (string c in columnNames)
             {
-                for (int i = 0; i<columnNames.Count; i++)
+                for (int i = 0; i<ColumnDefinitions.Count; i++)
                 {
-                    if (columna.Name.Equals(columnNames[i]))
+                    if (c.Equals(ColumnDefinitions[i]))
                     {
-                        columnasResultado.Add(columna);
+                        columnasResultado.Add(ColumnDefinitions[i]);
                     }
                 }
             }

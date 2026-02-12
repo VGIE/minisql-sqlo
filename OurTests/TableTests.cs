@@ -198,12 +198,15 @@ namespace OurTests
             List<string> columnasNombres = new List<string>();
             columnasNombres.Add("columna1");
             columnasNombres.Add("columna2");
+            List<string> columnasDesordenadas = new List<string>();
+            columnasNombres.Add("columna2");
+            columnasNombres.Add("columna1");
             Table tablaResultado2 = new Table("tablaResultado2", columnas);
             tablaResultado2.AddRow(fila);
             tablaResultado2.AddRow(fila2);
 
             Assert.Equal(tablaResultado.ToString(), tabla1.Select(columnasNombres, condicion).ToString());
-            Assert.Equal(tablaResultado2.ToString(), tabla1.Select(columnasNombres, null).ToString());
+            Assert.Equal(tablaResultado2.ToString(), tabla1.Select(columnasDesordenadas, null).ToString());
         }
 
         [Fact]
