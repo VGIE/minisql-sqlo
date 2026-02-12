@@ -95,7 +95,7 @@ namespace OurTests
             Assert.False(testRow.IsTrue(new Condition("salary", "<", "30000")));
             
         }
-        /*
+        
         [Fact]
         public void AsTextTest()
         {
@@ -124,11 +124,11 @@ namespace OurTests
             Row testRow = new Row(columns, rowValues);
             Row testRow2 = new Row(columns2, rowValues2);
 
-            Assert.Equal("jacinto:37:5:36859.23",testRow.AsText());
+            Assert.Equal("jacinto[SEPARATOR]37[SEPARATOR]5[SEPARATOR]36859.23",testRow.AsText());
             Assert.Equal("maider", testRow2.AsText());
 
-            Assert.NotEqual("jacinto:37:5:36859.23", testRow2.AsText());
-            Assert.NotEqual("maider", testRow.AsText());
+            Assert.NotEqual("jacinto:37:5:36859.23", testRow.AsText());
+            Assert.NotEqual("maider[SEPARATOR]", testRow2.AsText());
 
         }
         
@@ -150,8 +150,8 @@ namespace OurTests
             };
             Row testRow = new Row(columns, rowValues);
 
-            Assert.Equal(testRow.AsText(), Row.Parse(columns,rowValues).AsText());
-        }*/
+            Assert.Equal(testRow.AsText(), Row.Parse(columns, testRow.AsText()).AsText());
+        }
 
     }
 }
