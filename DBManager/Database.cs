@@ -105,7 +105,10 @@ namespace DbManager
             LastErrorMessage= Constants.TableDoesNotExistError;
             return false;
             }
-            if (values == null) { return false;}
+            if (values == null) 
+            {   
+                return false;
+            }
             if (values.Count() == table.NumColumns()) 
             {
                 List<ColumnDefinition> Columns = new List<ColumnDefinition>();
@@ -117,6 +120,7 @@ namespace DbManager
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
             }
+            LastErrorMessage = Constants.ColumnCountsDontMatch;
             return false;
             
         }
