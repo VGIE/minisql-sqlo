@@ -7,7 +7,7 @@ namespace OurTests
         //TODO DEADLINE 1A : Create your own tests for Table
 
         [Fact]
-        public void Test1()
+        public void constructorTest1()
         {
             var columns = new List<ColumnDefinition>
                   {
@@ -25,7 +25,18 @@ namespace OurTests
 
         }
 
+        [Fact]
+        public void TableSelectWithoutConditionTest() 
+        {
+            var columns = new List<ColumnDefinition>
+                  {
+        new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre"),
+        new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero")
+         };
 
+            Table table = new Table("Personas", columns);
+            table.Select(columns, );
+        }
     }
 
 }

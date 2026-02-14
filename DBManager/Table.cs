@@ -214,8 +214,8 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
-
             List<ColumnDefinition> newC = new List<ColumnDefinition>();
+            
             foreach (string name in columnNames)
             {
                 ColumnDefinition col = ColumnByName(name);
@@ -225,8 +225,8 @@ namespace DbManager
                 }
 
             }
-
             Table Result = new Table("Result", newC);
+
             for (int i = 0; i < Rows.Count; i++)
             {
                 if (condition == null || Rows[i].IsTrue(condition))
