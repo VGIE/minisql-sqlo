@@ -219,11 +219,11 @@ namespace DbManager
             foreach (string name in columnNames)
             {
                 ColumnDefinition col = ColumnByName(name);
+
                 if (col != null)
                 {
                     newC.Add(col);
                 }
-
             }
             Table Result = new Table("Result", newC);
 
@@ -237,9 +237,11 @@ namespace DbManager
                     {
 
                         int originalI = ColumnIndexByName(col.Name);
+
                         newValues.Add(Rows[i].Values[originalI]);
 
                     }
+                    
                     Row newRow = new Row(newC, newValues);
                     Result.AddRow(newRow);
 

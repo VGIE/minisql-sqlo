@@ -3,6 +3,7 @@ using DbManager.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Enumeration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,6 +85,7 @@ namespace DbManager
             else
             {
                 Table newTable = new Table(tableName, ColumnDefinition);
+                Tables.Add(newTable);
                 LastErrorMessage = Constants.CreateTableSuccess;
                 return true;
             }
@@ -121,6 +123,11 @@ namespace DbManager
             if (TableByName(tableName) == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+            if (values == null || values.Count != TableByName(tableName).NumColumns())
+            {
+                LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
             }
 
@@ -227,6 +234,7 @@ namespace DbManager
                         for (int c = 0; c < table.NumColumns(); c++)
                         {
                             ColumnDefinition col = table.GetColumn(c);
+
                             writer.Write(col.Name);
                             writer.Write(col.Type.ToString());
 
@@ -266,7 +274,84 @@ namespace DbManager
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
 
-            return null;
+
+            try
+            {
+            
+                Database db= new Database();
+                using (FileStream fs = new FileStream(databaseName, FileMode.Open))
+                using (BinaryReader reader = new BinaryReader(fs))
+                {
+
+                    db.m_username= reader.ReadString();
+
+                    int numTables= reader.ReadInt32();
+
+                    for(int i=0; i<numTables; i++)
+                    {
+                        string tableName= reader.ReadString();
+
+                        int columnCount= reader.ReadInt32();
+
+                        List<ColumnDefinition> columns= new List<ColumnDefinition>();
+
+                        for (int c=0; c<columnCount; c++)
+                        {
+
+                        string columnName= reader.ReadString();
+                        string columnTypeString= reader.ReadString(); 
+
+                        ColumnDefinition.DataType type= (ColumnDefinition.DataType)Enum.Parse(typeof(ColumnDefinition.DataType), columnTypeString);
+                        columns.Add(new ColumnDefinition(type, columnName));
+                    }
+
+                    Table table= new Table(tableName, columns);
+
+                    int rowCount= reader.ReadInt32();
+
+                    for(int r=0; r<rowCount; r++)
+                        {
+                            int valueCount= reader.ReadInt32();
+
+                            List<string> values= new List<string>();
+
+                            for(int v=0; v<valueCount; v++)
+                            {
+                                values.Add(reader.ReadString());
+                                
+                            }
+                            table.Insert(values);
+                        }
+
+                        db.Tables.Add(table);
+
+                    }
+
+                }
+                /* descomentar solo para DEADLINE 5
+                Manager manager= Manager.Load(databaseName, username);
+
+                if(manager==null)
+                {
+                    return null;
+                }
+
+                if(!manager.IsPasswordCorrect(username, password))
+                {
+                    return null;
+                }
+                
+                db.SecurityManager=manager;
+                */
+                return db;
+
+
+            }
+            catch
+            {
+                return null;
+            }
+           
         }
 
         public string ExecuteMiniSQLQuery(string query)

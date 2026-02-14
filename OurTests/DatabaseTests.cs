@@ -99,7 +99,7 @@ namespace OurTests
         }
 
         [Fact]
-        public void testInsertNull()
+        public void testInsertTableNotExist()
         {
             Database database = Database.CreateTestDatabase();
             bool insert = database.Insert("new table", new List<String>
@@ -107,6 +107,24 @@ namespace OurTests
 
             Assert.False(insert);
             Assert.Equal(Constants.TableDoesNotExistError, database.LastErrorMessage);
+        }
+
+        [Fact]
+        public void testInsertColumnDontMatch()
+        {
+            Database database = Database.CreateTestDatabase();
+            Table table = database.TableByName(Table.TestTableName);
+            bool insertMenos = database.Insert(Table.TestTableName, new List<String>
+                  { "Noa"});
+
+            Assert.False(insertMenos);
+            Assert.Equal(Constants.ColumnCountsDontMatch, database.LastErrorMessage);
+
+            bool insertMas = database.Insert(Table.TestTableName, new List<String>
+                  { "Noa", "1.80", "30", "Dato1"});
+
+            Assert.False(insertMas);
+            Assert.Equal(Constants.ColumnCountsDontMatch, database.LastErrorMessage);
         }
 
         [Fact]
@@ -149,7 +167,7 @@ namespace OurTests
             for (int i = 0; i < table.NumRows(); i++)
             {
                 Row row = table.GetRow(i);
-                Assert.NotEqual(Table.TestColumn1Row1, row.GetValue(Table.TestColumn1Row1));
+                Assert.NotEqual(Table.TestColumn1Row1, row.GetValue(Table.TestColumn1Name));
             }
         }
 
@@ -199,6 +217,24 @@ namespace OurTests
                     Assert.NotEqual("30", row.GetValue(Table.TestColumn3Name));
                 }
             }
+        }
+
+        [Fact]
+        public void testSaveAndLoad()
+        {
+            Database database = Database.CreateTestDatabase();
+
+            bool save = database.Save(Table.TestTableName);
+            Assert.True(save);
+
+            Database load = Database.Load(Table.TestTableName, Database.AdminUsername, Database.AdminPassword);
+            Assert.NotNull(load);
+
+            Table table = load.TableByName(Table.TestTableName);
+            Assert.NotNull(table);
+
+            Assert.Equal(3, table.NumColumns());
+            Assert.Equal(3, table.NumRows());
         }
     }
 }
