@@ -133,11 +133,15 @@ namespace OurTests
             List<string> valores = new List<string>();
             valores.Add("c1");
             valores.Add("c2");
+            List<string> valores2 = new List<string>();
+            valores2.Add("1");
+            valores2.Add("2");
             Row fila = new Row(columnas, valores);
-            Row fila2 = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores2);
             tabla1.AddRow(fila);
             tabla1.AddRow(fila2);
             Condition condicion = new Condition("columna1", "=", "c1");
+            Condition condicion2 = new Condition("columna2", "=", "2");
             List<int> index = new List<int>();
             for (int i = 0; i < tabla1.NumRows(); i++)
             {
@@ -146,7 +150,17 @@ namespace OurTests
                     index.Add(i);
                 }
             }
+
+            List<int> index2 = new List<int>();
+            for (int i = 0; i < tabla1.NumRows(); i++)
+            {
+                if (tabla1.GetRow(i).IsTrue(condicion2))
+                {
+                    index2.Add(i);
+                }
+            }
             Assert.Equal(index, tabla1.RowIndicesWhereConditionIsTrue(condicion));
+            Assert.Equal(index2, tabla1.RowIndicesWhereConditionIsTrue(condicion2));
         }
 
         [Fact]
