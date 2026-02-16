@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -100,6 +101,7 @@ namespace DbManager
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
             Table table = TableByName(tableName);
+            Boolean success;
             if (table==null) 
             {
             LastErrorMessage= Constants.TableDoesNotExistError;
@@ -107,21 +109,17 @@ namespace DbManager
             }
             if (values == null) 
             {   
-                return false;
-            }
-            if (values.Count() == table.NumColumns()) 
-            {
-                List<ColumnDefinition> Columns = new List<ColumnDefinition>();
-                for (int i= 0;i < table.NumColumns(); i++)
-                {
-                    Columns.Add(table.GetColumn(i));
-                } 
-                table.AddRow(new Row(Columns,values));
-                LastErrorMessage=Constants.InsertSuccess;
-                return true;
-            }
-            LastErrorMessage = Constants.ColumnCountsDontMatch;
             return false;
+            }
+            success=table.Insert(values);        
+            if(success)
+            {
+            LastErrorMessage = Constants.InsertSuccess;
+            return success;
+            }
+            
+            LastErrorMessage = Constants.ColumnCountsDontMatch;
+            return success;
             
         }
 
@@ -164,8 +162,26 @@ namespace DbManager
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            
-            return false;
+            bool result = true;
+            if (!Directory.Exists(databaseName))
+            {
+                Directory.CreateDirectory(databaseName);
+            }
+            foreach (Table table in Tables)
+            {
+                try
+                {
+                    TextWriter writer = File.CreateText(databaseName + "/" + table.Name + ".txt");
+                    writer.WriteLine(table.ToString);
+                    writer.Close();  
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    result=false;
+                }
+            }
+            return result;
             
         }
 
