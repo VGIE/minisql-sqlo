@@ -9,6 +9,8 @@ namespace OurTests
         [Fact]
         public void GetValueTest()
         {
+            Row nullRow = new Row(null,null);
+
             List<ColumnDefinition> columns = new List<ColumnDefinition>()
             {
                 new ColumnDefinition(ColumnDefinition.DataType.String, "employee_name"),
@@ -27,16 +29,21 @@ namespace OurTests
             Assert.Equal("37", testRow.GetValue("age"));
             Assert.Equal("5", testRow.GetValue("years_Worked"));
             Assert.Equal("36859.23", testRow.GetValue("salary"));
+            Assert.Null(testRow.GetValue(""));
 
             Assert.NotEqual("maider", testRow.GetValue("employee_name"));
             Assert.NotEqual("37.5", testRow.GetValue("age"));
             Assert.NotEqual("hola", testRow.GetValue("years_Worked"));
             Assert.NotEqual("46859.23", testRow.GetValue("salary"));
 
+            Assert.Null(nullRow.GetValue("test"));
+            Assert.Null(nullRow.GetValue(""));
+
         }
         [Fact]
         public void SetValueTest()
         {
+            Row nullRow = new Row(null, null);
             List<ColumnDefinition> columns = new List<ColumnDefinition>()
             {
                 new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
@@ -66,6 +73,32 @@ namespace OurTests
             Assert.NotEqual("37", testRow.GetValue("age"));
             Assert.NotEqual("maider", testRow.GetValue("years_Worked"));
             Assert.NotEqual("36859.23", testRow.GetValue("salary"));
+
+            nullRow.SetValue("hola", "adios");
+            Assert.Null(nullRow.GetValue("hola"));
+
+        }
+        [Fact]
+        public void SetValueDifferentSizes()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "age"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "years_Worked"),
+                new ColumnDefinition(ColumnDefinition.DataType.Double, "salary")
+            };
+
+            List<string> rowValues = new List<string>()
+            {
+                "jacinto","37"
+            };
+            
+            Row testRow = new Row(columns, rowValues);
+
+            testRow.SetValue("years_Worked","5");
+            Assert.Equal("5", testRow.GetValue("years_Worked"));
+            
         }
         [Fact]
         public void IsTrueTest()
@@ -93,7 +126,8 @@ namespace OurTests
             Assert.False(testRow.IsTrue(new Condition("age", ">", "65")));
             Assert.False(testRow.IsTrue(new Condition("years_Worked", "=", "500")));
             Assert.False(testRow.IsTrue(new Condition("salary", "<", "30000")));
-            
+
+            Assert.False(testRow.IsTrue(null));
         }
         
         [Fact]
@@ -129,6 +163,9 @@ namespace OurTests
 
             Assert.NotEqual("jacinto:37:5:36859.23", testRow.AsText());
             Assert.NotEqual("maider[SEPARATOR]", testRow2.AsText());
+
+            Row nullRow = new Row(null, null);
+            Assert.Null(nullRow.AsText());
 
         }
         

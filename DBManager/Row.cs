@@ -19,10 +19,13 @@ namespace DbManager
             ColumnDefinitions = columnDefinitions;
             Values = values;
 
-
         }
         public ColumnDefinition GetColumnByName(string name)
         {
+            if (this.ColumnDefinitions == null || this.Values == null || name==null || name =="")
+            {
+                return null;
+            }
             foreach (ColumnDefinition cd in ColumnDefinitions)
             {
                 if (cd.Name.Equals(name))
@@ -36,19 +39,30 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            int posi = 0;
-            foreach (ColumnDefinition cd in ColumnDefinitions)
+            if (this.ColumnDefinitions == null || this.Values == null || value == null || columnName == "" || columnName ==null || value=="")
             {
-                if (cd.Name.Equals(columnName))
-                {
-                    
-                    Values[posi] = value;
-                    break;
-                }
+                return;
+            }
+            //get Index of columnName
+            int posi = 0;
+            while (!ColumnDefinitions[posi].Name.Equals(columnName))
+            {
                 posi++;
             }
-            
-            
+            //Lenght comparison
+            if(posi>Values.Count-1)
+            {
+                for(int i=Values.Count-1; i < posi; i++)
+                {
+                    Values.Add(null);
+                }
+                Values.Add(value);
+            }
+            else
+            {
+                Values[posi] = value;
+            }
+
 
         }
 
@@ -56,23 +70,24 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
             int posi = 0;
+            if(this.ColumnDefinitions == null || this.Values == null || columnName == null ||columnName == "")
+            {
+                return null;
+            }
             if (posi < Values.Count && posi >= 0)
             {
                 foreach (ColumnDefinition cd in ColumnDefinitions)
                 {
                     if (cd.Name.Equals(columnName))
                     {
-
+                        return Values[posi];
                         break;
                     }
                     posi++;
                 }
-                return Values[posi];
+                
             }
-            else
-            {
-                return null;
-            }
+            return null;
             
         }
 
@@ -81,7 +96,10 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-
+            if(condition==null)
+            {
+                return false;
+            }
             return condition.IsTrue(GetValue(condition.ColumnName), GetColumnByName(condition.ColumnName).Type);
 
         }
@@ -109,6 +127,10 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
+            if (this.ColumnDefinitions == null || this.Values == null)
+            {
+                return null;
+            }
             string stringSum = "";
             foreach (string v in Values)
             {
