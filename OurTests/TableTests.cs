@@ -209,6 +209,9 @@ namespace OurTests
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
             columnas.Add(columna1);
             columnas.Add(columna2);
+            List<ColumnDefinition> columnasDes = new List<ColumnDefinition>();
+            columnasDes.Add(columna2);
+            columnasDes.Add(columna1);
             Table tabla1 = new Table("tabla1", columnas);
             List<string> valores = new List<string>();
             valores.Add("c1");
@@ -229,7 +232,7 @@ namespace OurTests
             List<string> columnasDesordenadas = new List<string>();
             columnasDesordenadas.Add("columna2");
             columnasDesordenadas.Add("columna1");
-            Table tablaResultado2 = new Table("tablaResultado2", columnas);
+            Table tablaResultado2 = new Table("tablaResultado2", columnasDes);
             tablaResultado2.AddRow(fila);
             tablaResultado2.AddRow(fila2);
 
