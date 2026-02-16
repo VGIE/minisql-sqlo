@@ -170,7 +170,7 @@ namespace OurTests
             Table tablaResultado = new Table("tablaResultado", columnas);
             tablaResultado.AddRow(fila2);
 
-            Assert.Equal(tablaResultado.ToString(),tabla1.ToString());
+            Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
         }
 
         [Fact]

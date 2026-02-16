@@ -7,7 +7,7 @@ namespace DbManager
 {
     public class ColumnDefinition
     {
-        public enum DataType { String, Int, Double}
+        public enum DataType { String, Int, Double }
 
         public DataType Type;
         public string Name { get; private set; }
@@ -27,15 +27,15 @@ namespace DbManager
         private static string Encode(string value)
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
-            return value.Replace(Delimiter,DelimiterEncoded);
-            
+            return value.Replace(Delimiter, DelimiterEncoded);
+
         }
 
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the delimiter in the value
             return value.Replace(DelimiterEncoded, Delimiter);
-            
+
         }
 
         public string AsText()
@@ -43,7 +43,7 @@ namespace DbManager
             //TODO DEADLINE 1.C: Return the column as a string with the name and the type separated by the delimiter
             string result;
             return result = Encode(Name) + Delimiter + Type.ToString();
-            
+
         }
 
         public static ColumnDefinition Parse(string value)
@@ -69,7 +69,7 @@ namespace DbManager
                     break;
             }
             cd = new ColumnDefinition(type, parsedValue);
-                return cd;
+            return cd;
         }
     }
 }

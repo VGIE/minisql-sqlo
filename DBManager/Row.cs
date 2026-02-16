@@ -41,14 +41,14 @@ namespace DbManager
             {
                 if (cd.Name.Equals(columnName))
                 {
-                    
+
                     Values[posi] = value;
                     break;
                 }
                 posi++;
             }
-            
-            
+
+
 
         }
 
@@ -73,7 +73,7 @@ namespace DbManager
             {
                 return null;
             }
-            
+
         }
 
         public bool IsTrue(Condition condition)
@@ -88,6 +88,7 @@ namespace DbManager
 
         private const string Delimiter = ":";
         private const string DelimiterEncoded = "[SEPARATOR]";
+
 
         private static string Encode(string value)
         {
@@ -108,14 +109,17 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            string churro = "";
+            string stringSum = "";
             foreach (string v in Values)
             {
-                
-                    churro = churro +Decode(v);
+                if (Values[Values.Count - 1].Equals(v))
+                {
+                    return stringSum = stringSum + v;
+                }
+                stringSum = stringSum + v + DelimiterEncoded;
 
             }
-            return churro;
+            return string.Empty;
 
         }
 
@@ -125,16 +129,15 @@ namespace DbManager
             string[] valuesToArray = Decode(value).Split(Delimiter);
             List<string> val = new List<string>();
 
-            for(int i=0;i<valuesToArray.Length;i++)
+            for (int i = 0; i < valuesToArray.Length; i++)
             {
-                if (!valuesToArray[valuesToArray.Length-1].Equals(valuesToArray[i]))
-                {
-                    val.Add(Encode(valuesToArray[i] + Delimiter));
-                }
-                val.Add(Encode(valuesToArray[i]));
+                val.Add(valuesToArray[i]);
+
             }
+
             return new Row(columns, val);
 
         }
     }
 }
+
