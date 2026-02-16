@@ -203,13 +203,13 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
             List<ColumnDefinition> columnasResultado = new List<ColumnDefinition>();
-            foreach (string c in columnNames)
+            foreach (ColumnDefinition columna in ColumnDefinitions)
             {
                 for (int i = 0; i < columnNames.Count; i++)
                 {
-                    if (c.Equals(ColumnDefinitions[i]))
+                    if (columna.Name.Equals(columnNames[i]))
                     {
-                        columnasResultado.Add(ColumnDefinitions[i]);
+                        columnasResultado.Add(columna);
                     }
                 }
             }

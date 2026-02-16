@@ -199,8 +199,8 @@ namespace OurTests
             columnasNombres.Add("columna1");
             columnasNombres.Add("columna2");
             List<string> columnasDesordenadas = new List<string>();
-            columnasNombres.Add("columna2");
-            columnasNombres.Add("columna1");
+            columnasDesordenadas.Add("columna2");
+            columnasDesordenadas.Add("columna1");
             Table tablaResultado2 = new Table("tablaResultado2", columnas);
             tablaResultado2.AddRow(fila);
             tablaResultado2.AddRow(fila2);
