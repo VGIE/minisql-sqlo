@@ -16,7 +16,7 @@ namespace OurTests
                 new ColumnDefinition(ColumnDefinition.DataType.Int, "years_Worked"),
                 new ColumnDefinition(ColumnDefinition.DataType.Double, "salary")
             };
-            
+
             List<string> rowValues = new List<string>()
             {
                 "jacinto","37","5","36859.23"
@@ -88,14 +88,14 @@ namespace OurTests
             Assert.True(testRow.IsTrue(new Condition("age", "<", "65")));
             Assert.True(testRow.IsTrue(new Condition("years_Worked", "=", "5")));
             Assert.True(testRow.IsTrue(new Condition("salary", ">", "30000")));
-            
+
             Assert.False(testRow.IsTrue(new Condition("name", "=", "Jacinto")));
             Assert.False(testRow.IsTrue(new Condition("age", ">", "65")));
             Assert.False(testRow.IsTrue(new Condition("years_Worked", "=", "500")));
             Assert.False(testRow.IsTrue(new Condition("salary", "<", "30000")));
-            
+
         }
-        
+
         [Fact]
         public void AsTextTest()
         {
@@ -114,7 +114,7 @@ namespace OurTests
             List<ColumnDefinition> columns2 = new List<ColumnDefinition>()
             {
                 new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
-                
+
             };
 
             List<string> rowValues2 = new List<string>()
@@ -124,14 +124,14 @@ namespace OurTests
             Row testRow = new Row(columns, rowValues);
             Row testRow2 = new Row(columns2, rowValues2);
 
-            Assert.Equal("jacinto[SEPARATOR]37[SEPARATOR]5[SEPARATOR]36859.23",testRow.AsText());
+            Assert.Equal("jacinto[SEPARATOR]37[SEPARATOR]5[SEPARATOR]36859.23", testRow.AsText());
             Assert.Equal("maider", testRow2.AsText());
 
             Assert.NotEqual("jacinto:37:5:36859.23", testRow.AsText());
             Assert.NotEqual("maider[SEPARATOR]", testRow2.AsText());
 
         }
-        
+
         [Fact]
         public void ParseTest()
         {

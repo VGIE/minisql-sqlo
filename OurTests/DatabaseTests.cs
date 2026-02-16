@@ -105,7 +105,7 @@ public class DatabaseTests
         List<SetValue> newValues = new List<SetValue>();
         SetValue value1 = new SetValue("Name", "actualizado1");
 
-        Assert.True(db.Update("Students",newValues,c));
+        Assert.True(db.Update("Students", newValues, c));
         Assert.False(db.Update("NoExiste", newValues, c));
         newValues.Clear();
         value1 = new SetValue("ColumnaInexistente", "null");
