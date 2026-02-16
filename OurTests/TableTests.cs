@@ -125,9 +125,7 @@ namespace OurTests
 
         }
 
-        /*
-         * Los deletes no funcionan
-         * [Fact]
+       [Fact]
          public void deleteTest()
         {
             var columns = new List<ColumnDefinition>
@@ -143,14 +141,38 @@ namespace OurTests
             table.Insert(new List<string> { "Irene" , "7" , "1.60" });
             table.Insert(new List<string> { "Ander" , "8" , "1.67" });
 
-            Condition condicion = new Condition("Nombre", "=", "Maria");
-            Condition condici2 = new Condition("Altua", "=", "1.75");
-            Condition condici3 = new Condition("Numero", "=", "8");
-            Assert.Equal(3, table.NumColumns());
-            table.DeleteIthRow(2);
-            Assert.Equal(2, table.NumColumns());
+            Condition condicion = new Condition("Nombre", "=", "Jorge");
+            Condition condici2 = new Condition("Altura", "<", "1.75");
 
-        }*/
+            Assert.Equal(3, table.NumColumns());
+            table.DeleteWhere(condicion);
+            Assert.Equal(2, table.NumRows());
+
+            table.DeleteWhere(condici2);
+            Assert.Equal(0, table.NumRows());
+
+        }
+
+        [Fact]
+        public void RowSetAndGetValueWithNotEnoughValues() 
+        {
+            var columns = new List<ColumnDefinition>
+                  {
+        new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre"),
+        new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero"),
+        new ColumnDefinition(ColumnDefinition.DataType.Double, "Altura")
+         };
+
+            Table table = new Table("Personas", columns);
+
+            Assert.False(table.Insert(new List<string> { "Jorge", "1" }));
+
+            Assert.False(table.Insert(new List<string> {}));
+
+            Row row = new Row(columns, new List<string>() { });
+            row.SetValue("Nombre","Juan");
+            Assert.Equal("Juan",row.GetValue("Nombre"));
+        }
     }
 
 }

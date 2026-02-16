@@ -32,8 +32,14 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
             for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
+                if (ColumnDefinitions.Count != Values.Count)
+                {
+                    Values.Add(null);
+                }
+
                 if (ColumnDefinitions[i].Name == columnName)
                 {
+                    
                     Values[i] = Encode(value);
                 }
             }
