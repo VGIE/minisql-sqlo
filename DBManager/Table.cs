@@ -189,11 +189,11 @@ namespace DbManager
         public void DeleteWhere(Condition condition)
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
-            for (int i = 0; i < Rows.Count; i++)
+            for (int i = Rows.Count -1; i >= 0; i--)
             {
                 if (Rows[i].IsTrue(condition))
                 {
-                    Rows.Remove(Rows[i]);
+                    Rows.RemoveAt(i);
                 }
             }
         }

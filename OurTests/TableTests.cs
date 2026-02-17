@@ -184,7 +184,7 @@ namespace OurTests
             valoresF2.Add("2.2");
             List<string> valoresF3 = new List<string>();
             valoresF3.Add("c1-3");
-            valoresF3.Add("3");
+            valoresF3.Add("2");
             valoresF3.Add("3.3");
             Row fila = new Row(columnas, valoresF1);
             Row fila2 = new Row(columnas, valoresF2);
@@ -194,7 +194,7 @@ namespace OurTests
             tabla1.AddRow(fila3);
             Condition condicion = new Condition("columna1", "=", "c1-1");
             Condition condicion2 = new Condition("columna2", "=", "2");
-            Condition condicion3 = new Condition("columna3", "=", "3.3");
+            Condition condicion3 = new Condition("columna3", ">", "3");
 
             Table tablaResultado = new Table("tablaResultado", columnas);
             tablaResultado.AddRow(fila2);
@@ -204,14 +204,13 @@ namespace OurTests
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
 
             tablaResultado= new Table("tablaResultado", columnas);
-            tablaResultado.AddRow(fila3);
             tabla1.DeleteWhere(condicion2);
 
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
 
             tablaResultado = new Table("tablaResultado", columnas);
+            tabla1.AddRow(fila3);
             tabla1.DeleteWhere(condicion3);
-
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
         }
 
