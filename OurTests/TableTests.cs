@@ -164,7 +164,7 @@ namespace OurTests
         }
 
         [Fact]
-        public void deleteWhereTest()
+        public void DeleteWhereTest()
         {
             ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
             ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.Int, "columna2");
