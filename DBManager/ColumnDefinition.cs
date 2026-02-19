@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace DbManager
 {
-    public class ColumnDefinition
+    public class ColumnDefinition : IEquatable<ColumnDefinition>
     {
         public enum DataType { String, Int, Double }
 
@@ -70,6 +70,18 @@ namespace DbManager
             }
             cd = new ColumnDefinition(type, parsedValue);
             return cd;
+        }
+
+        public bool Equals(ColumnDefinition other)
+        {
+            if (other.AsText().Equals(this.AsText()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

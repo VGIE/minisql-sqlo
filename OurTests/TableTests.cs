@@ -6,55 +6,48 @@ namespace OurTests
 {
     public class TableTests
     {
-        //TODO DEADLINE 1A : Create your own tests for Table
-        /*
-        [Fact]
-        public void Test1()
-        {
-
-        }
-        */
         [Fact]
         public void getRowColumnTest()
         {
-            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
-            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-            columnas.Add(columna1);
-            Table tabla1 = new Table("tabla1", columnas);
-            List<string> valores = new List<string>();
-            valores.Add("fila1");
-            Row fila = new Row(columnas, valores);
-            tabla1.AddRow(fila);
+            Table testTable = Table.CreateTestTable();
+            string TestColumn1Name = "Name";
+            string TestColumn2Name = "Height";
+            string TestColumn3Name = "Age";
+            string TestColumn1Row1 = "Rodolfo";
+            string TestColumn2Row1 = "1.62";
+            string TestColumn3Row1 = "25";
+            ColumnDefinition.DataType TestColumn1Type = ColumnDefinition.DataType.String;
+            ColumnDefinition.DataType TestColumn2Type = ColumnDefinition.DataType.Double;
+            ColumnDefinition.DataType TestColumn3Type = ColumnDefinition.DataType.Int;
+            List<ColumnDefinition> ExpectedTypes = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(TestColumn1Type, TestColumn1Name),
+                new ColumnDefinition(TestColumn2Type, TestColumn2Name),
+                new ColumnDefinition(TestColumn3Type, TestColumn3Name)
+            };
+            List<string> ExpectedValues = new List<string>() { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 };
+            Row ExpectedRow = new Row(ExpectedTypes, ExpectedValues);
 
-            Assert.Equal(fila, tabla1.GetRow(0));
-            Assert.Null(tabla1.GetRow(3));
-            Assert.Equal(columna1, tabla1.GetColumn(0));
-            Assert.Null(tabla1.GetColumn(3));
+            Assert.True(ExpectedRow.Equals(testTable.GetRow(0)));
+            Assert.Null(testTable.GetRow(5));
+            Assert.True((new ColumnDefinition(TestColumn1Type, TestColumn1Name)).Equals(testTable.GetColumn(0)));
+            Assert.Null(testTable.GetColumn(5));
         }
 
         [Fact]
         public void numRowsColumnsTest()
         {
-            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
-            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-            columnas.Add(columna1);
-            Table tabla1 = new Table("tabla1", columnas);
-            List<string> valores = new List<string>();
-            valores.Add("fila1");
-            List<string> valores2 = new List<string>();
-            valores.Add("fila2");
-            Row fila = new Row(columnas, valores);
-            Row fila2 = new Row(columnas, valores2);
-            tabla1.AddRow(fila);
-            tabla1.AddRow(fila2);
-
-            Assert.Equal(2, tabla1.NumRows());
-            Assert.Equal(1, tabla1.NumColumns());
+            Table testTable = Table.CreateTestTable();
+            Assert.Equal(3, testTable.NumRows());
+            Assert.Equal(3, testTable.NumColumns());
         }
 
         [Fact]
         public void columnByName_columnIndexByNameTest()
         {
+            Table testTable = Table.CreateTestTable();
+
+
             ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
             ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
@@ -203,7 +196,7 @@ namespace OurTests
 
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
 
-            tablaResultado= new Table("tablaResultado", columnas);
+            tablaResultado = new Table("tablaResultado", columnas);
             tabla1.DeleteWhere(condicion2);
 
             Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
