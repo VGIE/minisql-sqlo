@@ -173,6 +173,25 @@ namespace OurTests
             row.SetValue("Nombre","Juan");
             Assert.Equal("Juan",row.GetValue("Nombre"));
         }
+
+        [Fact]
+        public void TableSelectWithoutConditionAndDisorderedColumns()
+        {
+            Table table = Table.CreateTestTable();
+
+            Table select = table.Select(new List<string>
+            {
+                Table.TestColumn2Name, Table.TestColumn3Name, Table.TestColumn1Name
+            }, null);
+
+            Assert.Equal(Table.TestColumn2Row1, select.GetRow(0).Values[0]);
+            Assert.Equal(Table.TestColumn3Row1, select.GetRow(0).Values[1]);
+            Assert.Equal(Table.TestColumn1Row1, select.GetRow(0).Values[2]);
+
+            Assert.Equal(Table.TestColumn2Row2, select.GetRow(1).Values[0]);
+            Assert.Equal(Table.TestColumn3Row2, select.GetRow(1).Values[1]);
+            Assert.Equal(Table.TestColumn1Row2, select.GetRow(1).Values[2]);
+        }
     }
 
 }
