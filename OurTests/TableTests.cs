@@ -133,11 +133,15 @@ namespace OurTests
             List<string> valores = new List<string>();
             valores.Add("c1");
             valores.Add("c2");
+            List<string> valores2 = new List<string>();
+            valores2.Add("1");
+            valores2.Add("2");
             Row fila = new Row(columnas, valores);
-            Row fila2 = new Row(columnas, valores);
+            Row fila2 = new Row(columnas, valores2);
             tabla1.AddRow(fila);
             tabla1.AddRow(fila2);
             Condition condicion = new Condition("columna1", "=", "c1");
+            Condition condicion2 = new Condition("columna2", "=", "2");
             List<int> index = new List<int>();
             for (int i = 0; i < tabla1.NumRows(); i++)
             {
@@ -146,31 +150,68 @@ namespace OurTests
                     index.Add(i);
                 }
             }
+
+            List<int> index2 = new List<int>();
+            for (int i = 0; i < tabla1.NumRows(); i++)
+            {
+                if (tabla1.GetRow(i).IsTrue(condicion2))
+                {
+                    index2.Add(i);
+                }
+            }
             Assert.Equal(index, tabla1.RowIndicesWhereConditionIsTrue(condicion));
+            Assert.Equal(index2, tabla1.RowIndicesWhereConditionIsTrue(condicion2));
         }
 
         [Fact]
-        public void deleteWhereTest()
+        public void DeleteWhereTest()
         {
             ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
-            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
+            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.Int, "columna2");
+            ColumnDefinition columna3 = new ColumnDefinition(ColumnDefinition.DataType.Double, "columna3");
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
             columnas.Add(columna1);
             columnas.Add(columna2);
+            columnas.Add(columna3);
             Table tabla1 = new Table("tabla1", columnas);
-            List<string> valores = new List<string>();
-            valores.Add("c1");
-            valores.Add("c2");
-            Row fila = new Row(columnas, valores);
-            Row fila2 = new Row(columnas, valores);
+            List<string> valoresF1 = new List<string>();
+            valoresF1.Add("c1-1");
+            valoresF1.Add("1");
+            valoresF1.Add("1.1");
+            List<string> valoresF2 = new List<string>();
+            valoresF2.Add("c1-2");
+            valoresF2.Add("2");
+            valoresF2.Add("2.2");
+            List<string> valoresF3 = new List<string>();
+            valoresF3.Add("c1-3");
+            valoresF3.Add("2");
+            valoresF3.Add("3.3");
+            Row fila = new Row(columnas, valoresF1);
+            Row fila2 = new Row(columnas, valoresF2);
+            Row fila3 = new Row(columnas, valoresF3);
             tabla1.AddRow(fila);
             tabla1.AddRow(fila2);
-            Condition condicion = new Condition("columna2", "=", "c2");
-            tabla1.DeleteWhere(condicion);
+            tabla1.AddRow(fila3);
+            Condition condicion = new Condition("columna1", "=", "c1-1");
+            Condition condicion2 = new Condition("columna2", "=", "2");
+            Condition condicion3 = new Condition("columna3", ">", "3");
+
             Table tablaResultado = new Table("tablaResultado", columnas);
             tablaResultado.AddRow(fila2);
+            tablaResultado.AddRow(fila3);
+            tabla1.DeleteWhere(condicion);
 
-            Assert.Equal(tablaResultado.ToString(),tabla1.ToString());
+            Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
+
+            tablaResultado= new Table("tablaResultado", columnas);
+            tabla1.DeleteWhere(condicion2);
+
+            Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
+
+            tablaResultado = new Table("tablaResultado", columnas);
+            tabla1.AddRow(fila3);
+            tabla1.DeleteWhere(condicion3);
+            Assert.Equal(tablaResultado.ToString(), tabla1.ToString());
         }
 
         [Fact]
@@ -181,6 +222,9 @@ namespace OurTests
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
             columnas.Add(columna1);
             columnas.Add(columna2);
+            List<ColumnDefinition> columnasDes = new List<ColumnDefinition>();
+            columnasDes.Add(columna2);
+            columnasDes.Add(columna1);
             Table tabla1 = new Table("tabla1", columnas);
             List<string> valores = new List<string>();
             valores.Add("c1");
@@ -198,12 +242,15 @@ namespace OurTests
             List<string> columnasNombres = new List<string>();
             columnasNombres.Add("columna1");
             columnasNombres.Add("columna2");
-            Table tablaResultado2 = new Table("tablaResultado2", columnas);
+            List<string> columnasDesordenadas = new List<string>();
+            columnasDesordenadas.Add("columna2");
+            columnasDesordenadas.Add("columna1");
+            Table tablaResultado2 = new Table("tablaResultado2", columnasDes);
             tablaResultado2.AddRow(fila);
             tablaResultado2.AddRow(fila2);
 
             Assert.Equal(tablaResultado.ToString(), tabla1.Select(columnasNombres, condicion).ToString());
-            Assert.Equal(tablaResultado2.ToString(), tabla1.Select(columnasNombres, null).ToString());
+            Assert.Equal(tablaResultado2.ToString(), tabla1.Select(columnasDesordenadas, null).ToString());
         }
 
         [Fact]

@@ -8,7 +8,7 @@ namespace DbManager
     {
         private List<ColumnDefinition> ColumnDefinitions = new List<ColumnDefinition>();
         private List<Row> Rows = new List<Row>();
-        
+
         public string Name { get; private set; } = null;
 
         public Table(string name, List<ColumnDefinition> columns)
@@ -21,7 +21,7 @@ namespace DbManager
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
-            if (Rows != null && i<Rows.Count && i>=0)
+            if (Rows != null && i < Rows.Count && i >= 0)
             {
                 return Rows[i];
             }
@@ -29,7 +29,7 @@ namespace DbManager
             {
                 return null;
             }
-            
+
         }
 
         public void AddRow(Row row)
@@ -47,7 +47,7 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            if (ColumnDefinitions != null && i<ColumnDefinitions.Count && i >= 0)
+            if (ColumnDefinitions != null && i < ColumnDefinitions.Count && i >= 0)
             {
                 return ColumnDefinitions[i];
             }
@@ -62,7 +62,7 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return the number of columns
             return ColumnDefinitions.Count;
         }
-        
+
         public ColumnDefinition ColumnByName(string column)
         {
             //TODO DEADLINE 1.A: Return the number of columns
@@ -121,7 +121,7 @@ namespace DbManager
             {
                 tabla = "[";
                 String columnas = "";
-                for (int i = 0; i<ColumnDefinitions.Count; i++)
+                for (int i = 0; i < ColumnDefinitions.Count; i++)
                 {
                     if (ColumnDefinitions.Count == i + 1)
                     {
@@ -132,7 +132,7 @@ namespace DbManager
                         columnas = columnas + "'" + ColumnDefinitions[i].Name + "',";
                     }
                 }
-                tabla = tabla + columnas +"]";
+                tabla = tabla + columnas + "]";
             }
 
             if (Rows.Count == 0)
@@ -142,7 +142,7 @@ namespace DbManager
             else
             {
                 String filas = "";
-                for (int i = 0; i<Rows.Count; i++)
+                for (int i = 0; i < Rows.Count; i++)
                 {
                     filas = filas + "{";
                     for (int j = 0; j < ColumnDefinitions.Count; j++)
@@ -166,7 +166,10 @@ namespace DbManager
         public void DeleteIthRow(int row)
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            Rows.Remove(Rows[row]);
+            if ((row < Rows.Count) && row>=0) {
+                Rows.Remove(Rows[row]);
+            }
+            
         }
 
         public List<int> RowIndicesWhereConditionIsTrue(Condition condition)
@@ -186,12 +189,10 @@ namespace DbManager
         public void DeleteWhere(Condition condition)
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
-            for (int i = 0; i < Rows.Count; i++)
+            List<int> filas = RowIndicesWhereConditionIsTrue(condition);
+            for (int i = filas.Count -1; i >= 0; i--)
             {
-                if (Rows[i].IsTrue(condition))
-                {
-                    Rows.Remove(Rows[i]);
-                }
+                Rows.RemoveAt(i);
             }
         }
 
@@ -200,17 +201,17 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
             List<ColumnDefinition> columnasResultado = new List<ColumnDefinition>();
-            foreach (ColumnDefinition columna in ColumnDefinitions)
+            for (int j = 0; j < columnNames.Count; j++)
             {
-                for (int i = 0; i<columnNames.Count; i++)
+                for (int i = 0; i < ColumnDefinitions.Count; i++)
                 {
-                    if (columna.Name.Equals(columnNames[i]))
+                    if (columnNames[j].Equals(ColumnDefinitions[i].Name))
                     {
-                        columnasResultado.Add(columna);
+                        columnasResultado.Add(ColumnDefinitions[i]);
                     }
                 }
             }
-
+            
             Table Result = new Table("Result", columnasResultado);
             List<Row> filasResultado = new List<Row>();
             if (condition == null)
@@ -225,7 +226,8 @@ namespace DbManager
             {
                 for (int i = 0; i < Rows.Count; i++)
                 {
-                    if (Rows[i] != null && i>=0) {
+                    if (Rows[i] != null && i >= 0)
+                    {
                         if (Rows[i].IsTrue(condition))
                         {
                             filasResultado.Add(Rows[i]);
@@ -233,7 +235,8 @@ namespace DbManager
                     }
                 }
             }
-            for (int i = 0; i<filasResultado.Count; i++) {
+            for (int i = 0; i < filasResultado.Count; i++)
+            {
                 Result.AddRow(filasResultado[i]);
             }
             return Result;
@@ -242,7 +245,7 @@ namespace DbManager
         public bool Insert(List<string> values)
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-            
+
             if (values.Count != ColumnDefinitions.Count)
             {
                 return false;
@@ -278,7 +281,7 @@ namespace DbManager
                 }
                 return true;
             }
-            
+
         }
 
 

@@ -138,11 +138,11 @@ namespace DbManager
             string stringSum = "";
             foreach (string v in Values)
             {
-                if (Values[Values.Count-1].Equals(v))
+                if (Values[Values.Count - 1].Equals(v))
                 {
                     return stringSum = stringSum + v;
                 }
-                    stringSum = stringSum + v + DelimiterEncoded;
+                stringSum = stringSum + v + DelimiterEncoded;
 
             }
             return string.Empty;
@@ -155,12 +155,12 @@ namespace DbManager
             string[] valuesToArray = Decode(value).Split(Delimiter);
             List<string> val = new List<string>();
 
-            for(int i=0;i<valuesToArray.Length;i++)
+            for (int i = 0; i < valuesToArray.Length; i++)
             {
-                    val.Add(valuesToArray[i]);
-                
+                val.Add(valuesToArray[i]);
+
             }
-            
+
             return new Row(columns, val);
 
         }
