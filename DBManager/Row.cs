@@ -50,12 +50,16 @@ namespace DbManager
                 posi++;
             }
             //Lenght comparison
-            if(posi>Values.Count-1)
+            if(posi>Values.Count)
             {
                 for(int i=Values.Count-1; i < posi; i++)
                 {
                     Values.Add(null);
                 }
+                Values.Add(value);
+            }
+            else if (posi==Values.Count)
+            {
                 Values.Add(value);
             }
             else

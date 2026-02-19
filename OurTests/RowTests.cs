@@ -98,6 +98,11 @@ namespace OurTests
 
             testRow.SetValue("years_Worked","5");
             Assert.Equal("5", testRow.GetValue("years_Worked"));
+
+            Row testRow2 = new Row(columns, rowValues);
+            Assert.Equal("37", testRow2.GetValue("age"));
+            testRow2.SetValue("salary", "10000");
+            Assert.Equal("10000", testRow2.GetValue("salary"));
             
         }
         [Fact]
