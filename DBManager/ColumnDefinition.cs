@@ -71,7 +71,25 @@ namespace DbManager
             cd = new ColumnDefinition(type, parsedValue);
             return cd;
         }
+        public static ColumnDefinition CreateTestColumnString()
+        {
+            string TestColumn1Name = "Name";
+            ColumnDefinition.DataType TestColumn1Type = ColumnDefinition.DataType.String;
+            return new ColumnDefinition(TestColumn1Type, TestColumn1Name);
 
+        }
+        public static ColumnDefinition CreateTestColumnDouble()
+        {
+            string TestColumn2Name = "Height";
+            ColumnDefinition.DataType TestColumn2Type = ColumnDefinition.DataType.Double;
+            return new ColumnDefinition(TestColumn2Type, TestColumn2Name);
+        }
+        public static ColumnDefinition CreateTestColumnInt()
+        {
+            string TestColumn3Name = "Age";
+            ColumnDefinition.DataType TestColumn3Type = ColumnDefinition.DataType.Int;
+            return new ColumnDefinition(TestColumn3Type, TestColumn3Name);
+        }
         public bool Equals(ColumnDefinition other)
         {
             if (other.AsText().Equals(this.AsText()))
