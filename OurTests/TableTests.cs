@@ -86,8 +86,8 @@ namespace OurTests
         public void deleteIthRowTest()
         {
             Table testTable = Table.CreateTestTable();
-            Table testTable2 = Table.CreateTestTable2Rows();
-            Table testTable3 = Table.CreateTestTable1Row();
+            Table testTable2 = Table.CreateTestTable(0,2);
+            Table testTable3 = Table.CreateTestTable(0);
             testTable.DeleteIthRow(1);
             Assert.Equal(testTable2.ToString(), testTable.ToString());
             testTable.DeleteIthRow(1);
@@ -149,42 +149,41 @@ namespace OurTests
         public void selectTest()
         {
             Table testTable = Table.CreateTestTable();
+            Table testTableDisordered = Table.CreateTestTableDisordered();
+            Table expectedTable = Table.CreateTestTable(0);
+            Condition condition = new("Name", "=", "Rodolfo");
+            List<String> columns = new List<String>();
+            columns.Add(Table.TestColumn1Name);
+            columns.Add(Table.TestColumn2Name);
+            columns.Add(Table.TestColumn3Name);
+            Assert.Equal(expectedTable.ToString(), testTable.Select(columns,condition).ToString());
 
+            expectedTable = Table.CreateTestTableDisordered();
+            condition = new("Age", ">", "50");
+            expectedTable.DeleteIthRow(0);
+            columns.Clear();
+            columns.Add(Table.TestColumn3Name);
+            columns.Add(Table.TestColumn2Name);
+            columns.Add(Table.TestColumn1Name);
+            Assert.Equal(expectedTable.ToString(), testTableDisordered.Select(columns,condition).ToString());
 
-            ColumnDefinition columna1 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna1");
-            ColumnDefinition columna2 = new ColumnDefinition(ColumnDefinition.DataType.String, "columna2");
-            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-            columnas.Add(columna1);
-            columnas.Add(columna2);
-            List<ColumnDefinition> columnasDes = new List<ColumnDefinition>();
-            columnasDes.Add(columna2);
-            columnasDes.Add(columna1);
-            Table tabla1 = new Table("tabla1", columnas);
-            List<string> valores = new List<string>();
-            valores.Add("c1");
-            valores.Add("c2");
-            List<string> valores2 = new List<string>();
-            valores2.Add("c3");
-            valores2.Add("c4");
-            Row fila = new Row(columnas, valores);
-            Row fila2 = new Row(columnas, valores2);
-            tabla1.AddRow(fila);
-            tabla1.AddRow(fila2);
-            Condition condicion = new Condition("columna1", "=", "c1");
-            Table tablaResultado = new Table("tablaResultado", columnas);
-            tablaResultado.AddRow(fila);
-            List<string> columnasNombres = new List<string>();
-            columnasNombres.Add("columna1");
-            columnasNombres.Add("columna2");
-            List<string> columnasDesordenadas = new List<string>();
-            columnasDesordenadas.Add("columna2");
-            columnasDesordenadas.Add("columna1");
-            Table tablaResultado2 = new Table("tablaResultado2", columnasDes);
-            tablaResultado2.AddRow(fila);
-            tablaResultado2.AddRow(fila2);
-
-            Assert.Equal(tablaResultado.ToString(), tabla1.Select(columnasNombres, condicion).ToString());
-            Assert.Equal(tablaResultado2.ToString(), tabla1.Select(columnasDesordenadas, null).ToString());
+            columns.Clear();
+            columns.Add(Table.TestColumn2Name);
+            columns.Add(Table.TestColumn1Name);
+            condition = new Condition("Height", "<", "1.56");
+            testTable = Table.CreateTestTable(0,1,2);
+            expectedTable = Table.CreateTestTable2Columns();
+            expectedTable.DeleteIthRow(0);
+            expectedTable.DeleteIthRow(0);
+            Table actual = testTable.Select(columns, condition);
+            Assert.Equal(expectedTable.ToString(), actual.ToString());
+            expectedTable = Table.CreateTestTable(0, 1, 2);
+            testTable = Table.CreateTestTable(0, 1, 2);
+            columns.Clear();
+            columns.Add(Table.TestColumn1Name);
+            columns.Add(Table.TestColumn2Name);
+            columns.Add(Table.TestColumn3Name);
+            Assert.Equal(expectedTable.ToString(), testTable.Select(columns, null).ToString());
         }
 
         [Fact]

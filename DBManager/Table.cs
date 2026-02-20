@@ -304,7 +304,6 @@ namespace DbManager
         public const ColumnDefinition.DataType TestColumn1Type = ColumnDefinition.DataType.String;
         public const ColumnDefinition.DataType TestColumn2Type = ColumnDefinition.DataType.Double;
         public const ColumnDefinition.DataType TestColumn3Type = ColumnDefinition.DataType.Int;
-
         public static Table CreateTestTable(string tableName = TestTableName)
         {
             Table table = new Table(tableName, new List<ColumnDefinition>()
@@ -312,33 +311,64 @@ namespace DbManager
                 new ColumnDefinition(TestColumn1Type, TestColumn1Name),
                 new ColumnDefinition(TestColumn2Type, TestColumn2Name),
                 new ColumnDefinition(TestColumn3Type, TestColumn3Name)
+
             });
             table.Insert(new List<string>() { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 });
             table.Insert(new List<string>() { TestColumn1Row2, TestColumn2Row2, TestColumn3Row2 });
             table.Insert(new List<string>() { TestColumn1Row3, TestColumn2Row3, TestColumn3Row3 });
             return table;
         }
-        public static Table CreateTestTable2Rows(string tableName = TestTableName)
+        public static Table CreateTestTableDisordered(string tableName = TestTableName)
         {
             Table table = new Table(tableName, new List<ColumnDefinition>()
             {
-                new ColumnDefinition(TestColumn1Type, TestColumn1Name),
+                new ColumnDefinition(TestColumn3Type, TestColumn3Name),
                 new ColumnDefinition(TestColumn2Type, TestColumn2Name),
-                new ColumnDefinition(TestColumn3Type, TestColumn3Name)
+                new ColumnDefinition(TestColumn1Type, TestColumn1Name)
+
             });
-            table.Insert(new List<string>() { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 });
-            table.Insert(new List<string>() { TestColumn1Row3, TestColumn2Row3, TestColumn3Row3 });
+            table.Insert(new List<string>() { TestColumn3Row1, TestColumn2Row1, TestColumn1Row1 });
+            table.Insert(new List<string>() { TestColumn3Row2, TestColumn2Row2, TestColumn1Row2 });
+            table.Insert(new List<string>() { TestColumn3Row3, TestColumn2Row3, TestColumn1Row3 });
             return table;
         }
-        public static Table CreateTestTable1Row(string tableName = TestTableName)
+        public static Table CreateTestTable(params int[] rowIndex)
+        {
+            Table table = new Table(TestTableName, new List<ColumnDefinition>()
+    {
+        new ColumnDefinition(TestColumn1Type, TestColumn1Name),
+        new ColumnDefinition(TestColumn2Type, TestColumn2Name),
+        new ColumnDefinition(TestColumn3Type, TestColumn3Name)
+    });
+            foreach (int index in rowIndex)
+            {
+                switch (index)
+                {
+                    case 0:
+                        table.Insert(new List<string> { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 });
+                        break;
+                    case 1:
+                        table.Insert(new List<string> { TestColumn1Row2, TestColumn2Row2, TestColumn3Row2 });
+                        break;
+                    case 2:
+                        table.Insert(new List<string> { TestColumn1Row3, TestColumn2Row3, TestColumn3Row3 });
+                        break;
+                }
+            }
+            return table;
+        }
+
+        public static Table CreateTestTable2Columns(string tableName = TestTableName)
         {
             Table table = new Table(tableName, new List<ColumnDefinition>()
             {
-                new ColumnDefinition(TestColumn1Type, TestColumn1Name),
                 new ColumnDefinition(TestColumn2Type, TestColumn2Name),
-                new ColumnDefinition(TestColumn3Type, TestColumn3Name)
+                new ColumnDefinition(TestColumn1Type, TestColumn1Name)
+
             });
-            table.Insert(new List<string>() { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 });
+            table.Insert(new List<string>() {TestColumn2Row1, TestColumn1Row1 });
+            table.Insert(new List<string>() {TestColumn2Row2, TestColumn1Row2 });
+            table.Insert(new List<string>() {TestColumn2Row3, TestColumn1Row3 });
             return table;
         }
 
