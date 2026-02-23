@@ -43,16 +43,26 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            if (this.ColumnDefinitions == null || this.Values == null || value == null || columnName == "" || columnName ==null || value=="")
+            if (this.ColumnDefinitions == null || columnName == "" || columnName ==null)
             {
                 return;
             }
-            //get Index of columnName
-            int posi = 0;
-            while (!ColumnDefinitions[posi].Name.Equals(columnName))
+            //get Index of columnName, if its not found, then posi = -1
+            int posi = -1;
+            for(int i = 0; i<ColumnDefinitions.Count;i++)
             {
-                posi++;
+                if (ColumnDefinitions[i].Name == columnName)
+                {
+                    posi = i;
+                }
             }
+            //edge case not found
+            if(posi == -1)
+            {
+                return;
+            }
+
+
             //Lenght comparison
             if(posi>Values.Count)
             {
