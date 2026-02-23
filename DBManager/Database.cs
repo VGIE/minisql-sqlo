@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -162,7 +163,7 @@ namespace DbManager
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            bool result = true;
+            bool result = false;
             if (!Directory.Exists(databaseName))
             {
                 Directory.CreateDirectory(databaseName);
@@ -171,14 +172,24 @@ namespace DbManager
             {
                 try
                 {
-                    TextWriter writer = File.CreateText(databaseName + "/" + table.Name + ".txt");
-                    writer.WriteLine(table.ToString);
-                    writer.Close();  
+                    String ColumnStrng="";
+                    TextWriter writer = File.CreateText(databaseName + "\\" + table.Name + ".txt");
+                    for (int i = 0; i < table.NumColumns(); i++)
+                    {
+                        writer.WriteLine(table.GetColumn(i).AsText());
+                    }
+                    writer.WriteLine(ColumnStrng);
+                    writer.WriteLine("{[VALUES]}");
+                    for (int i = 0; i < table.NumRows(); i++)
+                    {
+                        writer.WriteLine(table.GetRow(i).AsText());
+                    }
+                    writer.Close();
+                    result = true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
-                    result=false;
                 }
             }
             return result;
@@ -191,8 +202,37 @@ namespace DbManager
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
-            
-            return null;
+            Boolean exists = false;
+            Database database = new Database();
+            try
+            {
+            exists=Directory.Exists(databaseName);
+                if (exists)
+                {
+                    String[] files= Directory.GetFiles(databaseName,"*.txt");
+                    foreach (String file in files)
+                    {
+                        TextReader reader = File.OpenText(file);
+                        String Line;
+                        while((Line=reader.ReadLine())!=null)
+                        {
+                            if (Line.Equals("{[VALUES]}"))
+                            {
+                                break;
+                            }
+                        ColumnDefinition column=null;
+                        column 
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.ToString());
+            }
+            return database;
         }
 
         public string ExecuteMiniSQLQuery(string query)
