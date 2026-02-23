@@ -219,7 +219,12 @@ namespace DbManager
             {
                 foreach (Row fila in Rows)
                 {
-                    Result.AddRow(fila);
+                    List<string> valores = new List<string>();
+                    for (int i = 0; i < columnasResultado.Count; i++)
+                    {
+                        valores.Add(fila.GetValue(columnasResultado[i].Name));
+                    }
+                    Result.AddRow(new Row(columnasResultado, valores));
                 }
                 return Result;
             }
@@ -238,7 +243,12 @@ namespace DbManager
             }
             for (int i = 0; i < filasResultado.Count; i++)
             {
-                Result.AddRow(filasResultado[i]);
+                List<string> valores = new List<string>();
+                for (int j = 0; j < columnasResultado.Count; j++)
+                {
+                    valores.Add(filasResultado[i].GetValue(columnasResultado[j].Name));
+                }
+                Result.AddRow(new Row(columnasResultado, valores));
             }
             return Result;
         }
