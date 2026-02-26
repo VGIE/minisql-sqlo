@@ -16,8 +16,12 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
-            ColumnDefinitions = columnDefinitions;
-            Values = values;
+
+            
+                ColumnDefinitions = columnDefinitions;
+                Values = values;
+            
+            
 
         }
         public ColumnDefinition GetColumnByName(string name)
@@ -52,7 +56,7 @@ namespace DbManager
             //Lenght comparison
             if (posi > Values.Count)
             {
-                for (int i = Values.Count - 1; i < posi; i++)
+                for(int i=Values.Count-1; i < posi-1; i++)
                 {
                     Values.Add(null);
                 }
@@ -138,26 +142,30 @@ namespace DbManager
             string stringSum = "";
             foreach (string v in Values)
             {
-                if (Values[Values.Count - 1].Equals(v))
+                if(v==null)
                 {
-                    return stringSum = stringSum + v;
+                    stringSum = stringSum + Delimiter;
+                
+                } else
+                {
+                    stringSum = stringSum + Encode(v) + Delimiter;
                 }
-                stringSum = stringSum + v + DelimiterEncoded;
+                
 
             }
-            return string.Empty;
+            return stringSum.Remove(stringSum.Length - 1);
 
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            string[] valuesToArray = Decode(value).Split(Delimiter);
+            string[] valuesToArray = value.Split(Delimiter);
             List<string> val = new List<string>();
 
             for (int i = 0; i < valuesToArray.Length; i++)
             {
-                val.Add(valuesToArray[i]);
+                val.Add(Decode(valuesToArray[i]));
 
             }
 
