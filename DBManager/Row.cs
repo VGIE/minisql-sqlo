@@ -116,10 +116,11 @@ namespace DbManager
 
         public bool IsTrue(Condition condition)
         {
-            //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
+            //TODO DEADLINE 1.A: Given a condition
+            //(column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            if(condition==null || this.ColumnDefinitions == null  || this.Values == null)
+            if(condition==null || condition.ColumnName == null)
             {
                 return false;
             }
