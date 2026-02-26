@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace DbManager
 {
-    public class Row
+    public class Row : IEquatable<Row>
     {
         private List<ColumnDefinition> ColumnDefinitions = new List<ColumnDefinition>();
         public List<string> Values { get; set; }
@@ -26,7 +26,7 @@ namespace DbManager
         }
         public ColumnDefinition GetColumnByName(string name)
         {
-            if (this.ColumnDefinitions == null || this.Values == null || name==null || name =="")
+            if (this.ColumnDefinitions == null || this.Values == null || name == null || name == "")
             {
                 return null;
             }
@@ -65,7 +65,7 @@ namespace DbManager
 
 
             //Lenght comparison
-            if(posi>Values.Count)
+            if (posi > Values.Count)
             {
                 for(int i=Values.Count-1; i < posi-1; i++)
                 {
@@ -73,7 +73,7 @@ namespace DbManager
                 }
                 Values.Add(value);
             }
-            else if (posi==Values.Count)
+            else if (posi == Values.Count)
             {
                 Values.Add(value);
             }
@@ -186,6 +186,18 @@ namespace DbManager
 
             return new Row(columns, val);
 
+        }
+
+        public bool Equals(Row other)
+        {
+            if (other.AsText().Equals(this.AsText()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
