@@ -16,8 +16,12 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
-            ColumnDefinitions = columnDefinitions;
-            Values = values;
+
+            
+                ColumnDefinitions = columnDefinitions;
+                Values = values;
+            
+            
 
         }
         public ColumnDefinition GetColumnByName(string name)
@@ -39,20 +43,31 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            if (this.ColumnDefinitions == null || this.Values == null || value == null || columnName == "" || columnName == null || value == "")
+            if (this.ColumnDefinitions == null || columnName == "" || columnName ==null)
             {
                 return;
             }
-            //get Index of columnName
-            int posi = 0;
-            while (!ColumnDefinitions[posi].Name.Equals(columnName))
+            //get Index of columnName, if its not found, then posi = -1
+            int posi = -1;
+            for(int i = 0; i<ColumnDefinitions.Count;i++)
             {
-                posi++;
+                if (ColumnDefinitions[i].Name == columnName)
+                {
+                    posi = i;
+                    break;
+                }
             }
+            //edge case not found
+            if(posi == -1)
+            {
+                return;
+            }
+
+
             //Lenght comparison
             if (posi > Values.Count)
             {
-                for (int i = Values.Count - 1; i < posi; i++)
+                for(int i=Values.Count-1; i < posi-1; i++)
                 {
                     Values.Add(null);
                 }
@@ -73,26 +88,30 @@ namespace DbManager
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-            int posi = 0;
-            if (this.ColumnDefinitions == null || this.Values == null || columnName == null || columnName == "")
+            int posi = -1;
+            if(this.ColumnDefinitions == null || this.Values == null || columnName == null ||columnName == "")
             {
                 return null;
             }
-            if (posi < Values.Count && posi >= 0)
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
-                foreach (ColumnDefinition cd in ColumnDefinitions)
+                if (ColumnDefinitions[i].Name == columnName)
                 {
-                    if (cd.Name.Equals(columnName))
-                    {
-                        return Values[posi];
-                        break;
-                    }
-                    posi++;
+                    posi = i;
+                    break;
                 }
-
             }
-            return null;
 
+            if(posi==-1)
+            {
+                return null;
+            }
+            else
+            {
+                return Values[posi];
+            }
+            
+            
         }
 
         public bool IsTrue(Condition condition)
@@ -100,7 +119,7 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            if (condition == null)
+            if(condition==null || this.ColumnDefinitions == null  || this.Values == null)
             {
                 return false;
             }
@@ -138,26 +157,30 @@ namespace DbManager
             string stringSum = "";
             foreach (string v in Values)
             {
-                if (Values[Values.Count - 1].Equals(v))
+                if(v==null)
                 {
-                    return stringSum = stringSum + v;
+                    stringSum = stringSum + Delimiter;
+                
+                } else
+                {
+                    stringSum = stringSum + Encode(v) + Delimiter;
                 }
-                stringSum = stringSum + v + DelimiterEncoded;
+                
 
             }
-            return string.Empty;
+            return stringSum.Remove(stringSum.Length - 1);
 
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            string[] valuesToArray = Decode(value).Split(Delimiter);
+            string[] valuesToArray = value.Split(Delimiter);
             List<string> val = new List<string>();
 
             for (int i = 0; i < valuesToArray.Length; i++)
             {
-                val.Add(valuesToArray[i]);
+                val.Add(Decode(valuesToArray[i]));
 
             }
 
