@@ -54,6 +54,7 @@ namespace DbManager
                 if (ColumnDefinitions[i].Name == columnName)
                 {
                     posi = i;
+                    break;
                 }
             }
             //edge case not found
@@ -87,25 +88,29 @@ namespace DbManager
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-            int posi = 0;
+            int posi = -1;
             if(this.ColumnDefinitions == null || this.Values == null || columnName == null ||columnName == "")
             {
                 return null;
             }
-            if (posi < Values.Count && posi >= 0)
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
-                foreach (ColumnDefinition cd in ColumnDefinitions)
+                if (ColumnDefinitions[i].Name == columnName)
                 {
-                    if (cd.Name.Equals(columnName))
-                    {
-                        return Values[posi];
-                        break;
-                    }
-                    posi++;
+                    posi = i;
+                    break;
                 }
-                
             }
-            return null;
+
+            if(posi==-1)
+            {
+                return null;
+            }
+            else
+            {
+                return Values[posi];
+            }
+            
             
         }
 
@@ -114,7 +119,7 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            if(condition==null)
+            if(condition==null || this.ColumnDefinitions == null  || this.Values == null)
             {
                 return false;
             }
