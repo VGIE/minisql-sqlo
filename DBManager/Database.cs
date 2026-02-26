@@ -209,37 +209,36 @@ namespace DbManager
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            bool result = false;
             if (!Directory.Exists(databaseName))
             {
                 Directory.CreateDirectory(databaseName);
             }
             foreach (Table table in Tables)
             {
+                TextWriter writer=null;
                 try
                 {
-                    String ColumnStrng="";
-                    TextWriter writer = File.CreateText(databaseName + "\\" + table.Name + ".txt");
+                     writer = File.CreateText(databaseName + "\\" + table.Name + ".txt");
                     for (int i = 0; i < table.NumColumns(); i++)
                     {
                         writer.WriteLine(table.GetColumn(i).AsText());
                     }
-                    writer.WriteLine(ColumnStrng);
                     writer.WriteLine("{[VALUES]}");
                     for (int i = 0; i < table.NumRows(); i++)
                     {
                         writer.WriteLine(table.GetRow(i).AsText());
                     }
                     writer.Close();
-                    result = true;
+                 
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
+                    if (writer != null) {  writer.Close(); }
+                    return false;
                 }
             }
-            return result;
-            
+            return true;
         }
 
         public static Database Load(string databaseName, string username, string password)
@@ -253,23 +252,35 @@ namespace DbManager
             try
             {
             exists=Directory.Exists(databaseName);
+                if (!exists) { return null;}
                 if (exists)
                 {
                     String[] files= Directory.GetFiles(databaseName,"*.txt");
                     foreach (String file in files)
                     {
                         TextReader reader = File.OpenText(file);
+                        String tableName = Path.GetFileNameWithoutExtension(file);
                         String Line;
+                        List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
+                        
                         while((Line=reader.ReadLine())!=null)
                         {
                             if (Line.Equals("{[VALUES]}"))
                             {
                                 break;
                             }
-                        ColumnDefinition column=null;
-                        column 
+                        ColumnDefinition column=ColumnDefinition.Parse(Line);
+                            columnDefinitions.Add(column);
+                        
                         }
-
+                        Table table = new Table(tableName, columnDefinitions);
+                        database.Tables.Add(table);
+                        while ((Line=reader.ReadLine()) != null)
+                        {
+                            Row values = Row.Parse(columnDefinitions,Line);
+                            table.AddRow(values);
+                        }
+                        reader.Close();
                     }
                 }
             }
