@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace DbManager
 {
-    public class Row
+    public class Row : IEquatable<Row>
     {
         private List<ColumnDefinition> ColumnDefinitions = new List<ColumnDefinition>();
         public List<string> Values { get; set; }
@@ -22,7 +22,7 @@ namespace DbManager
         }
         public ColumnDefinition GetColumnByName(string name)
         {
-            if (this.ColumnDefinitions == null || this.Values == null || name==null || name =="")
+            if (this.ColumnDefinitions == null || this.Values == null || name == null || name == "")
             {
                 return null;
             }
@@ -39,7 +39,7 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            if (this.ColumnDefinitions == null || this.Values == null || value == null || columnName == "" || columnName ==null || value=="")
+            if (this.ColumnDefinitions == null || this.Values == null || value == null || columnName == "" || columnName == null || value == "")
             {
                 return;
             }
@@ -50,15 +50,15 @@ namespace DbManager
                 posi++;
             }
             //Lenght comparison
-            if(posi>Values.Count)
+            if (posi > Values.Count)
             {
-                for(int i=Values.Count-1; i < posi; i++)
+                for (int i = Values.Count - 1; i < posi; i++)
                 {
                     Values.Add(null);
                 }
                 Values.Add(value);
             }
-            else if (posi==Values.Count)
+            else if (posi == Values.Count)
             {
                 Values.Add(value);
             }
@@ -74,7 +74,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
             int posi = 0;
-            if(this.ColumnDefinitions == null || this.Values == null || columnName == null ||columnName == "")
+            if (this.ColumnDefinitions == null || this.Values == null || columnName == null || columnName == "")
             {
                 return null;
             }
@@ -89,10 +89,10 @@ namespace DbManager
                     }
                     posi++;
                 }
-                
+
             }
             return null;
-            
+
         }
 
         public bool IsTrue(Condition condition)
@@ -100,7 +100,7 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            if(condition==null)
+            if (condition == null)
             {
                 return false;
             }
@@ -163,6 +163,18 @@ namespace DbManager
 
             return new Row(columns, val);
 
+        }
+
+        public bool Equals(Row other)
+        {
+            if (other.AsText().Equals(this.AsText()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
