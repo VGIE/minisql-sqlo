@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace DbManager
 {
-    public class Row
+    public class Row : IEquatable<Row>
     {
         private List<ColumnDefinition> ColumnDefinitions = new List<ColumnDefinition>();
         public List<string> Values { get; set; }
@@ -16,13 +16,20 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
-            ColumnDefinitions = columnDefinitions;
-            Values = values;
 
+            
+                ColumnDefinitions = columnDefinitions;
+                Values = values;
+            
+            
 
         }
         public ColumnDefinition GetColumnByName(string name)
         {
+            if (this.ColumnDefinitions == null || this.Values == null || name == null || name == "")
+            {
+                return null;
+            }
             foreach (ColumnDefinition cd in ColumnDefinitions)
             {
                 if (cd.Name.Equals(name))
@@ -36,43 +43,74 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            int posi = 0;
-            foreach (ColumnDefinition cd in ColumnDefinitions)
+            if (this.ColumnDefinitions == null || columnName == "" || columnName ==null)
             {
-                if (cd.Name.Equals(columnName))
+                return;
+            }
+            //get Index of columnName, if its not found, then posi = -1
+            int posi = -1;
+            for(int i = 0; i<ColumnDefinitions.Count;i++)
+            {
+                if (ColumnDefinitions[i].Name == columnName)
                 {
-                    
-                    Values[posi] = value;
+                    posi = i;
                     break;
                 }
-                posi++;
             }
-            
-            
+            //edge case not found
+            if(posi == -1)
+            {
+                return;
+            }
+
+
+            //Lenght comparison
+            if (posi > Values.Count)
+            {
+                for(int i=Values.Count-1; i < posi-1; i++)
+                {
+                    Values.Add(null);
+                }
+                Values.Add(value);
+            }
+            else if (posi == Values.Count)
+            {
+                Values.Add(value);
+            }
+            else
+            {
+                Values[posi] = value;
+            }
+
 
         }
 
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-            int posi = 0;
-            if (posi < Values.Count && posi >= 0)
-            {
-                foreach (ColumnDefinition cd in ColumnDefinitions)
-                {
-                    if (cd.Name.Equals(columnName))
-                    {
-
-                        break;
-                    }
-                    posi++;
-                }
-                return Values[posi];
-            }
-            else
+            int posi = -1;
+            if(this.ColumnDefinitions == null || this.Values == null || columnName == null ||columnName == "")
             {
                 return null;
             }
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name == columnName)
+                {
+                    posi = i;
+                    break;
+                }
+            }
+
+            if(posi==-1)
+            {
+                return null;
+            }
+            else
+            {
+                return Values[posi];
+            }
+            
             
         }
 
@@ -81,7 +119,10 @@ namespace DbManager
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-
+            if(condition==null || this.ColumnDefinitions == null  || this.Values == null)
+            {
+                return false;
+            }
             return condition.IsTrue(GetValue(condition.ColumnName), GetColumnByName(condition.ColumnName).Type);
 
         }
@@ -109,34 +150,54 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
+            if (this.ColumnDefinitions == null || this.Values == null)
+            {
+                return null;
+            }
             string stringSum = "";
             foreach (string v in Values)
             {
-                if (Values[Values.Count-1].Equals(v))
+                if(v==null)
                 {
-                    return stringSum = stringSum + v;
+                    stringSum = stringSum + Delimiter;
+                
+                } else
+                {
+                    stringSum = stringSum + Encode(v) + Delimiter;
                 }
-                    stringSum = stringSum + v + DelimiterEncoded;
+                
 
             }
-            return string.Empty;
+            return stringSum.Remove(stringSum.Length - 1);
 
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            string[] valuesToArray = Decode(value).Split(Delimiter);
+            string[] valuesToArray = value.Split(Delimiter);
             List<string> val = new List<string>();
 
-            for(int i=0;i<valuesToArray.Length;i++)
+            for (int i = 0; i < valuesToArray.Length; i++)
             {
-                    val.Add(valuesToArray[i]);
-                
+                val.Add(Decode(valuesToArray[i]));
+
             }
-            
+
             return new Row(columns, val);
 
+        }
+
+        public bool Equals(Row other)
+        {
+            if (other.AsText().Equals(this.AsText()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

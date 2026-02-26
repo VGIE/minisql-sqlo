@@ -29,7 +29,6 @@ namespace DbManager
         {
             //DEADLINE 1.B: Initalize the member variables
             this.m_username = adminUsername;
-            
         }
 
         public bool AddTable(Table table)
@@ -37,7 +36,7 @@ namespace DbManager
             //DEADLINE 1.B: Add a new table to the database
             Tables.Add(table);
             return true;
-            
+
         }
 
         public Table TableByName(string tableName)
@@ -46,13 +45,13 @@ namespace DbManager
             Table winnerTable = null;
             foreach (Table table in Tables)
             {
-                if(table.Name.Equals(tableName))
+                if (table.Name.Equals(tableName))
                 {
                     winnerTable = table;
                 }
             }
             return winnerTable;
-            
+
         }
 
         public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
@@ -61,30 +60,30 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            if(TableByName(tableName)!=null)
+            if (TableByName(tableName) != null)
             {
-                LastErrorMessage=Constants.TableAlreadyExistsError;
+                LastErrorMessage = Constants.TableAlreadyExistsError;
                 return false;
             }
-            if (ColumnDefinition.Count()==0)
+            if (ColumnDefinition.Count() == 0)
             {
                 LastErrorMessage = Constants.DatabaseCreatedWithoutColumnsError;
                 return false;
             }
-            Tables.Add(new Table(tableName,ColumnDefinition));
+            Tables.Add(new Table(tableName, ColumnDefinition));
             LastErrorMessage = Constants.CreateTableSuccess;
             return true;
-            
+
         }
 
         public bool DropTable(string tableName)
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            if (TableByName(tableName) != null) 
+            if (TableByName(tableName) != null)
             {
                 Tables.Remove(TableByName(tableName));
-                LastErrorMessage=Constants.DropTableSuccess;
+                LastErrorMessage = Constants.DropTableSuccess;
                 return true;
             }
             else
@@ -92,9 +91,9 @@ namespace DbManager
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
-             
-            
-            
+
+
+
         }
 
         public bool Insert(string tableName, List<string> values)
@@ -105,8 +104,8 @@ namespace DbManager
             Boolean success;
             if (table==null) 
             {
-            LastErrorMessage= Constants.TableDoesNotExistError;
-            return false;
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
             }
             if (values == null) 
             {   
@@ -129,19 +128,46 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            
-            return null;
-            
+
+            Table t = TableByName(tableName);
+            if (t == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return null;
+            }
+            foreach (String c in columns)
+            {
+                if (t.ColumnByName(c) == null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return null;
+                }
+            }
+            return t.Select(columns, condition);
         }
+
+
+
 
         public bool DeleteWhere(string tableName, Condition columnCondition)
         {
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-            
-            return false;
-            
+            Table t = TableByName(tableName);
+            if (t == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+            if ((t.ColumnByName(columnCondition.ColumnName)) == null)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+            t.DeleteWhere(columnCondition);
+            return true;
+
         }
 
         public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition)
@@ -149,15 +175,35 @@ namespace DbManager
             //DEADLINE 1.B: Update in the given table all the rows where the condition is true using the SetValues
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-            
-            return false;
-            
+            Table t = TableByName(tableName);
+            if (t == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+            if ((t.ColumnByName(columnCondition.ColumnName)) == null)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+            foreach (SetValue sv in columnNames)
+            {
+                if (t.ColumnByName(sv.ColumnName) == null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return false;
+                }
+            }
+
+            t.Update(columnNames, columnCondition);
+            return true;
+
         }
 
-        
-        
 
-        
+
+
+
         public bool Save(string databaseName)
         {
             //DEADLINE 1.C: Save this database to disk with the given name
