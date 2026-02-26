@@ -167,6 +167,10 @@ namespace OurTests
             columns.Add(Table.TestColumn1Name);
             Assert.Equal(expectedTable.ToString(), testTableDisordered.Select(columns,condition).ToString());
 
+            expectedTable = Table.CreateTestTableDisordered();
+            testTableDisordered = Table.CreateTestTable();
+            Assert.Equal(expectedTable.ToString(), testTableDisordered.Select(columns, null).ToString());
+
             columns.Clear();
             columns.Add(Table.TestColumn2Name);
             columns.Add(Table.TestColumn1Name);
@@ -184,6 +188,13 @@ namespace OurTests
             columns.Add(Table.TestColumn2Name);
             columns.Add(Table.TestColumn3Name);
             Assert.Equal(expectedTable.ToString(), testTable.Select(columns, null).ToString());
+
+
+
+            testTable = Table.CreateTestTable();
+            columns.Clear();
+            columns.Add("Invent");
+            Assert.Equal("",testTable.Select(columns, null).ToString());
         }
 
         [Fact]

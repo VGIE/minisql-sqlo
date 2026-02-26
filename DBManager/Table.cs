@@ -214,6 +214,10 @@ namespace DbManager
             }
 
             Table Result = new Table("Result", columnasResultado);
+            if (columnasResultado.Count == 0)
+            {
+                return Result;
+            }
             List<Row> filasResultado = new List<Row>();
             if (condition == null)
             {
