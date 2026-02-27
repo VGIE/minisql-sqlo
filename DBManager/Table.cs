@@ -81,6 +81,7 @@ namespace DbManager
 
         public ColumnDefinition ColumnByName(string column)
         {
+            if (ColumnDefinitions == null) { return null; }
             //TODO DEADLINE 1.A: Return the name of the instance
             for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
@@ -217,14 +218,18 @@ namespace DbManager
             List<ColumnDefinition> newC = new List<ColumnDefinition>();
             Table Result = new Table(null, null);
             if (columnNames is null) { return null; }
+
             foreach (string name in columnNames)
             {
+                if (ColumnByName(name)==null) { return null; }
+
                 ColumnDefinition col = ColumnByName(name);
 
                 if (col != null)
                 {
                     newC.Add(col);
                 }
+
             }
 
             Result = new Table("Result", newC);

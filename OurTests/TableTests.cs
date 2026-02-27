@@ -48,7 +48,9 @@ namespace OurTests
             Table t = new Table("Persona", null);
             Table result2 = t.Select(null, null);
             Assert.Null(result2);
-
+            Table result3 = t.Select(selectC, null);
+            
+           
         }
         [Fact]
         public void TableSelectWithConditionTest()
