@@ -120,11 +120,16 @@ namespace DbManager
             //(column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
 
-            if(condition==null || condition.ColumnName == null)
+            if(condition==null || condition.ColumnName == null ||
+                GetColumnByName(condition.ColumnName) == null || GetValue(condition.ColumnName)  == null
+                || condition.LiteralValue == null)
             {
                 return false;
             }
-            return condition.IsTrue(GetValue(condition.ColumnName), GetColumnByName(condition.ColumnName).Type);
+            else
+            {
+                return condition.IsTrue(GetValue(condition.ColumnName), GetColumnByName(condition.ColumnName).Type);
+            }
 
         }
 

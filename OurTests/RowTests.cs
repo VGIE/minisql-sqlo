@@ -133,11 +133,16 @@ namespace OurTests
             Assert.True(testRow.IsTrue(new Condition("salary", ">", "30000")));
 
             Assert.False(testRow.IsTrue(new Condition("name", "=", "Jacinto")));
-            Assert.False(testRow.IsTrue(new Condition("age", ">", "65")));
+            Assert.False(testRow.IsTrue(new Condition("ag,e", ">", "65")));
             Assert.False(testRow.IsTrue(new Condition("years_Worked", "=", "500")));
             Assert.False(testRow.IsTrue(new Condition("salary", "<", "30000")));
 
             Assert.False(testRow.IsTrue(null));
+            Assert.False(testRow.IsTrue(new Condition("nombre", "=", "jacinto"))); //column doesnt exist
+            Assert.False(testRow.IsTrue(new Condition("salary", "%", "30000"))); //symbol doesnt exist
+            Assert.False(testRow.IsTrue(new Condition("salary", "=", null)));
+            Assert.False(testRow.IsTrue(new Condition(null, "=", "30000")));
+            Assert.False(testRow.IsTrue(new Condition("salary", null, "30000")));
         }
 
         [Fact]
