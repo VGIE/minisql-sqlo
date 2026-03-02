@@ -179,4 +179,41 @@ public class DatabaseTests
         Assert.True(db.Insert("tabla", valores));
         Assert.Equal(Constants.InsertSuccess, db.LastErrorMessage);
     }
+    [Fact]
+    public void SaveAndLoadTest()
+    {
+        Database dbOld = CreateTestDatabase1();
+        dbOld.Save("test");
+
+        Database dbNew = Database.Load("test", "", "");
+
+        Assert.NotNull(dbNew);
+
+        Table oldTable = dbOld.TableByName("Students");
+        Table newTable = dbNew.TableByName("Students");
+
+        Assert.NotNull(newTable);
+        Assert.Equal(oldTable.ToString(), newTable.ToString());
+
+    }
+    [Fact]
+    public void SaveAndLoadWithDelimiterTest()
+    {
+        Database dbOld = CreateTestDatabase1();
+
+        Condition c = new Condition("Name", "=", "John");
+        List<SetValue> newValues = new List<SetValue>();
+        newValues.Add(new SetValue("Name", "John:ConDelimitador"));
+
+        dbOld.Save("test_delimiter");
+        Database dbNew = Database.Load("test_delimiter", "", "");
+
+        Assert.NotNull(dbNew);
+
+        Table oldTable = dbOld.TableByName("Students");
+        Table newTable = dbNew.TableByName("Students");
+
+        Assert.NotNull(newTable);
+        Assert.Equal(oldTable.ToString(), newTable.ToString());
+    }
 }

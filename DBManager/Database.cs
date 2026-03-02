@@ -288,6 +288,7 @@ namespace DbManager
             {
 
                 Console.WriteLine(ex.ToString());
+                return null;
             }
             return database;
         }
