@@ -8,10 +8,11 @@ namespace DbManager
     {
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
+            Match match;
             //TODO DEADLINE 2
             const string selectPattern = null;
             
-            const string insertPattern = null;
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s*\s*VALUES\s*\((.+)\)";
             
             const string dropTablePattern = null;
             
@@ -43,6 +44,19 @@ namespace DbManager
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
+
+            match = Regex.Match(MiniSqlQuery, insertPattern);
+            if(match.Success)
+            {
+                List<string> valores1 = match.Groups[4].Split(",");
+                List<string> valores2 = new List<string>();
+                foreach (String texto in valores1)
+                {
+                    texto.replace("\"","");
+                    valores2.add(texto);
+                }
+                return new Insert(valores2);
+            }
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
