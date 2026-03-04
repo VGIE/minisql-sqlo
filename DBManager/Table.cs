@@ -32,7 +32,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the i-th row
 
-            if (i >= 0 || i < Rows.Count)
+            if (i >= 0 && i < Rows.Count)
             {
                 return Rows[i];
             }
@@ -62,7 +62,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the i-th column
 
-            if (i >= 0 || i < ColumnDefinitions.Count)
+            if (i >= 0 && i < ColumnDefinitions.Count)
             {
                 return ColumnDefinitions[i];
 
@@ -216,12 +216,14 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
             List<ColumnDefinition> newC = new List<ColumnDefinition>();
+            List<ColumnDefinition> error = new List<ColumnDefinition>();
+            error.Add(new ColumnDefinition(ColumnDefinition.DataType.String,""));
             Table Result = new Table(null, null);
-            if (columnNames is null) { return null; }
+            if (columnNames is null) { return new Table("", error); }
 
             foreach (string name in columnNames)
             {
-                if (ColumnByName(name) == null) { return null; }
+                if (ColumnByName(name) == null) { return new Table("", error); }
 
                 ColumnDefinition col = ColumnByName(name);
 
