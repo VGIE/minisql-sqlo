@@ -37,8 +37,8 @@ namespace DbManager
             
             const string addUserPattern = null;
             
-            const string deleteUserPattern = null;
-            
+            const string deleteUserPattern = "DELETE\\s+FROM\\s+(\\w+)(:?\\s+WHERE\\s+(\\w+)\\s*(=|<|>|<=|>=)\\s*'(-?\\d+(:?.\\d+)?|\\w+)')?";
+
 
             //TODO DEADLINE 2
             //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
@@ -57,6 +57,17 @@ namespace DbManager
                     valores2.Add(texto);
                 }
                 return new Insert(match.Groups[1].Value, valores2);
+            }
+
+
+            //delete case
+            match = Regex.Match(miniSQLQuery, deletePattern);
+            if(match.Success)
+            {
+                return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
+            }else
+            {
+                return null;
             }
 
             //TODO DEADLINE 4

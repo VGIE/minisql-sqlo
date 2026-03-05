@@ -5,7 +5,7 @@ namespace OurTests
     public class ColumnDefinitionsTests
     {
         //TODO DEADLINE 1A : Create your own tests for ColumnDefinition
-        
+
         [Fact]
         public void Test1()
         {
@@ -19,12 +19,12 @@ namespace OurTests
             result = column.AsText();
             Assert.Equal(expected, result);
 
-            
+
             string input = "Salary->Double";
             ColumnDefinition result1 = ColumnDefinition.Parse(input);
             Assert.Equal("Salary", result1.Name);
             Assert.Equal(ColumnDefinition.DataType.Double, result1.Type);
         }
-        
+
     }
 }
