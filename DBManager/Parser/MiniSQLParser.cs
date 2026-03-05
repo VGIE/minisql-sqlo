@@ -1,5 +1,6 @@
 using DbManager.Parser;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DbManager
@@ -45,17 +46,17 @@ namespace DbManager
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
 
-            match = Regex.Match(MiniSqlQuery, insertPattern);
+            match = Regex.Match(miniSQLQuery, insertPattern);
             if(match.Success)
             {
-                List<string> valores1 = match.Groups[4].Split(",");
+                List<string> valores1 = match.Groups[4].Value.Split(",").ToList();
                 List<string> valores2 = new List<string>();
-                foreach (String texto in valores1)
+                foreach (string texto in valores1)
                 {
-                    texto.replace("\"","");
-                    valores2.add(texto);
+                    texto.Replace("\"", "");
+                    valores2.Add(texto);
                 }
-                return new Insert(valores2);
+                return new Insert(match.Groups[1].Value, valores2);
             }
 
             //TODO DEADLINE 4
