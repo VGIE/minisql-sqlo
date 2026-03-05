@@ -16,5 +16,12 @@ namespace OurTests
             */
         }
 
+        [Fact]
+        public void InsertTests()
+        {
+            List<string> valores = new List<string>{"valor1", "valor2"};
+            Assert.Equal(new Insert("tabla", valores), MiniSQLParser.Parse("INSERT INTO tabla VALUES (valor1, valor2)"));
+        }
+
     }
 }
