@@ -24,5 +24,18 @@ namespace DbManager.Parser
             return null;
             
         }
+        public override bool Equals(Object obj)
+        {
+            Delete other = (Delete)obj;
+            if(Table==other.Table && Where.ColumnName==other.Where.ColumnName &&
+                Where.LiteralValue==other.Where.LiteralValue && Where.Operator==other.Where.Operator)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

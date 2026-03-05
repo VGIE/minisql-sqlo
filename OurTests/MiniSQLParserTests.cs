@@ -11,9 +11,10 @@ namespace OurTests
         public void DeleteTests()
         {
             /*
-            Assert.Equal(new Delete("tabla", new Condition("columna", "=", "valor")), 
-                MiniSQLParser.Parse("DELETE FROM tabla WHERE columna = 'valor'"));
+            Delete deleteTest = new Delete("tabla", new Condition("edad","=","1"));
+            Assert.True(deleteTest.Equals(MiniSQLParser.Parse("DELETE FROM tabla WHERE edad = 1")));
             */
+            
         }
 
     }
