@@ -12,7 +12,7 @@ namespace OurTests
         {
             /*
             Assert.Equal(new Delete("tabla", new Condition("columna", "=", "valor")), 
-                MiniSQLParser.Parse("DELETE FROM tabla WHERE columna = valor"));
+                MiniSQLParser.Parse("DELETE FROM tabla WHERE columna = 'valor'"));
             */
         }
 
