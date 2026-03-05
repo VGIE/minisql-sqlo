@@ -14,7 +14,7 @@ namespace DbManager
         {
             //TODO DEADLINE 2: Initialize member variables
             Table = table;
-            Value = values;
+            Values = values;
         }
 
         public string Execute(Database database)
