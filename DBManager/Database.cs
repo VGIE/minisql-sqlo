@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -99,24 +101,26 @@ namespace DbManager
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
             Table table = TableByName(tableName);
-            if (table == null)
+            Boolean success;
+            if (table==null) 
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
-            if (values == null) { return false; }
-            if (values.Count() == table.NumColumns())
-            {
-                List<ColumnDefinition> Columns = new List<ColumnDefinition>();
-                for (int i = 0; i < table.NumColumns(); i++)
-                {
-                    Columns.Add(table.GetColumn(i));
-                }
-                table.AddRow(new Row(Columns, values));
-                LastErrorMessage = Constants.InsertSuccess;
-                return true;
-            }
+            if (values == null) 
+            {   
             return false;
+            }
+            success=table.Insert(values);        
+            if(success)
+            {
+            LastErrorMessage = Constants.InsertSuccess;
+            return success;
+            }
+            
+            LastErrorMessage = Constants.ColumnCountsDontMatch;
+            return success;
+            
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition)
@@ -205,9 +209,36 @@ namespace DbManager
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-
-            return false;
-
+            if (!Directory.Exists(databaseName))
+            {
+                Directory.CreateDirectory(databaseName);
+            }
+            foreach (Table table in Tables)
+            {
+                TextWriter writer=null;
+                try
+                {
+                     writer = File.CreateText(databaseName + "\\" + table.Name + ".txt");
+                    for (int i = 0; i < table.NumColumns(); i++)
+                    {
+                        writer.WriteLine(table.GetColumn(i).AsText());
+                    }
+                    writer.WriteLine("{[VALUES]}");
+                    for (int i = 0; i < table.NumRows(); i++)
+                    {
+                        writer.WriteLine(table.GetRow(i).AsText());
+                    }
+                    writer.Close();
+                 
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    if (writer != null) {  writer.Close(); }
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static Database Load(string databaseName, string username, string password)
@@ -216,8 +247,50 @@ namespace DbManager
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
+            Boolean exists = false;
+            Database database = new Database();
+            try
+            {
+            exists=Directory.Exists(databaseName);
+                if (!exists) { return null;}
+                if (exists)
+                {
+                    String[] files= Directory.GetFiles(databaseName,"*.txt");
+                    foreach (String file in files)
+                    {
+                        TextReader reader = File.OpenText(file);
+                        String tableName = Path.GetFileNameWithoutExtension(file);
+                        String Line;
+                        List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
+                        
+                        while((Line=reader.ReadLine())!=null)
+                        {
+                            if (Line.Equals("{[VALUES]}"))
+                            {
+                                break;
+                            }
+                        ColumnDefinition column=ColumnDefinition.Parse(Line);
+                            columnDefinitions.Add(column);
+                        
+                        }
+                        Table table = new Table(tableName, columnDefinitions);
+                        database.Tables.Add(table);
+                        while ((Line=reader.ReadLine()) != null)
+                        {
+                            Row values = Row.Parse(columnDefinitions,Line);
+                            table.AddRow(values);
+                        }
+                        reader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
 
-            return null;
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+            return database;
         }
 
         public string ExecuteMiniSQLQuery(string query)
