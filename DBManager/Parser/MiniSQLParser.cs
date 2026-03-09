@@ -26,7 +26,7 @@ namespace DbManager
             const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s\=\,]+)\s+WHERE\s+(.+)$";
 
             //punto para los int/double y comilla para los string 'x' 
-            const string deletePattern = @"^\s*DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*([<>=])\s*([a-zA-Z0-9\._']+)\s*$";
+            const string deletePattern = @"^\s*DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9\s]+)\s*([<>=])\s*([a-zA-Z0-9\.\s']+)\s*$";
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z0-9]+)$";
@@ -169,17 +169,24 @@ namespace DbManager
            if (matchDelete.Success)
            {
             //Mejor simplificar en cuatro grupos los operandos para no tener que hacer los if de =<>
-            string tableName= matchDelete.Groups[1].Value;
-            string column= matchDelete.Groups[2].Value;
-            string operador= matchDelete.Groups[3].Value;
-            string valor= matchDelete.Groups[4].Value;
+            string tableName= matchDelete.Groups[1].Value.Trim();
+            string column= matchDelete.Groups[2].Value.Trim();
+            string operador= matchDelete.Groups[3].Value.Trim();
+            string valor= matchDelete.Groups[4].Value.Trim();
+
+            if(column.Contains(" ") || (valor.Contains(" ") && !valor.StartsWith("'")))
+                {
+                    return null;
+                    
+                }
+
+                    //string limpiarV = valor.Trim('\'');
                     
                     Condition condicion= new Condition(column, operador, valor);
                     return new Delete(tableName, condicion);
                       
          }
-           
-
+        
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
