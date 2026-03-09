@@ -18,7 +18,7 @@ namespace DbManager
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
+            const string createTablePattern = @"CREATE\sTABLE\s([\w+]+)\s\(([\w]+\s(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s(?:INT|DOUBLE|TEXT)*))\)";
             
             const string updateTablePattern = null;
             
@@ -63,6 +63,33 @@ namespace DbManager
             else
             { 
                 return null;
+            }
+
+            //CREATE TABLE CASE
+            match = Regex.Match(miniSQLQuery, createTablePattern);
+            if (match.Success)
+            {
+                List<ColumnDefinition> columns = new List<ColumnDefinition>();
+                string[] columnsString = match.Groups[2].Value.Split(" ,");
+                for (int i =0; i < columnsString.Length; i=i+2)
+                {
+                    ColumnDefinition.DataType datatype;
+                    switch (columnsString[i + 1].ToLower())
+                    {
+                        case "int":
+                            datatype = ColumnDefinition.DataType.Int;
+                            break;
+                        case "double":
+                            datatype = ColumnDefinition.DataType.Double;
+                            break;
+                        case "text":
+                            datatype = ColumnDefinition.DataType.String;
+                            break;
+                    }
+                    columns.Add(new ColumnDefinition(datatype, columnsString[i]));
+                }
+
+
             }
 
 
