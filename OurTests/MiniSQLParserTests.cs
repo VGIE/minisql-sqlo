@@ -25,7 +25,7 @@ namespace OurTests
             Condition condition = new Condition("Column1", "=", "Hola");
 
             Assert.Equal(new Select("tabla", columns, condition), 
-                MiniSQLParser.Parse("SELECT Column1,Column2 FROM tabla WHERE Column1 = 'Hola'"));
+                MiniSQLParser.Parse("SELECT Column1,Column2 FROM tabla WHERE Column1='Hola'"));
 
             //UNA columna y SIN condición
 
@@ -34,15 +34,15 @@ namespace OurTests
 
             //Condicion con número entero
             Assert.Equal(new Select("tabla", new List<string> { "Column1" }, new Condition("Column1", "=", "42")),
-                MiniSQLParser.Parse("SELECT Column1 FROM tabla WHERE Column1 = '42'"));
+                MiniSQLParser.Parse("SELECT Column1 FROM tabla WHERE Column1='42'"));
 
             //Condicion con número decimal
             Assert.Equal(new Select("tabla", new List<string> { "Column1" }, new Condition("Column1", ">", "3.14")),
-                MiniSQLParser.Parse("SELECT Column1 FROM tabla WHERE Column1 > '3.14'"));
+                MiniSQLParser.Parse("SELECT Column1 FROM tabla WHERE Column1>'3.14'"));
 
             //Condicion con número negativo
             Assert.Equal(new Select("tabla", new List<string> { "Column1" }, new Condition("Column1", "<", "-5")),
-                MiniSQLParser.Parse("SELECT Column1 FROM tabla WHERE Column1 < '-5'"));
+                MiniSQLParser.Parse("SELECT Column1 FROM tabla WHERE Column1<'-5'"));
 
             // Querys malas
             Assert.Null(MiniSQLParser.Parse("SELECT FROM tabla"));
