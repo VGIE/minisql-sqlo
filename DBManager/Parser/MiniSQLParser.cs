@@ -59,14 +59,11 @@ namespace DbManager
             {
                 return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList<string>(), condition );
             }
-            else
-            { 
-                return null;
-            }
+            
 
 
             //delete case
-            Match match = Regex.Match(miniSQLQuery, deletePattern);
+            match = Regex.Match(miniSQLQuery, deletePattern);
             if(match.Success && match.Length == miniSQLQuery.Length)
             {
                 if (match.Groups[2].Value == "" && match.Groups[3].Value == "" && match.Groups[4].Value=="")
@@ -75,10 +72,7 @@ namespace DbManager
                 }
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
-            else
-            {
-                return null;
-            }
+            
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
