@@ -10,7 +10,7 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'-?(\d+\.?\d+|\w+)')?";
+            const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
             const string insertPattern = null;
             
@@ -47,7 +47,7 @@ namespace DbManager
             Match match;
             match = Regex.Match(miniSQLQuery, selectPattern);
             Condition condition;
-            if (match.Groups[3].Value == null)
+            if (match.Groups[3].Value == "")
             {
                 condition = null;
             }
@@ -67,11 +67,12 @@ namespace DbManager
 
 
             //delete case
-            Match match = Regex.Match(miniSQLQuery, deletePattern);
+            match = Regex.Match(miniSQLQuery, deletePattern);
             if(match.Success)
             {
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
-            }else
+            }
+            else
             {
                 return null;
             }
