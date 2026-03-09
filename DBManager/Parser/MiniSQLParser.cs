@@ -36,7 +36,7 @@ namespace DbManager
             
             const string addUserPattern = null;
             
-            const string deleteUserPattern = "DELETE\\s+FROM\\s+(\\w+)(:?\\s+WHERE\\s+(\\w+)\\s*(=|<|>|<=|>=)\\s*'(-?\\d+(:?.\\d+)?|\\w+)')?";
+            const string deleteUserPattern = null;
 
 
             //TODO DEADLINE 2
