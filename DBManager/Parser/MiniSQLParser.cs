@@ -1,5 +1,6 @@
 using DbManager.Parser;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DbManager
@@ -9,7 +10,7 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null;
+            const string selectPattern = @"SELECT\s([\w]+(?:,[\w]+)*)\sFROM\s(\w+)(?:\sWHERE\s(\w+)(<|>|=)'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
             const string insertPattern = null;
             
@@ -42,6 +43,26 @@ namespace DbManager
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
+            Match match;
+            match = Regex.Match(miniSQLQuery, selectPattern);
+            Condition condition;
+            if (match.Groups[3].Value == "")
+            {
+                condition = null;
+            }
+            else
+            {
+                condition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
+            }
+
+            if (match.Success)
+            {
+                return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList<string>(), condition );
+            }
+            else
+            { 
+                return null;
+            }
 
 
             //delete case
@@ -53,14 +74,15 @@ namespace DbManager
                     return new Delete(match.Groups[1].Value, null);
                 }
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
-            }else
+            }
+            else
             {
                 return null;
             }
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            
+
             return null;
            
         }
