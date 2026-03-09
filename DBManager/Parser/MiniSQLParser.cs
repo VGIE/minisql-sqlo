@@ -1,5 +1,6 @@
 using DbManager.Parser;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace DbManager
@@ -19,7 +20,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = null;
             
-            const string updateTablePattern = null;
+            const string updateTablePattern = @"UPDATE(\w +) SET([\w] += [\w] + (?:, [\w] += [\w] +) *) WHERE(\w +)([<>=])(\w +)";
             
             const string deletePattern = null;
             
@@ -43,14 +44,34 @@ namespace DbManager
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
-
+            //update case
+            Match match;
+            match= Regex.Match(miniSQLQuery, updateTablePattern);
+            if (match.Success)
+            {
+                string table=match.Groups[1].Value;
+                List <SetValue> values= new List<SetValue>();
+                List<string> valuesPre= CommaSeparatedNames(match.Groups[2].Value);
+                for(int i = 0; i <= valuesPre.Count; i++)
+                {
+                    string[] words = valuesPre[i].Split('=');
+                    values.Add(new SetValue(words[0], words[1]));
+                }
+                Condition cond= new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
+                return new Update(table,values,cond);
+            }
+            else
+            {
+                return null;
+            }
 
             //delete case
-            Match match = Regex.Match(miniSQLQuery, deletePattern);
+            match = Regex.Match(miniSQLQuery, deletePattern);
             if(match.Success)
             {
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
-            }else
+            }
+            else
             {
                 return null;
             }
