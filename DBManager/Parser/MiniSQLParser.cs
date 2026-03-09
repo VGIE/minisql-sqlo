@@ -14,7 +14,7 @@ namespace DbManager
             const string selectPattern = @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)$";
            
            //INSERT INTO tabla VALUES columnas patrón
-            const string insertPattern = @"^\s*INSERT\s+INTO\s+([a-zA-Z0-9]+)\s+VALUES\s*\(([a-zA-Z0-9\s\.,']+)\)s*$";
+            const string insertPattern = @"^\s*INSERT\s+INTO\s+([a-zA-Z0-9]+)\s+VALUES\s*\(([a-zA-Z0-9\s\.,']+)\)\s*$";
 
            //DROP TABLE tabla patrón
             const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z0-9]+)$";
@@ -140,7 +140,7 @@ namespace DbManager
                  char[] opreadores= new char[]{'=', '>', '<'} ;
                  string[] parts=  condicionTxt.Split(opreadores, StringSplitOptions.RemoveEmptyEntries);
 
-               if (partes.Length>=2)
+               if (parts.Length>=2)
                    {
                       string column= parts[0].Trim();
                       string value1= parts[1].Trim();
