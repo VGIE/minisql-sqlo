@@ -18,7 +18,7 @@ namespace DbManager
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"CREATE\sTABLE\s([\w+]+)\s\(([\w]+\s(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s(?:INT|DOUBLE|TEXT)*))\)";
+            const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s(?:INT|DOUBLE|TEXT))*)\)";
             
             const string updateTablePattern = null;
             
@@ -60,21 +60,22 @@ namespace DbManager
             {
                 return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList<string>(), condition );
             }
-            else
-            { 
-                return null;
-            }
+
 
             //CREATE TABLE CASE
             match = Regex.Match(miniSQLQuery, createTablePattern);
             if (match.Success)
             {
                 List<ColumnDefinition> columns = new List<ColumnDefinition>();
-                string[] columnsString = match.Groups[2].Value.Split(" ,");
-                for (int i =0; i < columnsString.Length; i=i+2)
+                string[] columnWithValue = match.Groups[2].Value.Split(",");
+                foreach (string s in columnWithValue)
                 {
+                    string[] parts = s.Split(" ");
+                    string name = parts[0];
+                    string type = parts[1];
+
                     ColumnDefinition.DataType datatype;
-                    switch (columnsString[i + 1].ToLower())
+                    switch (type.ToLower())
                     {
                         case "int":
                             datatype = ColumnDefinition.DataType.Int;
@@ -85,11 +86,13 @@ namespace DbManager
                         case "text":
                             datatype = ColumnDefinition.DataType.String;
                             break;
+                        default:
+                            datatype = ColumnDefinition.DataType.String;
+                            break;
                     }
-                    columns.Add(new ColumnDefinition(datatype, columnsString[i]));
+                    columns.Add(new ColumnDefinition(datatype, name));
                 }
-
-
+                return new CreateTable(match.Groups[1].Value, columns);
             }
 
 

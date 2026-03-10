@@ -50,6 +50,24 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("SELECT col1 col2 FROM tabla"));
         }
 
+        [Fact]
+
+        public void CreateTableTest()
+        {
+            CreateTable table = (new CreateTable("Table", new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "Edad"),
+                new ColumnDefinition(ColumnDefinition.DataType.Double, "Altura")
+            }));
+
+            Assert.Equal(table, MiniSQLParser.Parse("CREATE TABLE Table (Nombre TEXT,Edad INT,Altura DOUBLE)"));
+
+            Assert.Null(MiniSQLParser.Parse("CREATE TABLE table"));
+            Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota int)"));
+            Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota INT nombre TEXT"));
+
+        }
 
     }
 }
