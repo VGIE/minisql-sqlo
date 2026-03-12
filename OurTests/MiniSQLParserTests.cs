@@ -92,6 +92,15 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota INT nombre TEXT"));
 
         }
+        [Fact]
+        public void DropTableTest()
+        {
+            Assert.Equal(new DropTable("Test1"), MiniSQLParser.Parse("DROP TABLE Test1"));
+            Assert.Null(MiniSQLParser.Parse("DROP table Test2"));
+            Assert.Null(MiniSQLParser.Parse("DROP TABLE Test2, Test 3"));
+            Assert.Equal(new DropTable("Test4"),MiniSQLParser.Parse("DROP TABLE      Test4"));
+
+        }
 
     }
 }

@@ -14,7 +14,7 @@ namespace DbManager
             
             const string insertPattern = null;
             
-            const string dropTablePattern = null;
+            const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
@@ -91,6 +91,11 @@ namespace DbManager
                 return new CreateTable(match.Groups[1].Value, columns);
             }
 
+            match = Regex.Match(miniSQLQuery, dropTablePattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new DropTable(match.Groups[1].Value);
+            }
 
 
             //delete case
