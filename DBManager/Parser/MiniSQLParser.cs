@@ -22,8 +22,8 @@ namespace DbManager
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z0-9]+)\s+\(([a-zA-Z0-9,\s]*)\)$";
-            
-            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s\=\,]+)\s*WHERE\s+(<|>|=)$";
+
+            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s=,\.']+)\s+WHERE\s+(.+)$";
 
             const string deletePattern = @"^\s*DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+?)\s*$";
 
@@ -120,56 +120,72 @@ namespace DbManager
                return new DropTable(matchDrop.Groups[1].Value);  
            }
 
-            Match matchUpdate= Regex.Match(miniSQLQuery, updateTablePattern);
+            Match matchUpdate = Regex.Match(miniSQLQuery, updateTablePattern);
 
-           if (matchUpdate.Success)
-           {
-               //Los group corresponden al grupo de paréntesis de la expresión regular de arriba
-               string tableName= matchUpdate.Groups[1].Value; 
-               string value= matchUpdate.Groups[2].Value;
-               string condicionTxt= matchUpdate.Groups[3].Value;
+            if (matchUpdate.Success)
+            {
+                //Los group corresponden al grupo de paréntesis de la expresión regular de arriba
+                string tableName = matchUpdate.Groups[1].Value;
+                string value = matchUpdate.Groups[2].Value;
+                string condicionTxt = matchUpdate.Groups[3].Value;
 
-               List<SetValue> setValues = new List<SetValue>();
+                List<SetValue> setValues = new List<SetValue>();
 
-               string[] partes= value.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                string[] partes = value.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-               foreach(string part in partes)
+                foreach (string part in partes)
                 {
-                    string[] v= part.Split('=', StringSplitOptions.RemoveEmptyEntries);
-                    if(v.Length>=2)
-                    {
-                       setValues.Add(new SetValue(v[0].Trim(), v[1].Trim()));
-                    }
-                }
-                 char[] opreadores= new char[]{'=', '>', '<'} ;
-                
-                 string[] parts=  condicionTxt.Split(opreadores, StringSplitOptions.RemoveEmptyEntries);
+                    string[] v = part.Split('=', StringSplitOptions.RemoveEmptyEntries);
 
-               if (partes.Length>=2)
-                   {
-                      string column= parts[0].Trim();
-                      string value1= parts[1].Trim();
-                    
-                      //Por defecto, que normalmente suele ser un =
-                      string operadorElegido= "=";
-                    
+                    if (v.Length != 2)
+                    {
+                        return null;
+                    }
+
+                    string columnName = v[0].Trim();
+                    string val = v[1].Trim();
+
+                    if (val.StartsWith("'") && !val.EndsWith("'"))
+                    {
+                        return null;
+                    }
+
+                    setValues.Add(new SetValue(columnName, val));
+                }
+
+                char[] opreadores = new char[] { '=', '>', '<' };
+                string[] parts = condicionTxt.Split(opreadores, StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Length >= 2)
+                {
+                    string column = parts[0].Trim();
+                    string value1 = parts[1].Trim();
+
+                    if (value1.StartsWith("'") && !value1.EndsWith("'"))
+                    {
+                        return null;
+                    }
+
+                    //Por defecto, que normalmente suele ser un =
+                    string operadorElegido = "=";
+
                     if (condicionTxt.Contains(">"))
                     {
-                        operadorElegido= ">";
-                        
+                        operadorElegido = ">";
+
                     }
                     else if (condicionTxt.Contains("<"))
                     {
-                        operadorElegido="<";
+                        operadorElegido = "<";
                     }
-                    
-                    Condition condicion= new Condition(column, operadorElegido, value1);
-                    return new Update(tableName, setValues, condicion);
-                      
-                   }
-           }
 
-            Match matchDelete= Regex.Match(miniSQLQuery, deletePattern);
+                    Condition condicion = new Condition(column, operadorElegido, value1);
+                    return new Update(tableName, setValues, condicion);
+
+                }
+            }
+
+            Match matchDelete = Regex.Match(miniSQLQuery, deletePattern);
 
            if (matchDelete.Success)
            {
