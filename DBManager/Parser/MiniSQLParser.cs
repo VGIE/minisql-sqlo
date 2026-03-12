@@ -46,18 +46,14 @@ namespace DbManager
             Match match;
             match = Regex.Match(miniSQLQuery, selectPattern);
             Condition condition;
-            if (match.Groups[3].Value == "")
-            {
-                condition = null;
-            }
-            else
-            {
-                condition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
-            }
-
             if (match.Success)
             {
-                return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList<string>(), condition );
+                if (match.Groups[3].Value == "")
+                {
+                    return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList(), null);
+                }
+                condition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
+                return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList(), condition);
             }
 
 
