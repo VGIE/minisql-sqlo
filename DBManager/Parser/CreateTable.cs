@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DbManager.Parser;
 
@@ -24,6 +25,12 @@ namespace DbManager
             
             return null;
             
+        }
+
+        public override bool Equals(object obj)
+        {
+            CreateTable other = (CreateTable)obj;
+            return (Table == other.Table && ColumnsParameters.SequenceEqual(other.ColumnsParameters));
         }
 
     }

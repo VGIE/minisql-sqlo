@@ -23,5 +23,15 @@ namespace DbManager
             return null;
             
         }
+
+        public override bool Equals(object obj)
+        {
+            DropTable other = (DropTable)obj;
+            if (Table == other.Table)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

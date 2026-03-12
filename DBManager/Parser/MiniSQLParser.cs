@@ -10,15 +10,15 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s([\w]+(?:,[\w]+)*)\sFROM\s(\w+)(?:\sWHERE\s(\w+)(<|>|=)'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
+            const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
             const string insertPattern = null;
             
-            const string dropTablePattern = null;
+            const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
+            const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)\)";
             
             const string updateTablePattern = null;
 
@@ -45,21 +45,57 @@ namespace DbManager
             //If there is no match, it means there is a syntax error. We will return null.
             Match match;
             match = Regex.Match(miniSQLQuery, selectPattern);
-            Condition condition;
-            if (match.Groups[3].Value == "")
+            
+            if (match.Success && match.Length == miniSQLQuery.Length)
             {
-                condition = null;
-            }
-            else
-            {
+                if (match.Groups[3].Value == "")
+                {
+                    return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList(), null);
+                }
+                Condition condition;
                 condition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
+                return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList(), condition);
             }
 
-            if (match.Success)
+
+            //CREATE TABLE CASE
+            match = Regex.Match(miniSQLQuery, createTablePattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
             {
-                return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList<string>(), condition );
+                List<ColumnDefinition> columns = new List<ColumnDefinition>();
+                string[] columnWithValue = match.Groups[2].Value.Split(",");
+                foreach (string s in columnWithValue)
+                {
+                    string[] parts = s.Split(" ");
+                    string name = parts[0];
+                    string type = parts[1];
+
+                    ColumnDefinition.DataType datatype;
+                    switch (type.ToLower())
+                    {
+                        case "int":
+                            datatype = ColumnDefinition.DataType.Int;
+                            break;
+                        case "double":
+                            datatype = ColumnDefinition.DataType.Double;
+                            break;
+                        case "text":
+                            datatype = ColumnDefinition.DataType.String;
+                            break;
+                        default:
+                            datatype = ColumnDefinition.DataType.String;
+                            break;
+                    }
+                    columns.Add(new ColumnDefinition(datatype, name));
+                }
+                return new CreateTable(match.Groups[1].Value, columns);
             }
-            
+
+            match = Regex.Match(miniSQLQuery, dropTablePattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new DropTable(match.Groups[1].Value);
+            }
 
 
             //delete case
