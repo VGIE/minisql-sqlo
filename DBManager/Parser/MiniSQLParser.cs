@@ -49,11 +49,12 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, insertPattern);
             if(match.Success)
             {
-                List<string> valores1 = match.Groups[4].Value.Split(",").ToList();
+                List<string> valores1 = match.Groups[2].Value.Split(",").ToList();
                 List<string> valores2 = new List<string>();
                 foreach (string texto in valores1)
                 {
-                    texto.Replace("\"", "");
+                    texto.Replace("\'", "");
+                    texto.Replace(" ", "");
                     valores2.Add(texto);
                 }
                 return new Insert(match.Groups[1].Value, valores2);
