@@ -14,8 +14,8 @@ namespace DbManager
             const string selectPattern = @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)$";
            
            //INSERT INTO tabla VALUES columnas patrón
-            const string insertPattern = @"^\s*INSERT\s+INTO\s+([a-zA-Z0-9]+)\s+VALUES\s*\(([a-zA-Z0-9\s\.,']+)\)\s*$";
-
+            const string insertPattern = @"^\s*INSERT\s+INTO\s+([a-zA-Z0-9]+)\s+VALUES\s*\((.+?)\)\s*$";
+            
            //DROP TABLE tabla patrón
             const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z0-9]+)$";
             
@@ -23,10 +23,9 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z0-9]+)\s+\(([a-zA-Z0-9,\s]*)\)$";
             
-            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s\=\,]+)\s+WHERE\s+(.+)$";
+            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s\=\,]+)\s*WHERE\s+(<|>|=)$";
 
-            //punto para los int/double y comilla para los string 'x' 
-            const string deletePattern = @"^\s*DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9\s]+)\s*([<>=])\s*([a-zA-Z0-9\.\s']+)\s*$";
+            const string deletePattern = @"^\s*DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+?)\s*$";
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z0-9]+)$";
@@ -57,28 +56,32 @@ namespace DbManager
                return new Select(matchSelect.Groups[2].Value, CommaSeparatedNames(matchSelect.Groups[1].Value)); 
            }
 
-           Match matchInsert= Regex.Match(miniSQLQuery, insertPattern);
+           Match matchInsert= Regex.Match(miniSQLQuery, insertPattern, RegexOptions.IgnoreCase);
 
            if (matchInsert.Success)
            {
 
-            string tableName= matchInsert.Groups[1].Value;
+            string tableName= matchInsert.Groups[1].Value.Trim();
             string valores= matchInsert.Groups[2].Value; 
 
-            List<string> val= CommaSeparatedNames(valores);
+            List<string> valoresSucio= CommaSeparatedNames(valores);
+            List<string> valoresLimpio= new List<string>();
 
-                foreach (string v in val)
+
+                foreach (string v in valoresSucio)
                 {
-                    string trimmedV= v.Trim();
-                    
-                    //Esto da error en caso de haber espacio pero que no empiece con comilla 'x'
-                    if (trimmedV.Contains(" ") && !trimmedV.StartsWith("'"))
+                    if (v.Contains(" ") && !v.StartsWith("'"))
                     {
-                        return null;
+                    return null;
                     }
+                    
+                    if(v.StartsWith("'") && !v.EndsWith("'") || (!v.StartsWith("'") && v.EndsWith("'")))
+                    {
+                        return null;   
+                    }
+                    valoresLimpio.Add(v.Trim('\''));
                 }
-
-               return new Insert(tableName, val);
+               return new Insert(tableName, valoresLimpio);
            }
 
            Match matchCreateTable= Regex.Match(miniSQLQuery, createTablePattern);
@@ -107,8 +110,9 @@ namespace DbManager
                }
                return  new CreateTable(tableName, columnDefinitions);
            }
-
-            Match matchDrop= Regex.Match(miniSQLQuery, dropTablePattern);
+            
+            //A ver si esto arregla el IncorrectCapitalization
+            Match matchDrop= Regex.Match(miniSQLQuery, dropTablePattern, RegexOptions.IgnoreCase);
 
            if (matchDrop.Success)
            {
@@ -138,9 +142,10 @@ namespace DbManager
                     }
                 }
                  char[] opreadores= new char[]{'=', '>', '<'} ;
+                
                  string[] parts=  condicionTxt.Split(opreadores, StringSplitOptions.RemoveEmptyEntries);
 
-               if (parts.Length>=2)
+               if (partes.Length>=2)
                    {
                       string column= parts[0].Trim();
                       string value1= parts[1].Trim();
@@ -174,16 +179,15 @@ namespace DbManager
             string operador= matchDelete.Groups[3].Value.Trim();
             string valor= matchDelete.Groups[4].Value.Trim();
 
-            if(column.Contains(" ") || (valor.Contains(" ") && !valor.StartsWith("'")))
+            if (valor.Contains(" ") && !valor.StartsWith("'"))
                 {
                     return null;
                     
                 }
+                string valorLimpio= valor.Trim('\'');
 
-                    //string limpiarV = valor.Trim('\'');
-                    
-                    Condition condicion= new Condition(column, operador, valor);
-                    return new Delete(tableName, condicion);
+                Condition condicion= new Condition(column, operador, valorLimpio);
+                return new Delete(tableName, condicion);
                       
          }
         
