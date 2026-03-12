@@ -20,8 +20,8 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = null;
             
-            const string updateTablePattern = @"UPDATE(\w +) SET([\w] += [\w] + (?:, [\w] += [\w] +) *) WHERE(\w +)([<>=])(\w +)";
-            
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+\s*=\s*[\w]+(?:,\s*[\w]+\s*=\s*[\w]+)*)\s+WHERE\s+(\w+)\s*([<>=])\s*(\w+)";
+
             const string deletePattern = null;
             
 
@@ -52,17 +52,13 @@ namespace DbManager
                 string table=match.Groups[1].Value;
                 List <SetValue> values= new List<SetValue>();
                 List<string> valuesPre= CommaSeparatedNames(match.Groups[2].Value);
-                for(int i = 0; i <= valuesPre.Count; i++)
+                for(int i = 0; i < valuesPre.Count; i++)
                 {
                     string[] words = valuesPre[i].Split('=');
                     values.Add(new SetValue(words[0], words[1]));
                 }
                 Condition cond= new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
                 return new Update(table,values,cond);
-            }
-            else
-            {
-                return null;
             }
 
             //delete case
