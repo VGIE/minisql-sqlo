@@ -26,7 +26,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z0-9]+)\s+\(([a-zA-Z0-9,\s]*)\)$";
 
-            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s=,\.']+)\s+WHERE\s+(.+)$";
+            const string updateTablePattern = @"^\s*UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s=,\.']+)\s+WHERE\s+([a-zA-Z0-9\s<>=\.\']+)\s*$";
 
             const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+?)\s*$";
 
@@ -160,7 +160,7 @@ namespace DbManager
 
                 foreach (string part in partes)
                 {
-                    string[] v = part.Split('=', StringSplitOptions.RemoveEmptyEntries);
+                    string[] v = part.Split('=');
 
                     if (v.Length != 2)
                     {
@@ -170,7 +170,12 @@ namespace DbManager
                     string columnName = v[0].Trim();
                     string val = v[1].Trim();
 
-                    if (val.StartsWith("'") && !val.EndsWith("'"))
+                    if ((val.StartsWith("'") && !val.EndsWith("'")) || (!val.StartsWith("'") && val.EndsWith("'")))
+                    {
+                        return null;
+                    }
+
+                    if (val.Contains(" ") && !val.StartsWith("'"))
                     {
                         return null;
                     }
@@ -181,7 +186,7 @@ namespace DbManager
                 char[] opreadores = new char[] { '=', '>', '<' };
                 string[] parts = condicionTxt.Split(opreadores, StringSplitOptions.RemoveEmptyEntries);
 
-                if (parts.Length >= 2)
+                if (parts.Length == 2)
                 {
                     string column = parts[0].Trim();
                     string value1 = parts[1].Trim();

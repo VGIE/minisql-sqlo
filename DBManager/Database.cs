@@ -196,6 +196,11 @@ namespace DbManager
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
+            else if (columnCondition == null)
+            {
+                LastErrorMessage = Constants.SyntaxError;
+                return false;
+            }
             else if (TableByName(tableName).ColumnByName(columnCondition.ColumnName) == null)
             {
                 LastErrorMessage = Constants.ColumnDoesNotExistError;
