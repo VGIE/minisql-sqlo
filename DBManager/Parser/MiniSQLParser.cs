@@ -45,13 +45,14 @@ namespace DbManager
             //If there is no match, it means there is a syntax error. We will return null.
             Match match;
             match = Regex.Match(miniSQLQuery, selectPattern);
-            Condition condition;
-            if (match.Success)
+            
+            if (match.Success && match.Length == miniSQLQuery.Length)
             {
                 if (match.Groups[3].Value == "")
                 {
                     return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList(), null);
                 }
+                Condition condition;
                 condition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
                 return new Select(match.Groups[2].Value, match.Groups[1].Value.Split(",").ToList(), condition);
             }
@@ -59,7 +60,7 @@ namespace DbManager
 
             //CREATE TABLE CASE
             match = Regex.Match(miniSQLQuery, createTablePattern);
-            if (match.Success)
+            if (match.Success && match.Length == miniSQLQuery.Length)
             {
                 List<ColumnDefinition> columns = new List<ColumnDefinition>();
                 string[] columnWithValue = match.Groups[2].Value.Split(",");
