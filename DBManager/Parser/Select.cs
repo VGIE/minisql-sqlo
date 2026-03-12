@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DbManager 
+namespace DbManager
 {
-    public class Select: MiniSqlQuery
+    public class Select : MiniSqlQuery
     {
         public string Table { get; private set; }
         public List<string> Columns { get; private set; }
         public Condition Where { get; private set; }
 
-        public Select(string table, List<string> columns, Condition condition=null)
+        public Select(string table, List<string> columns, Condition condition = null)
         {
             //TODO DEADLINE 2: Initialize member variables
             Table = table;
@@ -23,9 +23,20 @@ namespace DbManager
         public string Execute(Database database)
         {
             //TODO DEADLINE 3: Run the query and return the table as a string (or the last error in the database)
-            
+
             return null;
-            
+
+        }
+        public override bool Equals(Object obj)
+        {
+            Select other = (Select)obj;
+
+            if (Table == other.Table && Columns.SequenceEqual(other.Columns) && ((Where == null && other.Where == null) || (Where.ColumnName == other.Where.ColumnName &&
+                    Where.LiteralValue == other.Where.LiteralValue && Where.Operator == other.Where.Operator)))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
