@@ -38,12 +38,12 @@ namespace DbManager.Parser
                 return true;
             }
             //Last, with both null cases ruled out, we can compare Where clauses one by one
-            else if(Where.ColumnName == other.Where.ColumnName || Where.LiteralValue == other.Where.LiteralValue ||
+            else if(Where.ColumnName == other.Where.ColumnName && Where.LiteralValue == other.Where.LiteralValue &&
                 Where.Operator == other.Where.Operator)
             {
                 return true;
             }
-            //Else to shut the compiler
+            //Code didn't found a match, thus they are not equal
             else
             {
                 return false;

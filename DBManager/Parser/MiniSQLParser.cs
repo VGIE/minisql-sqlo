@@ -22,7 +22,7 @@ namespace DbManager
             
             const string updateTablePattern = null;
 
-            const string deletePattern = @"DELETE\sFROM\s(\w+)(?:\sWHERE\s(\w+)(=|<|>|<=|>=)'(-?\d+|-?\d+\.\d+|\w+)')?";
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)')?";
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = null;
