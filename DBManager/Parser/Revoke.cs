@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DbManager.Parser;
+using DbManager.Security;
 
 namespace DbManager
 {
@@ -25,7 +26,21 @@ namespace DbManager
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
 
-            database.SecurityManager.RevokePrivilege(PrivilegeName, TableName, PrivilegeUtils.FromPrivilegeName(ProfileName));
+            Profile profile= database.SecurityManager.ProfileByName(ProfileName);
+
+            if (profile==null)
+            {
+                return "Error: Security profile does not exist";
+            }
+    
+            Privilege revokePrivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
+
+            if (!profile.IsGrantedPrivilege(TableName, revokePrivilege))
+            {
+                return "Error: The security profile of the user does not have the required privilege to perform the operation";
+            }
+            
+            database.SecurityManager.RevokePrivilege(PrivilegeName, TableName, revokePrivilege);
 
             if(database.LastErrorMessage!=null)
             {
@@ -33,9 +48,9 @@ namespace DbManager
 
             }
             
-            return "RevokePrivilageSuccess";
-            
+            return "Security privilege revoked"; 
         }
-
+        
     }
+
 }

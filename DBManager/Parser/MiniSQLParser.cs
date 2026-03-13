@@ -24,7 +24,7 @@ namespace DbManager
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z0-9]+)\s+\(([a-zA-Z0-9,\s]*)\)$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z0-9]+)\s*\((?:([a-zA-Z0-9]+\s+(?:INT|DOUBLE|TEXT))(?:,([a-zA-Z0-9]+\s+(?:INT|DOUBLE|TEXT)))*)?\)$";
 
             const string updateTablePattern = @"^\s*UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s=,\.']+)\s+WHERE\s+([a-zA-Z0-9\s<>=\.\']+)\s*$";
 
@@ -123,16 +123,28 @@ namespace DbManager
                {
                    //El trim es para evitar los errores si hay espacios extra al haber escrito las columnas en el query
                    //Split separa cada columna para quedarse con una cada vez
-                   string[] parts= s.Trim().Split(' ');
+                   string[] parts= s.Trim().Split(new[]{ ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                   //El >=2 es para que al menos esté un tipo y su columna
-                   if (parts.Length>=2)
+                   //Solo nombre y tipo
+                   if (parts.Length==2)
                    {
-                       //Aquí usa parse para convertir el texto en el valor real del tipo que sea. True hace que INT e int sean válidos igual
-                       ColumnDefinition.DataType type= (ColumnDefinition.DataType)Enum.Parse(typeof(ColumnDefinition.DataType), parts[1], true);
-                       columnDefinitions.Add(new ColumnDefinition(type, parts[0]));
+                    string type= parts[1].ToUpper();
+                        if (type=="INT" || type== "DOUBLE" || type== "TEXT")
+                        {
+                            //Aquí usa parse para convertir el texto en el valor real del tipo que sea. True hace que INT e int sean válidos igual
+                            ColumnDefinition.DataType Rtype= (ColumnDefinition.DataType)Enum.Parse(typeof(ColumnDefinition.DataType), type, true);
+                            columnDefinitions.Add(new ColumnDefinition(Rtype, parts[0]));
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                       //Aquí faltaría una parte pero habría algo, así que es error
                    }
-                  
+                    else if (parts.Length!=0)
+                    {
+                        return null;
+                    }
                }
                return  new CreateTable(tableName, columnDefinitions);
            }

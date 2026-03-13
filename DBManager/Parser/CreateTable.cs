@@ -29,7 +29,7 @@ namespace DbManager
                 return database.LastErrorMessage;
             }
             
-            return "CreateTableSuccess";
+            return "Table created";
             
         }
 

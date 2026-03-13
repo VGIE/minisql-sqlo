@@ -25,15 +25,20 @@ namespace DbManager
             Profile profile= new Profile();
             profile.Name= ProfileName;
 
+             if (!database.SecurityManager.IsUserAdmin())
+            {
+                return "Error: The security profile of the user does not have the required privilege to perform the operation";
+            }
+
             database.SecurityManager.AddProfile(profile);
+            
             if(database.LastErrorMessage!=null)
             {
                 return database.LastErrorMessage;
             }
-
           
             
-            return "CreateSecurityProfileSuccess";
+            return "Security profile created";
             
         }
 

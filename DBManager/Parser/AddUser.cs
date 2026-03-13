@@ -30,7 +30,7 @@ namespace DbManager
 
             if(profile==null)
             {
-               return "SecurityProfileDoesNotExistError";
+               return "Error: Security profile does not exist";
             }
 
                 User user= new User();
@@ -41,13 +41,18 @@ namespace DbManager
 
                 database.SecurityManager.AddProfile(profile);
                 
+             if (!database.SecurityManager.IsUserAdmin())
+            {
+                return "Error: The security profile of the user does not have the required privilege to perform the operation";
+            }
+                
              if(database.LastErrorMessage!=null)
             {
                 return database.LastErrorMessage;
             }
 
             
-            return "AddUserSuccess";
+            return "User added";
             
         }
 

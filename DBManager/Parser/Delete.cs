@@ -29,7 +29,7 @@ namespace DbManager.Parser
                 return database.LastErrorMessage;
             }
             
-            return "DeleteSuccess";
+            return "Tuple(s) deleted";
             
         }
     }

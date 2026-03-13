@@ -30,7 +30,7 @@ namespace DbManager
                 return database.LastErrorMessage;
             }
             
-            return "InsertSuccess";
+            return "Tuple added";
             
         }
     }

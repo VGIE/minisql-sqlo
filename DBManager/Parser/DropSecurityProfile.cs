@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DbManager.Parser;
+using DbManager.Security;
 
 namespace DbManager
 {
@@ -20,6 +21,17 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, DropSecurityProfileSuccess
+
+            Profile profile= database.SecurityManager.ProfileByName(ProfileName);
+
+            if(profile==null)
+            {
+                return "Error: Security profile does not exist";
+            }
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                
+            }
             bool remove= database.SecurityManager.RemoveProfile(ProfileName);
 
              if(database.LastErrorMessage!=null)
@@ -29,11 +41,11 @@ namespace DbManager
             
             if(!remove)
             {
-                return "SecurityProfileDoesNotExistError";
+                return "Error: Security profile does not exist";
             }
 
             
-            return "DropSecurityProfileSuccess";
+            return "Security profile dropped";
             
         }
 

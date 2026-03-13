@@ -27,7 +27,7 @@ namespace DbManager
             }
             
             
-            return "DropTableSuccess";
+            return "Table dropped";
             
         }
     }

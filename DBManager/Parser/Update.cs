@@ -28,7 +28,7 @@ namespace DbManager
                 return database.LastErrorMessage;
 
             }
-             return "UpdateSuccess";
+             return "Tuple(s) updated";
             
         }
 

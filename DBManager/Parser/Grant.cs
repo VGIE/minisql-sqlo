@@ -25,14 +25,39 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, PrivilegeDoesNotExistError, GrantPrivilegeSuccess, ProfileAlreadyHasPrivilege
-            database.SecurityManager.GrantPrivilege(PrivilegeName, TableName,PrivilegeUtils.FromPrivilegeName(ProfileName));
+
+            Profile profile= database.SecurityManager.ProfileByName(ProfileName);
+
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return "Error: The security profile of the user does not have the required privilege to perform the operation";
+            }
+
+            if (profile==null)
+            {
+                return "Error: Security profile does not exist";
+            }
+
+            Privilege grantprivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
+
+            if (grantprivilege==null)
+            {
+                return "Error: Privilege does not exist";
+            }
+
+            if (profile.IsGrantedPrivilege(TableName, grantprivilege))
+            {
+                return "Error: Profile already has privilege";
+            }
+
+            database.SecurityManager.GrantPrivilege(PrivilegeName, TableName,grantprivilege);
+
             if(database.LastErrorMessage!=null)
             {
                 return database.LastErrorMessage;
             }
-
             
-            return "GrantPrivilegeSuccess";
+            return "Security privilege granted";
             
         }
 
