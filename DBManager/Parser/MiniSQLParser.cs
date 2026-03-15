@@ -15,8 +15,8 @@ namespace DbManager
             const string selectPattern = @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)$";
 
             //SELECT WHERE
-            const string selectWherePattern= @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+?)\s*";
-           
+            const string selectWherePattern= @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+)";
+
            //INSERT INTO tabla VALUES columnas patrón
             const string insertPattern = @"^INSERT\s+INTO\s+([a-zA-Z0-9]+)\s+VALUES\s*\((.+?)\)\s*$";
             
@@ -27,9 +27,9 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z0-9]+)\s*\((?:([a-zA-Z0-9]+\s+(?:INT|DOUBLE|TEXT))(?:,([a-zA-Z0-9]+\s+(?:INT|DOUBLE|TEXT)))*)?\)$";
 
-            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z0-9]+)\s+SET\s+([a-zA-Z0-9\s=,.]+)\s+WHERE\s+([a-zA-Z0-9\s<>=.]+)$";
+            const string updateTablePattern = @"^UPDATE\s+(\w+)\s+SET\s+(\w+=('[-]?\d+(\.\d+)?'|'[^']+')(?:,(\w+=('[-]?\d+(\.\d+)?'|'[^']+'))*)?)\s+WHERE\s+(\w+)(=|<|>)('[-]?\d+(\.\d+)?'|'[^']+')$";
 
-            const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+?)\s*$";
+            const string deletePattern = @"^DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)('-?\d+(\.\d+)?'|'[^']+')$";
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z0-9]+)$";
@@ -129,8 +129,11 @@ namespace DbManager
                    //Solo nombre y tipo
                    if (parts.Length==2)
                    {
+                    string typeInt= "INT";
+                    string typeDouble= "DOUBLE";
+                    string typeTxt= "TEXT";
                     string type= parts[1].ToUpper();
-                        if (type=="INT" || type== "DOUBLE" || type== "TEXT")
+                        if (type==typeInt || type==typeDouble || type== typeTxt)
                         {
                             //Aquí usa parse para convertir el texto en el valor real del tipo que sea. True hace que INT e int sean válidos igual
                             ColumnDefinition.DataType Rtype= (ColumnDefinition.DataType)Enum.Parse(typeof(ColumnDefinition.DataType), type, true);
@@ -158,63 +161,48 @@ namespace DbManager
                return new DropTable(matchDrop.Groups[1].Value);  
            }
 
-            Match matchUpdate = Regex.Match(miniSQLQuery, updateTablePattern, RegexOptions.IgnoreCase);
+            Match matchUpdate = Regex.Match(miniSQLQuery, updateTablePattern);
 
             if (matchUpdate.Success)
             {
-                string tableName = matchUpdate.Groups[1].Value;
-                string set = matchUpdate.Groups[2].Value;
-                string where = matchUpdate.Groups[3].Value;
-
-                List<SetValue> setValues = new List<SetValue>();
-                
-                string[] parts = set.Split(',');
-
-                foreach (string part in parts)
+                string tableName= matchUpdate.Groups[1].Value;
+                string set= matchUpdate.Groups[2].Value;
+                List<SetValue> setValues= new List<SetValue>();
+                string []parts= set.Split(',');
+                foreach(string p in parts)
                 {
-                    string[] v = part.Split('=');
+                    string[] v= p.Split('=');
 
-                    if (v.Length != 2)
+                    if (v.Length!=2)
                     {
                         return null;
                     }
 
-                    string columnName = v[0].Trim();
-                    string valores = v[1].Trim();
+                    string columnName= v[0].Trim();
+                    string valores= v[1].Trim();
 
-                    bool startsWith = valores.StartsWith("'");
-                    bool endsWith = valores.EndsWith("'");
+                    bool startsWith= valores.StartsWith("'");
+                    bool endsWith= valores.EndsWith("'");
 
-                    if (startsWith != endsWith) return null;
-                    if (!startsWith && valores.Contains(" ")) return null;
+                    if (startsWith!=endsWith)
+                    {
+                        return null;
+                    }
+                    if (!startsWith && valores.Contains(" "))
+                    {
+                        return null;
+                    }
 
-                    string valor = valores.Trim('\'');
+                    string valor= valores.Trim('\'');
                     setValues.Add(new SetValue(columnName, valor));
                 }
 
-                char[] operadores = new char[] { '=', '>', '<' };
-                string[] whereParts = where.Split(operadores, StringSplitOptions.RemoveEmptyEntries);
+                string column= matchUpdate.Groups[8].Value;
+                string operador= matchUpdate.Groups[9].Value;
+                string value= matchUpdate.Groups[10].Value.Trim('\'');
+                Condition condicion= new Condition(column, operador, value);
+                return new Update(tableName, setValues, condicion);
 
-                if (whereParts.Length == 2)
-                {
-                    string whereColumn = whereParts[0].Trim();
-                    string whereValores = whereParts[1].Trim();
-
-                    bool startsWith = whereValores.StartsWith("'");
-                    bool endsWith = whereValores.EndsWith("'");
-
-                    if (startsWith != endsWith) return null;
-                    if (!startsWith && whereValores.Contains(" ")) return null;
-
-                    string whereValor = whereValores.Trim('\'');
-
-                    string op = "=";
-                    if (where.Contains(">")) op = ">";
-                    else if (where.Contains("<")) op = "<";
-
-                    Condition condition = new Condition(whereColumn, op, whereValor);
-                    return new Update(tableName, setValues, condition);
-                }
             }
 
             Match matchDelete = Regex.Match(miniSQLQuery, deletePattern);

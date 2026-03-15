@@ -45,15 +45,33 @@ namespace OurTests
 
             Assert.Contains(Table.TestColumn1Row1, result);
             Assert.DoesNotContain(Table.TestColumn1Row2, result);
-
             
+        }
+
+        [Fact]
+
+        public void TestSelectWithSpacesInLiteralWithoutQuotesNull()
+        {
+            string query= "SELECT Nombre FROM Usuarios WHERE Ciudad = Lu ";
+
+            var result= MiniSQLParser.Parse(query);
+            Assert.Null(result);
+
+        }
+
+        [Fact]
+
+        public void TestSelectWhereValueWIthSpacesWithQuotesNotNull()
+        {
+            string query= "SELECT Nombre FROM Personas WHERE Name = 'Lupe'";
+            Select result = MiniSQLParser.Parse(query) as Select;
+
+            Assert.NotNull(result);
+            Assert.Equal("Lupe", result.Where.LiteralValue);
         }
 
 
 
     }
     
-    
-    }
-
-  
+}
