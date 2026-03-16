@@ -24,5 +24,11 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            DropSecurityProfile other = (DropSecurityProfile)obj;
+            return (ProfileName == other.ProfileName);
+        }
+
     }
 }
