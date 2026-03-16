@@ -23,7 +23,9 @@ namespace DbManager
             const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)\)";
 
             string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+='[\w]+'(?:,\s*[\w]+='[\w]+')*)\s+WHERE\s+(\w+)([<>=])'(\w+)'";
-            const string deletePattern = @"DELETE\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)')?";
+
+
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)'";
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)";
@@ -128,10 +130,6 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, deletePattern);
             if(match.Success && match.Length == miniSQLQuery.Length)
             {
-                if (match.Groups[2].Value == "" && match.Groups[3].Value == "" && match.Groups[4].Value=="")
-                {
-                    return new Delete(match.Groups[1].Value, null);
-                }
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
 
