@@ -21,8 +21,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)\)";
 
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+\s*=\s*[\w]+(?:,\s*[\w]+\s*=\s*[\w]+)*)\s+WHERE\s+(\w+)\s*([<>=])\s*(\w+)";
-
+            string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+='[\w]+'(?:,\s*[\w]+='[\w]+')*)\s+WHERE\s+(\w+)([<>=])'(\w+)'";
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)')?";
 
             //TODO DEADLINE 4
@@ -46,19 +45,28 @@ namespace DbManager
             //If there is no match, it means there is a syntax error. We will return null.
             //update case
             Match match;
-            match= Regex.Match(miniSQLQuery, updateTablePattern);
+            match = Regex.Match(miniSQLQuery, updateTablePattern);
             if (match.Success)
             {
-                string table=match.Groups[1].Value;
-                List <SetValue> values= new List<SetValue>();
-                List<string> valuesPre= CommaSeparatedNames(match.Groups[2].Value);
-                for(int i = 0; i < valuesPre.Count; i++)
+                string table = match.Groups[1].Value;
+                List<SetValue> values = new List<SetValue>();
+                List<string> valuesPre = CommaSeparatedNames(match.Groups[2].Value);
+
+                for (int i = 0; i < valuesPre.Count; i++)
                 {
                     string[] words = valuesPre[i].Split('=');
-                    values.Add(new SetValue(words[0], words[1]));
+
+                    string columnName = words[0].Trim();
+                    string columnValue = words[1].Trim(' ', '\'', '"');
+
+                    values.Add(new SetValue(columnName, columnValue));
                 }
-                Condition cond= new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
-                return new Update(table,values,cond);
+                string whereColumn = match.Groups[3].Value;
+                string whereOperator = match.Groups[4].Value;
+                string whereValue = match.Groups[5].Value.Trim(' ', '\'', '"');
+
+                Condition cond = new Condition(whereColumn, whereOperator, whereValue);
+                return new Update(table, values, cond);
             }
             match = Regex.Match(miniSQLQuery, selectPattern);
             

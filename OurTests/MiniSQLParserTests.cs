@@ -108,7 +108,7 @@ namespace OurTests
         [Fact]
         public void UpdateTests()
         {
-            Update result = (Update)MiniSQLParser.Parse("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor");
+            Update result = (Update)MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'");
             Assert.Equal("tabla",result.Table);
 
 
