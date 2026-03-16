@@ -15,7 +15,7 @@ namespace OurTests.SecurityTest
         public void GrantPrivilegeTest()
         {
             Profile p = new Profile();
-            
+
             Assert.True(p.GrantPrivilege("t", Privilege.Update));
             Assert.True(p.GrantPrivilege("t", Privilege.Delete));
             Assert.False(p.GrantPrivilege("t", Privilege.Delete));
@@ -27,10 +27,10 @@ namespace OurTests.SecurityTest
         {
             Profile p = new Profile();
 
-            Assert.False(p.RevokePrivilege("t",Privilege.Select));
+            Assert.False(p.RevokePrivilege("t", Privilege.Select));
             p.GrantPrivilege("t", Privilege.Select);
-            Assert.True(p.RevokePrivilege("t",Privilege.Select));
-            Assert.False(p.RevokePrivilege("t",Privilege.Select));
+            Assert.True(p.RevokePrivilege("t", Privilege.Select));
+            Assert.False(p.RevokePrivilege("t", Privilege.Select));
         }
 
         [Fact]
