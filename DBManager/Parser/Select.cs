@@ -24,7 +24,7 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the table as a string (or the last error in the database)
             Table result = database.Select(Table,Columns,Where);
-            if (result.ToString() == null)
+            if (result == null || result.ToString() == null)
             {
                 return database.LastErrorMessage;
             }

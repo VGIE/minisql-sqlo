@@ -13,14 +13,30 @@ namespace OurTests
             
         }
         */
-        /*
+        
         [Fact]
         public void SelectTests()
         {
             Database database = Database.CreateTestDatabase();
-            Select select = 
+            Select select = new Select("TestTable", new List<string>()
+            {
+                "Name","Height"
+            });
+            Assert.Equal(database.Select("TestTable", new List<string>()
+            {
+                "Name","Height"
+            },null).ToString(),select.Execute(database));
+
+
+            select = new Select("TablaMal", new List<string>() { });
+            string result = select.Execute(database);
+            Assert.Equal(Constants.TableDoesNotExistError, database.LastErrorMessage);
+
+            select = new Select("TestTable", new List<string>() { "NoExiste" });
+            result = select.Execute(database);
+            Assert.Equal(Constants.ColumnDoesNotExistError, database.LastErrorMessage);
         }   
-        */
+        
         [Fact]
         public void CreateTableTest()
         {
@@ -38,12 +54,18 @@ namespace OurTests
 
 
         }
-        /*
+        
         [Fact]
         public void DropTableTest()
         {
-            
+            Database database = Database.CreateTestDatabase();
+
+            DropTable dropTable = new DropTable("TestTable");
+            Assert.Equal(Constants.DropTableSuccess, dropTable.Execute(database));
+
+            string result = dropTable.Execute(database);
+            Assert.Equal(Constants.TableDoesNotExistError, dropTable.Execute(database));
         }
-        */
+        
     }
 }
