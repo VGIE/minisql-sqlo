@@ -127,10 +127,11 @@ namespace OurTests
         {
             Assert.Equal(new Grant("INSERT", "TestTable", "User"),MiniSQLParser.Parse("GRANT INSERT ON TestTable TO User"));
             Assert.Equal(new Grant("DELETE", "Table", "Admin"), MiniSQLParser.Parse("GRANT DELETE ON Table TO Admin"));
-            Assert.Equal(new Grant("SELECT", "Test", "UserTest57"), MiniSQLParser.Parse("GRANT SELECT ON Test TO UserTest57"));
-            Assert.Equal(new Grant("UPDATE", "TestTa", "User1"), MiniSQLParser.Parse("GRANT UPDATE ON TestTa TO User1"));
+            Assert.Equal(new Grant("SELECT", "Test", "UserTest"), MiniSQLParser.Parse("GRANT SELECT ON Test TO UserTest"));
+            Assert.Equal(new Grant("UPDATE", "TestTa", "User"), MiniSQLParser.Parse("GRANT UPDATE ON TestTa TO User"));
             Assert.Null(MiniSQLParser.Parse("GRANT insert ON T TO User"));
-            Assert.Null(MiniSQLParser.Parse("GRANT DELETE ON Table TO Pedro"));
+            Assert.Null(MiniSQLParser.Parse("GRANT SELECT ON Test TO UserTest57"));
+            Assert.Null(MiniSQLParser.Parse("GRANT DELETE on Table TO Pedro"));
             Assert.Null(MiniSQLParser.Parse("GRANT DROP ON TO Pablo"));
         }
 
@@ -139,9 +140,10 @@ namespace OurTests
         {
             Assert.Equal(new Revoke("INSERT", "TestTable", "User"), MiniSQLParser.Parse("REVOKE INSERT ON TestTable TO User"));
             Assert.Equal(new Revoke("DELETE", "Table", "Admin"), MiniSQLParser.Parse("REVOKE DELETE ON Table TO Admin"));
-            Assert.Equal(new Revoke("SELECT", "Test", "UserTest57"), MiniSQLParser.Parse("REVOKE SELECT ON Test TO UserTest57"));
-            Assert.Equal(new Revoke("UPDATE", "TestTa", "User1"), MiniSQLParser.Parse("REVOKE    UPDATE ON TestTa TO User1"));
+            Assert.Equal(new Revoke("SELECT", "Test", "UserTest"), MiniSQLParser.Parse("REVOKE SELECT ON Test TO UserTest"));
+            Assert.Equal(new Revoke("UPDATE", "TestTa", "User"), MiniSQLParser.Parse("REVOKE    UPDATE ON TestTa TO User"));
             Assert.Null(MiniSQLParser.Parse("REVOKE insert ON T TO User"));
+            Assert.Null(MiniSQLParser.Parse("REVOKE SELECT ON Test TO UserTest57"));
             Assert.Null(MiniSQLParser.Parse("REVOKE DROP ON TO Pablo"));
         }
 
