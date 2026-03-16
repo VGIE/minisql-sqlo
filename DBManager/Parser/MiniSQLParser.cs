@@ -130,10 +130,6 @@ namespace DbManager
             {
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
-            else
-            {
-                return null;
-            }
             
 
             //TODO DEADLINE 4
