@@ -36,16 +36,7 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table  WHERE age>-32.6123"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table '"));
 
-            //Execute Tests
-            Assert.Equal("DeleteSuccess",Database.CreateTestDatabase().
-                ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Age='25'"));
-            Assert.NotEqual("DeleteSuccess", Database.CreateTestDatabase().
-                ExecuteMiniSQLQuery("DELETE FROM TestTable"));
-            Assert.Equal("DeleteSuccess", Database.CreateTestDatabase().
-                ExecuteMiniSQLQuery("DELETE      FROM    TestTable    WHERE Age<'25'"));
-            Assert.Equal("DeleteSuccess", Database.CreateTestDatabase().
-                ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Name='Maider'"));
-
+            
 
 
 

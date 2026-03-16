@@ -5,15 +5,21 @@ namespace OurTests
 {
     public class ExecuteTests
     {
-        /*
+        
         [Fact]
         public void DeleteTests()
         {
-            
-            
+            Assert.Equal("DeleteSuccess",Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Age='25'"));
+            Assert.NotEqual("DeleteSuccess", Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable"));
+            Assert.Equal("DeleteSuccess", Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE      FROM    TestTable    WHERE Age<'25'"));
+            Assert.Equal("DeleteSuccess", Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Name='Maider'"));
         }
-        */
         
+
         [Fact]
         public void SelectTests()
         {
