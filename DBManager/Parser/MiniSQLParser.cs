@@ -11,7 +11,6 @@ namespace DbManager
     {
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
-            Match match;
             //TODO DEADLINE 2
             const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
@@ -124,19 +123,6 @@ namespace DbManager
             if (match.Success && match.Length == miniSQLQuery.Length)
             {
                 return new DropTable(match.Groups[1].Value);
-            }
-
-            match = Regex.Match(miniSQLQuery, insertPattern);
-            if(match.Success)
-            {
-                List<string> valores1 = match.Groups[2].Value.Split(",").ToList();
-                List<string> valores2 = new List<string>();
-                foreach (string texto in valores1)
-                {
-                    string textoLimpio = texto.Replace("\'", "").Trim();
-                    valores2.Add(textoLimpio);
-                }
-                return new Insert(match.Groups[1].Value, valores2);
             }
 
             match = Regex.Match(miniSQLQuery, insertPattern);

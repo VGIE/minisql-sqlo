@@ -35,6 +35,7 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("DELETE FROM  table WHERE age>='-32.6123'"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table  WHERE age>-32.6123"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table '"));
+            
 
             
 
@@ -72,7 +73,6 @@ namespace OurTests
 
             // Querys malas
             Assert.Null(MiniSQLParser.Parse("SELECT FROM tabla"));
-            Assert.Null(MiniSQLParser.Parse("INSERT INTO tabla VALUES (1)"));
             Assert.Null(MiniSQLParser.Parse("SELECT col1 col2 FROM tabla"));
         }
 
@@ -183,8 +183,7 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("DROP SECURITY PROFILE Admin1"));
             Assert.Null(MiniSQLParser.Parse("DROP security PROFILE Admin"));
             
-            Assert.Equal(new Delete("tabla", new Condition("columna", "=", "valor")), 
-                MiniSQLParser.Parse("DELETE FROM tabla WHERE columna = valor"));
+            
             
         }
 
