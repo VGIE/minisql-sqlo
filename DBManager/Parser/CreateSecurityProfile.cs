@@ -13,6 +13,7 @@ namespace DbManager
         public CreateSecurityProfile(string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
+            ProfileName = profileName;
             
         }
         public string Execute(Database database)
@@ -24,5 +25,10 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            CreateSecurityProfile other = (CreateSecurityProfile)obj;
+            return (ProfileName == other.ProfileName);
+        }
     }
 }

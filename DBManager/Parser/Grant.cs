@@ -15,7 +15,9 @@ namespace DbManager
         public Grant(string privilegeName, string tableName, string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
-            
+            PrivilegeName = privilegeName;
+            TableName = tableName;
+            ProfileName = profileName;
         }
         public string Execute(Database database)
         {
@@ -26,5 +28,10 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            Grant other = (Grant)obj;
+            return (PrivilegeName == other.PrivilegeName && TableName == other.TableName && ProfileName == other.ProfileName);
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace DbManager
         public DeleteUser(string username)
         {
             //TODO DEADLINE 4: Initialize member variables
-            
+            Username = username;
         }
         public string Execute(Database database)
         {
@@ -22,6 +22,12 @@ namespace DbManager
             
             return null;
             
+        }
+
+        public override bool Equals(object obj)
+        {
+            DeleteUser other = (DeleteUser)obj;
+            return (Username == other.Username);
         }
 
     }

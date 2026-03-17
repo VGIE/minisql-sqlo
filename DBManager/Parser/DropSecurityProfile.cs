@@ -13,7 +13,7 @@ namespace DbManager
         public DropSecurityProfile(string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
-            
+            ProfileName = profileName;
         }
         public string Execute(Database database)
         {
@@ -22,6 +22,12 @@ namespace DbManager
             
             return null;
             
+        }
+
+        public override bool Equals(object obj)
+        {
+            DropSecurityProfile other = (DropSecurityProfile)obj;
+            return (ProfileName == other.ProfileName);
         }
 
     }

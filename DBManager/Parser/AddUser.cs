@@ -16,6 +16,9 @@ namespace DbManager
         public AddUser(string username, string password, string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
+            Username = username;
+            Password = password;
+            ProfileName = profileName;
             
         }
         public string Execute(Database database)
@@ -27,5 +30,10 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            AddUser other = (AddUser)obj;
+            return (Username == other.Username && Password == other.Password && ProfileName == other.ProfileName);
+        }
     }
 }
