@@ -53,9 +53,8 @@ namespace DbManager
                 List<string> valores2 = new List<string>();
                 foreach (string texto in valores1)
                 {
-                    texto.Replace("\'", "");
-                    texto.Replace(" ", "");
-                    valores2.Add(texto);
+                    string textoLimpio = texto.Replace("\'", "").Trim();
+                    valores2.Add(textoLimpio);
                 }
                 return new Insert(match.Groups[1].Value, valores2);
             }
