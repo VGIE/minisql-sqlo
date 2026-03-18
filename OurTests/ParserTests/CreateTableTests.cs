@@ -156,16 +156,18 @@ public class CreateTableTests
          [Fact]
          public void TestExecuteCreate()
           {
+               string table= "A";
             Database database = Database.CreateTestDatabase();
             var columns = new List<ColumnDefinition>
                   {
-        new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre"),
+        new ColumnDefinition(ColumnDefinition.DataType.String, "N"),
         new ColumnDefinition(ColumnDefinition.DataType.Int, "Numero"),
-        new ColumnDefinition(ColumnDefinition.DataType.Double, "Altura")
+        
          };
 
-            CreateTable createQ= new CreateTable(Table.TestTableName,columns);
+            CreateTable createQ= new CreateTable(table,columns);
             string result= createQ.Execute(database);
+            Assert.Equal("Table created", result);
           }
 
 
