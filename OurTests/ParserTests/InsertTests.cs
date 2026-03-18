@@ -4,13 +4,13 @@ namespace OurTests
 {
     public class InsertTests
     {
-       [Fact]
-       public void TestInsertConstructor()
+        [Fact]
+        public void TestInsertConstructor()
         {
-            string table= "Datos";
-            List<string> values= new List<string>{"Manzana", "1.20", "5"};
+            string table = "Datos";
+            List<string> values = new List<string> { "Manzana", "1.20", "5" };
 
-            Insert insertQ= new Insert(table, values);
+            Insert insertQ = new Insert(table, values);
 
             Assert.Equal("Datos", insertQ.Table);
             Assert.Equal(3, insertQ.Values.Count);
@@ -21,84 +21,83 @@ namespace OurTests
         public void TestInsertExecuteSuccess()
         {
 
-            Database db= Database.CreateTestDatabase();
-            List<string> values= new List<string>{"NuevoObj", "2.55", "35"};
+            Database db = Database.CreateTestDatabase();
+            List<string> values = new List<string> { "NuevoObj", "2.55", "35" };
 
-            Insert insertQ= new Insert(Table.TestTableName, values);
+            Insert insertQ = new Insert(Table.TestTableName, values);
 
-            string result=  insertQ.Execute(db);
+            string result = insertQ.Execute(db);
 
-            Assert.Equal(Constants.InsertSuccess, result);  
+            Assert.Equal(Constants.InsertSuccess, result);
         }
 
         [Fact]
         public void TestInsertExecuteTableDoesNotExist()
         {
-            Database db= Database.CreateTestDatabase();
-            List<string> values= new List<string>{"Dato"};
+            Database db = Database.CreateTestDatabase();
+            List<string> values = new List<string> { "Dato" };
 
-            Insert insertQ= new Insert("TableInexistente", values);
-            string result= insertQ.Execute(db);
+            Insert insertQ = new Insert("TableInexistente", values);
+            string result = insertQ.Execute(db);
 
             Assert.Equal(Constants.TableDoesNotExistError, result);
             Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
-            
+
         }
 
         [Fact]
-          public void TestInsertSpaceInStringReturnsNull()
-          {
-               string query= "INSERT INTO Personas VALUES (10 00, 'Dato')";
+        public void TestInsertSpaceInStringReturnsNull()
+        {
+            string query = "INSERT INTO Personas VALUES (10 00, 'Dato')";
 
-               Insert result = MiniSQLParser.Parse(query) as Insert;
+            Insert result = MiniSQLParser.Parse(query) as Insert;
 
-               Assert.Null(result);
-          }
+            Assert.Null(result);
+        }
 
-          [Fact]
-          public void TestInsertUnbalancedQuotesReturnsNull()
-          {
-               string query= "INSERT INTO Personas VALUES ('Dato)";
+        [Fact]
+        public void TestInsertUnbalancedQuotesReturnsNull()
+        {
+            string query = "INSERT INTO Personas VALUES ('Dato)";
 
-               Insert result = MiniSQLParser.Parse(query) as Insert;
+            Insert result = MiniSQLParser.Parse(query) as Insert;
 
-               Assert.Null(result);
-          }
+            Assert.Null(result);
+        }
 
-          [Fact]
-          public void TestInsertMissingComaReturnsNull()
-          {
-               string query= "INSERT INTO Personas VALUES ('Dato1' 'Dato2')";
+        [Fact]
+        public void TestInsertMissingComaReturnsNull()
+        {
+            string query = "INSERT INTO Personas VALUES ('Dato1' 'Dato2')";
 
-               Insert result = MiniSQLParser.Parse(query) as Insert;
+            Insert result = MiniSQLParser.Parse(query) as Insert;
 
-               Assert.Null(result);
-          }
+            Assert.Null(result);
+        }
 
-          [Fact]
-          public void TestInsertInvalidSpaceAtTheEndReturnsNull()
-          {
-               string query= "INSERT INTO Personas VALUES ('Dato' )";
+        [Fact]
+        public void TestInsertInvalidSpaceAtTheEndReturnsNull()
+        {
+            string query = "INSERT INTO Personas VALUES ('Dato' )";
 
-               Insert result = MiniSQLParser.Parse(query) as Insert;
+            Insert result = MiniSQLParser.Parse(query) as Insert;
 
-               Assert.Null(result);
-          }
+            Assert.Null(result);
+        }
 
-          [Fact]
-          public void TestInsertValidQuery()
-          {
-               string query= "INSERT INTO Personas VALUES ('1', 'Hola')";
+        [Fact]
+        public void TestInsertValidQuery()
+        {
+            string query = "INSERT INTO Personas VALUES ('1', 'Hola')";
 
-               Insert result = MiniSQLParser.Parse(query) as Insert;
+            Insert result = MiniSQLParser.Parse(query) as Insert;
 
-               Assert.NotNull(result);
-          }
+            Assert.NotNull(result);
+        }
 
     }
 
 }
 
-        
 
-        
+
