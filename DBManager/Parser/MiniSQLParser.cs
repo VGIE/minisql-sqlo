@@ -14,7 +14,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*('?\w+'?(?:\s*,\s*'?\w+'?\s*)*)\s*\)";
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*((?:'[^']*'|[\w.-]+)(?:\s*,\s*(?:'[^']*'|[\w.-]+))*)\s*\)";
             
             const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
