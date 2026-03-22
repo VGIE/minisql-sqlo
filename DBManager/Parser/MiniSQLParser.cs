@@ -14,7 +14,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*((?:'[^']*'|[\w.-]+)(?:\s*,\s*(?:'[^']*'|[\w.-]+))*)\s*\)";
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*((?:'[^']*'|""[^""]*""|[\w.-]+)(?:\s*,\s*(?:'[^']*'|""[^""]*""|[\w.-]+))*)\s*\)";
             
             const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
@@ -125,14 +125,14 @@ namespace DbManager
                 return new DropTable(match.Groups[1].Value);
             }
 
-            match = Regex.Match(miniSQLQuery, insertPattern);
+            match = Regex.Match(miniSQLQuery, insertPattern, RegexOptions.IgnoreCase);
             if(match.Success)
             {
                 List<string> valores1 = match.Groups[2].Value.Split(",").ToList();
                 List<string> valores2 = new List<string>();
                 foreach (string texto in valores1)
                 {
-                    string textoLimpio = texto.Replace("\'", "").Trim();
+                    string textoLimpio = texto.Replace("\'", "").Replace("\"", "").Trim();
                     valores2.Add(textoLimpio);
                 }
                 return new Insert(match.Groups[1].Value, valores2);
