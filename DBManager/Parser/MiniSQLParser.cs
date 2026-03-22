@@ -15,12 +15,11 @@ namespace DbManager
             //SELECT columnas FROM tabla patrón
             const string selectPattern = @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)$";
 
-
             //SELECT WHERE
             const string selectWherePattern = @"^SELECT\s+([a-zA-Z0-9\*,]+)\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)\s*(<|>|=)\s*(.+)";
 
             //INSERT INTO tabla VALUES columnas patrón
-            const string insertPattern = @"^INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*('[-]?\d+(\.\d+)?'|'[^']+')(?:\s*,\s*('[-]?\d+(\.\d+)?'|'[^']+'))*\s*\)$";
+            const string insertPattern = @"^INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*(('[-]?\d+(\.\d+)?'|'[^']+')(?:\s*,\s*('[-]?\d+(\.\d+)?'|'[^']+'))*)\)$";
 
             //DROP TABLE tabla patrón
             const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z0-9]+)$";
@@ -98,14 +97,10 @@ namespace DbManager
 
             }
 
-
             Match matchInsert = Regex.Match(miniSQLQuery, insertPattern);
-
 
             if (matchInsert.Success)
             {
-
-
                 string tableName = matchInsert.Groups[1].Value.Trim();
                 string valores = matchInsert.Groups[2].Value;
 
@@ -115,16 +110,17 @@ namespace DbManager
 
                 foreach (string v in valoresSucio)
                 {
-                    if (v.Contains(" ") && !v.StartsWith("'"))
+                    string val = v.Trim();
+                    if (val.Contains(" ") && !val.StartsWith("'"))
                     {
                         return null;
                     }
 
-                    if (v.StartsWith("'") && !v.EndsWith("'") || (!v.StartsWith("'") && v.EndsWith("'")))
+                    if (val.StartsWith("'") && !val.EndsWith("'") || (!val.StartsWith("'") && val.EndsWith("'")))
                     {
                         return null;
                     }
-                    valoresLimpio.Add(v.Trim('\''));
+                    valoresLimpio.Add(val.Trim('\''));
                 }
                 return new Insert(tableName, valoresLimpio);
             }
@@ -132,35 +128,27 @@ namespace DbManager
 
             Match matchCreateTable = Regex.Match(miniSQLQuery, createTablePattern);
 
-
             if (matchCreateTable.Success)
             {
                 string tableName = matchCreateTable.Groups[1].Value;
 
                 string stringColumns = matchCreateTable.Groups[2].Value;
 
-
                 List<string> columnParts = CommaSeparatedNames(stringColumns);
 
-
                 List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
-
 
                 foreach (string s in columnParts)
                 {
                     string[] parts = s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-
                     //Solo nombre y tipo
                     if (parts.Length == 2)
                     {
-
-
                         string name = parts[0];
                         string typeInt = "INT";
                         string typeDouble = "DOUBLE";
                         string typeTxt = "TEXT";
-
 
                         string type = parts[1];
                         if (type == typeInt)

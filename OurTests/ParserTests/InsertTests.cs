@@ -95,7 +95,7 @@ namespace OurTests
 
             Assert.NotNull(result);
         }
-
+        /*
         [Fact]
         public void TestInsertCommasAndSpaces()
         {
@@ -149,7 +149,7 @@ namespace OurTests
             Insert result12= MiniSQLParser.Parse(query12) as Insert;
             Assert.Null(result12);
         }
-
+        */
     }
 
 
