@@ -28,7 +28,7 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table"));
             Assert.Null(MiniSQLParser.Parse("Delete From table"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table1 WHERE name=Jacinto"));
-            Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age ='-32.6123'"));
+            Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age ='32.6123'"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age>= '-32.6123'"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age>'-32.6123' "));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age >'-32.6123'"));
