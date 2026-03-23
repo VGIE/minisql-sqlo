@@ -26,7 +26,7 @@ namespace DbManager.Parser
 
             if(result == true)
             {
-                return "DeleteSuccess";
+                return Constants.DeleteSuccess;
             }
             else
             {

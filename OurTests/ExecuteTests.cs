@@ -9,14 +9,16 @@ namespace OurTests
         [Fact]
         public void DeleteTests()
         {
-            Assert.Equal("DeleteSuccess",Database.CreateTestDatabase().
+            Assert.Equal(Constants.DeleteSuccess,Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Age='25'"));
-            Assert.NotEqual("DeleteSuccess", Database.CreateTestDatabase().
+            Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable"));
-            Assert.Equal("DeleteSuccess", Database.CreateTestDatabase().
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE      FROM    TestTable    WHERE Age<'25'"));
-            Assert.Equal("DeleteSuccess", Database.CreateTestDatabase().
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Name='Maider'"));
+            Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable1 WHERE Wage='-52.85'"));
         }
         
 
