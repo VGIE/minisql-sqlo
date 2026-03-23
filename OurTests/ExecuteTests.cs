@@ -1,4 +1,5 @@
-﻿using DbManager;
+﻿
+using DbManager;
 using DbManager.Parser;
 using Xunit;
 namespace OurTests
@@ -66,6 +67,13 @@ namespace OurTests
             string result = dropTable.Execute(database);
             Assert.Equal(Constants.TableDoesNotExistError, dropTable.Execute(database));
         }
-        
+        [Fact]
+        public void UpdateTableTest() 
+        {
+            Assert.Equal(Constants.UpdateSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("UPDATE TestTable SET Height='1.56',Age='52' WHERE Name='Pepe'"));
+            Assert.NotEqual("UpdateSuccess", Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor"));
+        }
     }
 }

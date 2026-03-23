@@ -130,10 +130,7 @@ namespace OurTests
             Assert.Equal("column2", result.Columns[1].ColumnName);
             Assert.Equal("2", result.Columns[1].Value);
 
-            //Execute
-
-            Assert.Equal();
-            Assert.Equal(); 
+            
         }
 
     }
