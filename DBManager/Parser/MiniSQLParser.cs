@@ -22,7 +22,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)\)";
 
-            string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+='[\w]+'(?:,\s*[\w]+='[\w]+')*)\s+WHERE\s+(\w+)([<>=])'(\w+)'";
+            const string updateTablePattern = @"UPDATE\s*([\w]+)\s+SET\s+([\w]+='(?:-?\d+(?:\.?\d+)?|[a-zA-Z]+)'(?:,(?:[\w]+)='(?:-?\d+(?:\.?\d+)?|[a-zA-Z]+)')*)\s+WHERE\s+([\w]+)([=<>])'(-?\d+(?:\.?\d+)?|[a-zA-Z]+)'";
 
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)'";
@@ -50,7 +50,7 @@ namespace DbManager
             //update case
             Match match;
             match = Regex.Match(miniSQLQuery, updateTablePattern);
-            if (match.Success)
+            if (match.Success && match.Length == miniSQLQuery.Length)
             {
                 string table = match.Groups[1].Value;
                 List<SetValue> values = new List<SetValue>();

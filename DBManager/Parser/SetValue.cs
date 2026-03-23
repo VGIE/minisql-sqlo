@@ -18,5 +18,14 @@ namespace DbManager.Parser
             ColumnName = column;
             Value = value;
         }
+        public override bool Equals(object obj)
+        {
+            SetValue other = (SetValue)obj;
+            if (ColumnName.Equals(other.ColumnName) && Value.Equals(other.Value))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
