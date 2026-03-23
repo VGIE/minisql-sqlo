@@ -28,5 +28,10 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            Revoke other = (Revoke)obj;
+            return (PrivilegeName == other.PrivilegeName && TableName == other.TableName && ProfileName == other.ProfileName);
+        }
     }
 }

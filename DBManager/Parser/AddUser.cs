@@ -30,5 +30,10 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            AddUser other = (AddUser)obj;
+            return (Username == other.Username && Password == other.Password && ProfileName == other.ProfileName);
+        }
     }
 }

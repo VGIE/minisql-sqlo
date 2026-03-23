@@ -1,4 +1,5 @@
 using DbManager.Parser;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
-            const string insertPattern = null;
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*((?:'[^']*'|""[^""]*""|[\w.-]+)(?:\s*,\s*(?:'[^']*'|""[^""]*""|[\w.-]+))*)\s*\)";
             
             const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
@@ -27,17 +28,17 @@ namespace DbManager
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)'";
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = null;
+            const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)";
             
-            const string dropSecurityProfilePattern = null;
+            const string dropSecurityProfilePattern = @"DROP\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)";
             
-            const string grantPattern = null;
+            const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([a-zA-Z]+)";
             
-            const string revokePattern = null;
+            const string revokePattern = @"REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([a-zA-Z]+)";
             
-            const string addUserPattern = null;
+            const string addUserPattern = @"ADD\s+USER\s+\(([a-zA-Z]+),(\w+),([a-zA-Z]+)\)";
             
-            const string deleteUserPattern = null;
+            const string deleteUserPattern = @"DELETE\s+USER\s+([a-zA-Z]+)";
 
 
             //TODO DEADLINE 2
@@ -45,6 +46,7 @@ namespace DbManager
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
+            
             //update case
             Match match;
             match = Regex.Match(miniSQLQuery, updateTablePattern);
@@ -123,6 +125,19 @@ namespace DbManager
                 return new DropTable(match.Groups[1].Value);
             }
 
+            match = Regex.Match(miniSQLQuery, insertPattern, RegexOptions.IgnoreCase);
+            if(match.Success)
+            {
+                List<string> valores1 = match.Groups[2].Value.Split(",").ToList();
+                List<string> valores2 = new List<string>();
+                foreach (string texto in valores1)
+                {
+                    string textoLimpio = texto.Replace("\'", "").Replace("\"", "").Trim();
+                    valores2.Add(textoLimpio);
+                }
+                return new Insert(match.Groups[1].Value, valores2);
+            }
+
 
             //delete case
             match = Regex.Match(miniSQLQuery, deletePattern);
@@ -130,10 +145,56 @@ namespace DbManager
             {
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
-            
+
+
+
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+
+            //GRANT case
+            match = Regex.Match(miniSQLQuery, grantPattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new Grant(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value);
+            }
+
+            //REVOKE case
+            match = Regex.Match(miniSQLQuery, revokePattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new Revoke(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value);
+            }
+
+            //ADD USER case
+
+            match = Regex.Match(miniSQLQuery, addUserPattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new AddUser(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value);
+            }
+
+            //DELETE USER case
+            match = Regex.Match(miniSQLQuery, deleteUserPattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new DeleteUser(match.Groups[1].Value);
+            }
+
+            //CREATE PROFILE case
+            match = Regex.Match(miniSQLQuery, createSecurityProfilePattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new CreateSecurityProfile(match.Groups[1].Value);
+            }
+
+            //DROP PROFILE case
+            match = Regex.Match(miniSQLQuery, dropSecurityProfilePattern);
+            if (match.Success && match.Length == miniSQLQuery.Length)
+            {
+                return new DropSecurityProfile(match.Groups[1].Value);
+            }
+
 
             return null;
            

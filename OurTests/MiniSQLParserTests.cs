@@ -35,6 +35,7 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("DELETE FROM  table WHERE age>='-32.6123'"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table  WHERE age>-32.6123"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table '"));
+            
 
             
 
@@ -72,7 +73,6 @@ namespace OurTests
 
             // Querys malas
             Assert.Null(MiniSQLParser.Parse("SELECT FROM tabla"));
-            Assert.Null(MiniSQLParser.Parse("INSERT INTO tabla VALUES (1)"));
             Assert.Null(MiniSQLParser.Parse("SELECT col1 col2 FROM tabla"));
         }
 
@@ -120,6 +120,94 @@ namespace OurTests
             Assert.Equal("1", result.Columns[0].Value);
             Assert.Equal("column2", result.Columns[1].ColumnName);
             Assert.Equal("2", result.Columns[1].Value);
+        }
+
+        [Fact]
+        public void GrantTests()
+        {
+            Assert.Equal(new Grant("INSERT", "TestTable", "User"),MiniSQLParser.Parse("GRANT INSERT ON TestTable TO User"));
+            Assert.Equal(new Grant("DELETE", "Table", "Admin"), MiniSQLParser.Parse("GRANT DELETE ON Table TO Admin"));
+            Assert.Equal(new Grant("SELECT", "Test", "UserTest"), MiniSQLParser.Parse("GRANT SELECT ON Test TO UserTest"));
+            Assert.Equal(new Grant("UPDATE", "TestTa", "User"), MiniSQLParser.Parse("GRANT UPDATE ON TestTa TO User"));
+            Assert.Null(MiniSQLParser.Parse("GRANT insert ON T TO User"));
+            Assert.Null(MiniSQLParser.Parse("GRANT SELECT ON Test TO UserTest57"));
+            Assert.Null(MiniSQLParser.Parse("GRANT DELETE on Table TO Pedro"));
+            Assert.Null(MiniSQLParser.Parse("GRANT DROP ON TO Pablo"));
+        }
+
+        [Fact]
+        public void RevokeTests()
+        {
+            Assert.Equal(new Revoke("INSERT", "TestTable", "User"), MiniSQLParser.Parse("REVOKE INSERT ON TestTable TO User"));
+            Assert.Equal(new Revoke("DELETE", "Table", "Admin"), MiniSQLParser.Parse("REVOKE DELETE ON Table TO Admin"));
+            Assert.Equal(new Revoke("SELECT", "Test", "UserTest"), MiniSQLParser.Parse("REVOKE SELECT ON Test TO UserTest"));
+            Assert.Equal(new Revoke("UPDATE", "TestTa", "User"), MiniSQLParser.Parse("REVOKE    UPDATE ON TestTa TO User"));
+            Assert.Null(MiniSQLParser.Parse("REVOKE insert ON T TO User"));
+            Assert.Null(MiniSQLParser.Parse("REVOKE SELECT ON Test TO UserTest57"));
+            Assert.Null(MiniSQLParser.Parse("REVOKE DROP ON TO Pablo"));
+        }
+
+        [Fact]
+        public void AddUserTests()
+        {
+            Assert.Equal(new AddUser("User", "Password", "Usuario"), MiniSQLParser.Parse("ADD USER (User,Password,Usuario)"));
+            Assert.Equal(new AddUser("Pablo", "Contrasena", "Admin"), MiniSQLParser.Parse("ADD      USER (Pablo,Contrasena,Admin)"));
+            Assert.Null(MiniSQLParser.Parse("ADD USER (Pablo123,password,mod)"));
+            Assert.Null(MiniSQLParser.Parse("ADD USER (Pablo,password)"));
+            Assert.Null(MiniSQLParser.Parse("ADD USER (Pablo,password,admin123)"));
+        }
+
+        [Fact]
+        public void DeleteUserTests()
+        {
+            Assert.Equal(new DeleteUser("Pablo"), MiniSQLParser.Parse("DELETE USER Pablo"));
+            Assert.Equal(new DeleteUser("Pablo"), MiniSQLParser.Parse("DELETE USER  Pablo"));
+            Assert.Null(MiniSQLParser.Parse("DELETE USER Pablo123"));
+            Assert.Null(MiniSQLParser.Parse("DELETE user Pablo123"));
+        }
+
+        [Fact]
+        public void CreateSecurityProfileTests()
+        {
+            Assert.Equal(new CreateSecurityProfile("Moderador"), MiniSQLParser.Parse("CREATE SECURITY PROFILE Moderador"));
+            Assert.Equal(new CreateSecurityProfile("Mod"), MiniSQLParser.Parse("CREATE   SECURITY       PROFILE    Mod"));
+            Assert.Null(MiniSQLParser.Parse("CREATE SECURITY PROFILE Admin1"));
+            Assert.Null(MiniSQLParser.Parse("CREATE security PROFILE Admin"));
+        }
+
+        [Fact]
+        public void DropSecurityProfileTests()
+        {
+            Assert.Equal(new DropSecurityProfile("Moderador"), MiniSQLParser.Parse("DROP SECURITY PROFILE Moderador"));
+            Assert.Equal(new DropSecurityProfile("Mod"), MiniSQLParser.Parse("DROP   SECURITY       PROFILE    Mod"));
+            Assert.Null(MiniSQLParser.Parse("DROP SECURITY PROFILE Admin1"));
+            Assert.Null(MiniSQLParser.Parse("DROP security PROFILE Admin"));
+            
+            
+            
+        }
+
+        [Fact]
+        public void InsertTests()
+        {
+            List<string> valores = new List<string>{"valor1", "valor2"};
+            List<string> valores2 = new List<string>{"valor3", "valor4"};
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+            columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "columna1"));
+            columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "columna2"));
+            Table table = new Table("tabla", columnas);
+            Table table2 = new Table("alumnos", columnas);
+
+            Insert resultado = (Insert)MiniSQLParser.Parse("INSERT INTO tabla VALUES (valor1, valor2)");
+            Insert resultado2 = (Insert)MiniSQLParser.Parse("INSERT  INTO   tabla   VALUES  (  valor1  ,  valor2   )");
+            Insert resultado3 = (Insert)MiniSQLParser.Parse("INSERT INTO alumnos VALUES ('valor3', 'valor4')");
+
+            Assert.Equal("tabla", resultado.Table);
+            Assert.Equal(valores, resultado.Values);
+            Assert.Equal("tabla", resultado2.Table);
+            Assert.Equal(valores, resultado2.Values);
+            Assert.Equal("alumnos", resultado3.Table);
+            Assert.Equal(valores2, resultado3.Values);
         }
 
     }

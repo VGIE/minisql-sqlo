@@ -24,5 +24,11 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            DeleteUser other = (DeleteUser)obj;
+            return (Username == other.Username);
+        }
+
     }
 }
