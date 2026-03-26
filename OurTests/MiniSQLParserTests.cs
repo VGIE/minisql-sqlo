@@ -106,7 +106,7 @@ namespace OurTests
         [Fact]
         public void UpdateTests()
         {
-            Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "1"), new SetValue("column2", "2") }, new Condition("columna", "=", "valor")),MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'"));
+            Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "1"), new SetValue("column2", "2") }, new Condition("columna", "=", "valor")), MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'"));
             Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "Hola"), new SetValue("column2", "2.5") }, new Condition("columna", ">", "3.4")), MiniSQLParser.Parse("UPDATE    tabla    SET    column1='Hola',column2='2.5'    WHERE     columna>'3.4'"));
         }
 

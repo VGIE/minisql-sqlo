@@ -1,4 +1,5 @@
-﻿using DbManager;
+﻿
+using DbManager;
 using DbManager.Parser;
 using Xunit;
 namespace OurTests
@@ -95,6 +96,14 @@ namespace OurTests
             Assert.NotNull(Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("INSERT INTO    table1 VALUES('val5 val5','val6 val6 val6')"));
             
+        }
+        [Fact]
+        public void UpdateTableTest() 
+        {
+            Assert.Equal(Constants.UpdateSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("UPDATE TestTable SET Height='1.56',Age='52' WHERE Name='Pepe'"));
+            Assert.NotEqual("UpdateSuccess", Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor"));
         }
     }
 }
