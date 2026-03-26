@@ -46,6 +46,7 @@ namespace OurTests.SecurityTest
             u2.EncryptedPassword = "password";
             p.Users.Add(u2);
 
+
             Assert.True(manager.IsUserAdmin());
         }
 
@@ -158,6 +159,18 @@ namespace OurTests.SecurityTest
             Assert.True(manager.IsGrantedPrivilege("Admin", "t", Privilege.Select));
             Assert.False(manager.IsGrantedPrivilege("Admin", null, Privilege.Select));
             Assert.False(manager.IsGrantedPrivilege("Admin", "t", Privilege.Delete));
+
+            User user2 = new User("Nodmin", "abcd");
+            Profile p2 = new Profile();
+            p2.Name = "p2";
+            p2.Users.Add(user2);
+            p2.GrantPrivilege("t",Privilege.Select);
+            Manager m = new Manager("Nodmin");
+            m.Profiles.Add(p2);
+
+            Assert.True(m.IsGrantedPrivilege("Nodmin", "t", Privilege.Select));
+            Assert.False(m.IsGrantedPrivilege("Nodmin", null, Privilege.Select));
+            
         }
 
         [Fact]
