@@ -25,5 +25,10 @@ namespace DbManager
             
         }
 
+        public override bool Equals(object obj)
+        {
+            CreateSecurityProfile other = (CreateSecurityProfile)obj;
+            return (ProfileName == other.ProfileName);
+        }
     }
 }

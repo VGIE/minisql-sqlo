@@ -1,5 +1,6 @@
 using DbManager.Parser;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DbManager
 {
@@ -26,6 +27,16 @@ namespace DbManager
                 return Constants.UpdateSuccess;
             }
                 return database.LastErrorMessage;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Update other = (Update)obj;
+            if (Columns.SequenceEqual(other.Columns) && other.Table.Equals(Table) && other.Where.Equals(Where))
+            {
+                return true;
+            }
+            return false;
         }
 
        

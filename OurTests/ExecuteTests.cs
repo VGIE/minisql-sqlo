@@ -6,15 +6,23 @@ namespace OurTests
 {
     public class ExecuteTests
     {
-        /*
+        
         [Fact]
         public void DeleteTests()
         {
-            
-            
+            Assert.Equal(Constants.DeleteSuccess,Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Age='25'"));
+            Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable"));
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE      FROM    TestTable    WHERE Age<'25'"));
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Name='Maider'"));
+            Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("DELETE FROM TestTable1 WHERE Wage='-52.85'"));
         }
-        */
         
+
         [Fact]
         public void SelectTests()
         {
@@ -66,6 +74,20 @@ namespace OurTests
 
             string result = dropTable.Execute(database);
             Assert.Equal(Constants.TableDoesNotExistError, dropTable.Execute(database));
+        }
+        
+        [Fact]
+        public void InsertTest()
+        {
+            Database database = Database.CreateTestDatabase();
+            Insert insert = new Insert("TestTable", new List<string>() { "Igor", "21", "1.80" });
+            Assert.Equal(Constants.InsertSuccess, insert.Execute(database));
+
+            insert = new Insert("TablaMal", new List<string>() { "Igor", "21", "1.80" });
+            Assert.Equal(Constants.TableDoesNotExistError, insert.Execute(database));
+
+            insert = new Insert("TestTable", new List<string>() { "Igor", "21" });
+            Assert.Equal(Constants.ColumnCountsDontMatch, insert.Execute(database));
         }
         [Fact]
         public void UpdateTableTest() 
