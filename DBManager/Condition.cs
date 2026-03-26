@@ -71,5 +71,15 @@ namespace DbManager
             return false;
 
         }
+
+        public override bool Equals(object obj)
+        {
+            Condition other = (Condition)obj;
+            if (ColumnName.Equals(other.ColumnName) && Operator.Equals(other.Operator) && LiteralValue.Equals(LiteralValue))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
