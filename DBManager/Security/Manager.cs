@@ -21,14 +21,12 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            
             return false;
         }
 
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
-            
             return false;
             
         }
@@ -80,7 +78,16 @@ namespace DbManager.Security
         public Profile ProfileByUser(string username)
         {
             //TODO DEADLINE 5: Return the profile by user. If the user doesn't exist, return null
-            
+            foreach (Profile p in Profiles)
+            {
+                foreach (User u in p.Users)
+                {
+                    if (u.Username.Equals(username))
+                    {
+                        return p;
+                    }
+                }
+            }
             return null;
             
         }
@@ -88,7 +95,14 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            
+            foreach (Profile p in Profiles)
+            {
+
+                if (p.Name.Equals(profileName))
+                {
+                    Profiles.Remove(p);
+                }
+            }
             return false;
         }
 
