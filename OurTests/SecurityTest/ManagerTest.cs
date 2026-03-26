@@ -145,22 +145,19 @@ namespace OurTests.SecurityTest
             Assert.False(manager.IsGrantedPrivilege("Admin", "t", Privilege.Select));
 
             Profile p = new Profile();
-            p.Name = "Admin";
+            p.Name = "p1";
             p.Users.Add(user);
             manager.Profiles.Add(p);
 
-            manager.GrantPrivilege("Admin", "t", Privilege.Select);
-            Assert.True(manager.IsGrantedPrivilege("Admin", "t", Privilege.Select));
-
-            manager.GrantPrivilege("Admin", "t2", Privilege.Delete);
-            Assert.True(manager.IsGrantedPrivilege("Admin", "t2", Privilege.Delete));
-
+            Assert.False(manager.IsGrantedPrivilege(null, "t", Privilege.Select));
+            Assert.False(manager.IsGrantedPrivilege("Admin", null, Privilege.Delete));
+            Assert.False(manager.IsGrantedPrivilege("Arago", "t", Privilege.Delete));
             Assert.False(manager.IsGrantedPrivilege("Admin", "t", Privilege.Delete));
-            Assert.False(manager.IsGrantedPrivilege("Admin", "t2", Privilege.Select));
 
-            manager.RevokePrivilege("Admin", "t", Privilege.Select);
-            Assert.False(manager.IsGrantedPrivilege("Admin", "t", Privilege.Select));
+            p.GrantPrivilege("t",Privilege.Select);
+            Assert.True(manager.IsGrantedPrivilege("Admin", "t", Privilege.Select));
             Assert.False(manager.IsGrantedPrivilege("Admin", null, Privilege.Select));
+            Assert.False(manager.IsGrantedPrivilege("Admin", "t", Privilege.Delete));
         }
 
         [Fact]

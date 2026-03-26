@@ -69,13 +69,12 @@ namespace DbManager.Security
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
-            if (ProfileByName(username) != null)
+            if (IsUserAdmin()) { return true; }
+            if (username == null) { return false; }
+            if (ProfileByUser(username) != null)
             {
                 Profile p = ProfileByUser(username);
-                if (p == null)
-                {
-                    return false;
-                }
+
                 //Preguntar a borja si la tabla puede ser null
                 if (table == null)
                 {
