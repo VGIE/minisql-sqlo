@@ -1,4 +1,5 @@
-﻿using DbManager;
+﻿
+using DbManager;
 using DbManager.Parser;
 using Xunit;
 namespace OurTests
@@ -87,6 +88,14 @@ namespace OurTests
 
             insert = new Insert("TestTable", new List<string>() { "Igor", "21" });
             Assert.Equal(Constants.ColumnCountsDontMatch, insert.Execute(database));
+        }
+        [Fact]
+        public void UpdateTableTest() 
+        {
+            Assert.Equal(Constants.UpdateSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("UPDATE TestTable SET Height='1.56',Age='52' WHERE Name='Pepe'"));
+            Assert.NotEqual("UpdateSuccess", Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor"));
         }
     }
 }
