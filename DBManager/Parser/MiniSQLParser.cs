@@ -14,7 +14,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(\s*((?:'[^']*'|""[^""]*""|[\w.-]+)(?:\s*,\s*(?:'[^']*'|""[^""]*""|[\w.-]+))*)\s*\)";
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\('(-?\d+|-?\d+\.\d+|(?:\w+(?:\s+\w+)*))'(?:,'(-?\d+|-?\d+\.\d+|\w+(\s+\w+)*)')*\)";
             
             const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
@@ -25,7 +25,7 @@ namespace DbManager
             string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+='[\w]+'(?:,\s*[\w]+='[\w]+')*)\s+WHERE\s+(\w+)([<>=])'(\w+)'";
 
 
-            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|\w+)'";
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|(?:\w+(?:\s+\w+)*))'";
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)";
@@ -125,15 +125,14 @@ namespace DbManager
                 return new DropTable(match.Groups[1].Value);
             }
 
-            match = Regex.Match(miniSQLQuery, insertPattern, RegexOptions.IgnoreCase);
-            if(match.Success)
+            match = Regex.Match(miniSQLQuery, insertPattern);
+            if(match.Success && match.Length == miniSQLQuery.Length)
             {
-                List<string> valores1 = match.Groups[2].Value.Split(",").ToList();
                 List<string> valores2 = new List<string>();
-                foreach (string texto in valores1)
+                for (int i=2;i<match.Groups.Count;i++)
                 {
-                    string textoLimpio = texto.Replace("\'", "").Replace("\"", "").Trim();
-                    valores2.Add(textoLimpio);
+
+                    valores2.Add(match.Groups[i].Value);
                 }
                 return new Insert(match.Groups[1].Value, valores2);
             }
