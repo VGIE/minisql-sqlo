@@ -285,7 +285,7 @@ namespace DbManager
             catch (Exception ex)
             {
 
-                Console.WriteLine(ex.ToString());
+                
                 return null;
             }
             return database;
