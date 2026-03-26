@@ -14,7 +14,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"SELECT\s+([\w]+(?:,[\w]+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)\s*(<|>|=)\s*'(-?\d+(?:\.\d+)?|[a-zA-Z]+)')?";
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\('(-?\d+|-?\d+\.\d+|(?:\w+(?:\s+\w+)*))'(?:,'(-?\d+|-?\d+\.\d+|\w+(\s+\w+)*)')*\)";
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s*\(('(?:-?\d+|-?\d+\.\d+|\w+(?:\s+\w+)*)'(?:,'(?:-?\d+|-?\d+\.\d+|\w+(?:\s+\w+)*)')*)\)";
             
             const string dropTablePattern = @"DROP\s+TABLE\s+([\w+]+)";
             
@@ -128,13 +128,15 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, insertPattern);
             if(match.Success && match.Length == miniSQLQuery.Length)
             {
-                List<string> valores2 = new List<string>();
-                for (int i=2;i<match.Groups.Count;i++)
+                string valueBlock = match.Groups[2].Value;
+                List<string> rawValues = CommaSeparatedNames(valueBlock);
+                List<string> cleanValues = new List<string>();
+                foreach (String s in rawValues)
                 {
-
-                    valores2.Add(match.Groups[i].Value);
+                    cleanValues.Add(s.Trim('\''));
                 }
-                return new Insert(match.Groups[1].Value, valores2);
+
+                return new Insert(match.Groups[1].Value, cleanValues);
             }
 
 
