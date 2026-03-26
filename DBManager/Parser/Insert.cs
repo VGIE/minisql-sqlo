@@ -1,3 +1,4 @@
+using DbManager.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,32 @@ namespace DbManager
                 return Constants.InsertSuccess;
             }
             return database.LastErrorMessage;
+        }
+        public override bool Equals(Object obj)
+        {
+            Insert other = (Insert)obj;
+            //First we compare extreme cases where 'WHERE' clause is null in one side (we also discard different table names)
+            if (Table != other.Table || (Values != null && other.Values == null || Values == null && other.Values != null))
+            {
+                return false;
+            }
+            //Then, we compare both null case -> true
+            else if (other.Values == null && Values == null)
+            {
+                return true;
+            }
+            //Last, with both null cases ruled out, we can compare Where clauses one by one
+            else
+            {
+                for(int i = 0; i<Values.Count;i++)
+                {
+                    if (Values[i] != other.Values[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
     }
 }

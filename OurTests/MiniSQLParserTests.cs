@@ -27,7 +27,7 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table one"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table"));
             Assert.Null(MiniSQLParser.Parse("Delete From table"));
-            Assert.Null(MiniSQLParser.Parse("DELETE FROM table1 WHERE name=Jacinto"));
+            Assert.Null(MiniSQLParser.Parse(" DELETE FROM table1 WHERE name='Jacinto' "));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age ='32.6123'"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age>= '-32.6123'"));
             Assert.Null(MiniSQLParser.Parse("DELETE FROM table WHERE age>'-32.6123' "));
@@ -178,24 +178,28 @@ namespace OurTests
         [Fact]
         public void InsertTests()
         {
-            List<string> valores = new List<string>{"valor1", "valor2"};
-            List<string> valores2 = new List<string>{"valor3", "valor4"};
+            List<string> valores = new List<string>{"val1", "val2"};
+            List<string> valores2 = new List<string>{"val3", "val4"};
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-            columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "columna1"));
-            columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "columna2"));
-            Table table = new Table("tabla", columnas);
-            Table table2 = new Table("alumnos", columnas);
+            columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "col1"));
+            columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "col2"));
+            Table table = new Table("table1", columnas);
+            Table table2 = new Table("table2", columnas);
 
-            Insert resultado = (Insert)MiniSQLParser.Parse("INSERT INTO tabla VALUES (valor1, valor2)");
-            Insert resultado2 = (Insert)MiniSQLParser.Parse("INSERT  INTO   tabla   VALUES  (  valor1  ,  valor2   )");
-            Insert resultado3 = (Insert)MiniSQLParser.Parse("INSERT INTO alumnos VALUES ('valor3', 'valor4')");
+            Insert insertTest1 = new Insert("table1",valores);
+            Insert insertTest2 = new Insert("table1", valores);
+            Insert insertTest3 = new Insert("table2", valores2);
 
-            Assert.Equal("tabla", resultado.Table);
-            Assert.Equal(valores, resultado.Values);
-            Assert.Equal("tabla", resultado2.Table);
-            Assert.Equal(valores, resultado2.Values);
-            Assert.Equal("alumnos", resultado3.Table);
-            Assert.Equal(valores2, resultado3.Values);
+            Assert.Equal(insertTest1, MiniSQLParser.Parse("INSERT INTO table1 VALUES ('val1','val2')"));
+            Assert.Equal(insertTest2, MiniSQLParser.Parse("INSERT  INTO   table1   VALUES('val1','val2')"));
+            Assert.Equal(insertTest3, MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3','val4')"));
+            Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3')"));
+            Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3','a','-53.543')"));
+            Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('null')"));
+
+
+            //Regex Comprobation
+            Assert.Null(MiniSQLParser.Parse("INSERT INTO table1 VALUES (val1, val2)"));
         }
 
     }
