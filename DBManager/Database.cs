@@ -233,8 +233,6 @@ namespace DbManager
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
-                    if (writer != null) {  writer.Close(); }
                     return false;
                 }
             }
