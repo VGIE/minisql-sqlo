@@ -22,7 +22,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)\)";
 
-            const string updateTablePattern = @"UPDATE\s*([\w]+)\s+SET\s+([\w]+='(?:-?\d+(?:\.?\d+)?|[a-zA-Z]+(?:\s+[a-zA-Z]+)*)'(?:,(?:[\w]+)='(?:-?\d+(?:\.?\d+)?|[a-zA-Z]+)')*)\s+WHERE\s+([\w]+)([=<>])'(-?\d+(?:\.?\d+)?|[a-zA-Z]+(?:\s+[a-zA-Z]+)*)'";
+            string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+([\w]+='[\w.-]+'(?:,\s*[\w]+='[\w.-]+')*)\s+WHERE\s+(\w+)([<>=])'([\w.-]+)'";
 
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(=|<|>)'(-?\d+|-?\d+\.\d+|(?:\w+(?:\s+\w+)*))'";
