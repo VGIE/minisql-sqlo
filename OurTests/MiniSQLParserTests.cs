@@ -106,14 +106,36 @@ namespace OurTests
         [Fact]
         public void UpdateTests()
         {
-            Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "1"), new SetValue("column2", "2") }, new Condition("columna", "=", "valor")),MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'"));
-            Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "Hola"), new SetValue("column2", "2.5") }, new Condition("columna", ">", "3.4")), MiniSQLParser.Parse("UPDATE    tabla    SET    column1='Hola',column2='2.5'    WHERE     columna>'3.4'"));
+            Update result = (Update)MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'");
+
+            Assert.Equal("tabla", result.Table);
 
             Assert.Equal(2, result.Columns.Count);
             Assert.Equal("column1", result.Columns[0].ColumnName);
             Assert.Equal("1", result.Columns[0].Value);
             Assert.Equal("column2", result.Columns[1].ColumnName);
             Assert.Equal("2", result.Columns[1].Value);
+
+            Assert.NotNull(result.Where);
+            Assert.Equal("columna", result.Where.ColumnName);
+            Assert.Equal("=", result.Where.Operator);
+            Assert.Equal("valor", result.Where.LiteralValue);
+
+            // update has /s 
+            Update result2 = (Update)MiniSQLParser.Parse("UPDATE    tabla    SET    column1='Hola',column2='2.5'    WHERE     columna>'3.4'");
+
+            Assert.Equal("tabla", result2.Table);
+
+            Assert.Equal(2, result2.Columns.Count);
+            Assert.Equal("column1", result2.Columns[0].ColumnName);
+            Assert.Equal("Hola", result2.Columns[0].Value);
+            Assert.Equal("column2", result2.Columns[1].ColumnName);
+            Assert.Equal("2.5", result2.Columns[1].Value);
+
+            Assert.NotNull(result2.Where);
+            Assert.Equal("columna", result2.Where.ColumnName);
+            Assert.Equal(">", result2.Where.Operator);
+            Assert.Equal("3.4", result2.Where.LiteralValue);
         }
 
         [Fact]
