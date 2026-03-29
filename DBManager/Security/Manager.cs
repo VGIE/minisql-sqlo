@@ -198,13 +198,10 @@ namespace DbManager.Security
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error al cargar la información de seguridad: " + ex.Message);   
+                    throw;   
                 }
             }
-            else
-            {
-                Console.WriteLine("No se encontró el archivo de seguridad para la base de datos: " + databaseName);
-            }
+            
             return manager;
         }
 
@@ -233,7 +230,7 @@ namespace DbManager.Security
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error al guardar la información de seguridad: " + ex.Message);
+                throw;        
             }
         }
     }
