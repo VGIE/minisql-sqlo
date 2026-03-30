@@ -109,15 +109,99 @@ namespace DbManager.Security
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
+
+            Manager manager = new Manager(username);
+            if (!Directory.Exists(databaseName))
+            {
+                return null;
+            }
+            String[] files = Directory.GetFiles(databaseName, "*-profile.txt");
+            foreach(String file in files)
+            {
+                
+                StreamReader reader = new StreamReader(file);
+                String[] fullFileName = Path.GetFileNameWithoutExtension(file).Split("-");
+                String profileName = fullFileName[0];
+                Profile p = new Profile();
+                p.Name = profileName;
+                String line;
+                List<Profile> profiles = new List<Profile>();
+                line = reader.ReadLine();
+                if (line.Equals("{TABLE} || {PRIVILEGES}"))
+                {
+                    break;
+                }
+                while ((line = reader.ReadLine())!="{USERNAME} || {PASSWORD}")
+                {
+                    String[] parts = line.Split(":");
+                    List<Privilege> privilegesList = new List<Privilege>();
+                    String[] privileges = parts[1].Split(" ");
+                    foreach(String s in privileges)
+                    {
+                        Privilege privilegeparse;
+                        switch (s)
+                        {
+                            case "Delete":
+                                 privilegeparse = Privilege.Delete;
+                                break;
+                            case "Insert":
+                                privilegeparse = Privilege.Insert;
+                                break;
+                            case "Update":
+                                privilegeparse = Privilege.Update;
+                                break;
+                            case "Select":
+                                privilegeparse = Privilege.Select;
+                                break;
+                            default:
+                                privilegeparse = Privilege.Select;
+                                break;
+                        }
+                        privilegesList.Add(privilegeparse);
+                    }
+                    p.PrivilegesOn.Add(parts[0], privilegesList);
+                }
+                while (reader.ReadLine() != null)
+                {
+                    //ME SALTO UN USUARIO ENTRE EL FINAL DEL ANTERIOR WHILE Y EL COMIENZO DE ESTE
+                }
+            }
             
-            return null;
             
         }
 
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            
+            if (Directory.Exists(databaseName))
+            {
+                Directory.CreateDirectory(databaseName);
+            }
+            foreach(Profile p in Profiles)
+            {
+                TextWriter writer = null;
+                try
+                {
+                    writer = File.CreateText(databaseName + "\\" + p.Name + "-profile.txt");
+                    writer.WriteLine("{TABLE} || {PRIVILEGES}");
+                    foreach (var privilege in p.PrivilegesOn)
+                    {
+                        foreach(Privilege pr in privilege.Value)
+                        {
+                            writer.WriteLine(privilege.Key+":");
+                            writer.Write(pr+" ");
+                        }
+                        
+                    }
+                    writer.WriteLine("{USERNAME} || {PASSWORD}");
+                    foreach (User u in p.Users)
+                    {
+                        writer.WriteLine(u.Username + " || " + u.EncryptedPassword);
+                    }
+                    writer.Close();
+                }
+                catch (Exception ex) { }
+            }
         }
     }
 }

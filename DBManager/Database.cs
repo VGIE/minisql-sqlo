@@ -218,7 +218,7 @@ namespace DbManager
                 TextWriter writer=null;
                 try
                 {
-                     writer = File.CreateText(databaseName + "\\" + table.Name + ".txt");
+                     writer = File.CreateText(databaseName + "\\" + table.Name + "-table.txt");
                     for (int i = 0; i < table.NumColumns(); i++)
                     {
                         writer.WriteLine(table.GetColumn(i).AsText());
@@ -253,7 +253,7 @@ namespace DbManager
                 if (!exists) { return null;}
                 if (exists)
                 {
-                    String[] files= Directory.GetFiles(databaseName,"*.txt");
+                    String[] files= Directory.GetFiles(databaseName,"*-table.txt");
                     foreach (String file in files)
                     {
                         TextReader reader = File.OpenText(file);
