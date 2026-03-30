@@ -199,13 +199,6 @@ namespace OurTests.SecurityTest
         }
 
         [Fact]
-
-        public void RemoveProfileTest()
-        {
-
-        }
-
-        [Fact]
         
         public void testManagerSaveLoad()
         {
@@ -253,6 +246,16 @@ namespace OurTests.SecurityTest
             manager.Save(dbName);
 
             Manager loadedManager= Manager.Load(dbName, "Admin");
+            Profile p= new Profile();
+
+            p.Users.Add(new User("wiwi", "wiwi123"));
+            Assert.NotNull(loadedManager);
+            Assert.True(loadedManager.IsPasswordCorrect("wiwi", "wiwi123"));
+            Assert.NotNull(loadedManager.ProfileByUser("wiwi"));
+            Assert.Equal(p, loadedManager.ProfileByUser("wiwi"));
+            Assert.NotNull(loadedManager.ProfileByUser("wiwi").PrivilegesOn);
+            Assert.True(loadedManager.ProfileByUser("wiwi").PrivilegesOn.ContainsKey("TablaY"));
+
 
             Assert.True(loadedManager.IsGrantedPrivilege("arara", "TablaY", Privilege.Select));
             Assert.True(loadedManager.IsGrantedPrivilege("arara", "TablaY", Privilege.Insert));

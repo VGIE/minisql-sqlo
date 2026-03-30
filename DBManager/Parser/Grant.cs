@@ -50,7 +50,7 @@ namespace DbManager
                 return Constants.ProfileAlreadyHasPrivilege;
             }
 
-            database.SecurityManager.GrantPrivilege(PrivilegeName, TableName,grantprivilege);
+            database.SecurityManager.GrantPrivilege(ProfileName, TableName,grantprivilege);
 
             
             return Constants.GrantPrivilegeSuccess;

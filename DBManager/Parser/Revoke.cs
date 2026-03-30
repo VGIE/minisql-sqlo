@@ -41,7 +41,7 @@ namespace DbManager
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
             
-            database.SecurityManager.RevokePrivilege(PrivilegeName, TableName, revokePrivilege);
+            database.SecurityManager.RevokePrivilege(ProfileName, TableName, revokePrivilege);
 
             
             return Constants.RevokePrivilegeSuccess; 
