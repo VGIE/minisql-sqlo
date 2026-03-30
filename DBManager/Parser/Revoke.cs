@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 using DbManager.Parser;
 using DbManager.Security;
@@ -30,25 +31,20 @@ namespace DbManager
 
             if (profile==null)
             {
-                return "Error: Security profile does not exist";
+                return Constants.SecurityProfileDoesNotExistError;
             }
     
             Privilege revokePrivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
 
             if (!profile.IsGrantedPrivilege(TableName, revokePrivilege))
             {
-                return "Error: The security profile of the user does not have the required privilege to perform the operation";
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
             
             database.SecurityManager.RevokePrivilege(PrivilegeName, TableName, revokePrivilege);
 
-            if(database.LastErrorMessage!=null)
-            {
-                return database.LastErrorMessage;
-
-            }
             
-            return "Security privilege revoked"; 
+            return Constants.RevokePrivilegeSuccess; 
         }
         
     }

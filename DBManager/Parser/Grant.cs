@@ -30,34 +30,30 @@ namespace DbManager
 
             if (!database.SecurityManager.IsUserAdmin())
             {
-                return "Error: The security profile of the user does not have the required privilege to perform the operation";
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
 
             if (profile==null)
             {
-                return "Error: Security profile does not exist";
+                return Constants.SecurityProfileDoesNotExistError;
             }
 
             Privilege grantprivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
 
             if (grantprivilege==null)
             {
-                return "Error: Privilege does not exist";
+                return Constants.PrivilegeDoesNotExistError;
             }
 
             if (profile.IsGrantedPrivilege(TableName, grantprivilege))
             {
-                return "Error: Profile already has privilege";
+                return Constants.ProfileAlreadyHasPrivilege;
             }
 
             database.SecurityManager.GrantPrivilege(PrivilegeName, TableName,grantprivilege);
 
-            if(database.LastErrorMessage!=null)
-            {
-                return database.LastErrorMessage;
-            }
             
-            return "Security privilege granted";
+            return Constants.GrantPrivilegeSuccess;
             
         }
 
