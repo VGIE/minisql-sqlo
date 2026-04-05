@@ -266,7 +266,7 @@ namespace OurTests.SecurityTest
             Assert.Equal(0, load.Profiles.Count);
         }
         [Fact]
-        public void CheckPermissionsNotBeingAdminForRegularQueries()
+        public void testCheckPermissionsNotBeingAdminForRegularQueries()
         {
             string dbName = "SecurityManualTest";
             Database db = Database.CreateTestDatabase(); 
@@ -281,8 +281,8 @@ namespace OurTests.SecurityTest
             Assert.NotNull(dbAra.SecurityManager);
             Assert.NotNull(dbAra.TableByName(Table.TestTableName)); 
             
-            string query = $"SELECT * FROM {Table.TestTableName}"; 
-    
+            string query = "DROP SECURITY PROFILE GuestRole"; 
+
             string result = dbAra.ExecuteMiniSQLQuery(query);
 
             Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, result);
@@ -290,5 +290,58 @@ namespace OurTests.SecurityTest
             File.Delete(dbName);
             File.Delete(dbName + "_Security.json");
         }
+
+        [Fact]
+        public void testCheckPermissionsNotBeingAdmin2()
+        {
+
+        string dbName = "SecurityTestDB";
+        Database db = new Database(Database.AdminUsername, Database.AdminPassword);
+
+        Profile profile = new Profile { Name = "userProfile" };
+        User user = new User("user", "1234");
+        profile.Users.Add(user);
+
+        db.SecurityManager.Profiles.Add(profile);
+
+        db.Save(dbName);
+
+        Database dbUser = Database.Load(dbName, "user", "1234");
+    
+        db.SecurityManager.GrantPrivilege("userProfile", "Table", Privilege.Update);
+
+        bool privilege = dbUser.SecurityManager.IsGrantedPrivilege("user", "Table", Privilege.Update);
+        Assert.False(privilege);
+        }
+
+        [Fact]
+        public void testCheckPermissionsnotBeingAdminGrantRevoke()
+        {
+            string dbName= "SecurityGrantRevokeTest";  
+            Database db= new Database("admin", "admin123");
+
+            Profile userProfile= new Profile { Name = "UserRole" };
+            userProfile.Users.Add(new User("lupe", "lupe123"));
+            db.SecurityManager.Profiles.Add(userProfile);
+
+            Profile p= new Profile { Name = "TestRole" };
+            db.SecurityManager.Profiles.Add(p);
+
+            db.Save(dbName);
+
+            Database dbLupe = Database.Load(dbName, "lupe", "lupe123");
+
+            string queryGrant= "GRANT SELECT ON TestTable TO TestRole";
+            string resultGrant= dbLupe.ExecuteMiniSQLQuery(queryGrant);
+
+            Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, resultGrant);
+
+            string queryRevoke= "REVOKE SELECT ON TestTable TO TestRole";
+            string resultRevoke= dbLupe.ExecuteMiniSQLQuery(queryRevoke);
+
+            Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, resultRevoke);
+
+        }
+
     }
 }

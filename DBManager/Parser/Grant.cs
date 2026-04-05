@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using DbManager.Parser;
 using DbManager.Security;
@@ -26,22 +27,25 @@ namespace DbManager
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, PrivilegeDoesNotExistError, GrantPrivilegeSuccess, ProfileAlreadyHasPrivilege
 
-            Profile profile= database.SecurityManager.ProfileByName(ProfileName);
-
             if (!database.SecurityManager.IsUserAdmin())
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
-            }
+            }            
+            
+            Profile profile= database.SecurityManager.ProfileByName(ProfileName);
 
             if (profile==null)
             {
                 return Constants.SecurityProfileDoesNotExistError;
             }
 
-            Privilege grantprivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
+            Privilege grantprivilege; 
+            try{
 
-            if (grantprivilege==null)
-            {
+            grantprivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
+
+            }catch
+            { 
                 return Constants.PrivilegeDoesNotExistError;
             }
 

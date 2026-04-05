@@ -21,6 +21,7 @@ namespace DbManager.Parser
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //DeleteSuccess or the last error in the database
+
             database.DeleteWhere(Table, Where);
 
 
@@ -29,7 +30,7 @@ namespace DbManager.Parser
                 return database.LastErrorMessage;
             }
             
-            return "Tuple(s) deleted";
+            return Constants.DeleteSuccess;
             
         }
     }
