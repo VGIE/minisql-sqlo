@@ -343,5 +343,24 @@ namespace OurTests.SecurityTest
 
         }
 
+        [Fact]
+
+        public void testAdminGrantRevoke()
+        {
+            Manager manager = new Manager("admin");
+            Profile admin= new Profile { Name = Profile.AdminProfileName };
+            admin.Users.Add(new User("admin", "1234"));
+            manager.Profiles.Add(admin);
+
+            Profile p1 = new Profile { Name = "wi" };
+            p1.Users.Add(new User("wiwi", "123"));
+            manager.Profiles.Add(p1);
+            
+            manager.GrantPrivilege("wi", "Tabla1", Privilege.Select);
+            Assert.True(manager.IsGrantedPrivilege("wiwi", "Tabla1", Privilege.Select));
+
+            manager.RevokePrivilege("wi", "Tabla1", Privilege.Select);
+            Assert.False(manager.IsGrantedPrivilege("wiwi", "Tabla1", Privilege.Select));
+        }
     }
 }

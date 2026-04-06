@@ -40,7 +40,8 @@ namespace DbManager
             }
 
             Privilege grantprivilege; 
-            try{
+            try
+            {
 
             grantprivilege= PrivilegeUtils.FromPrivilegeName(PrivilegeName);
 
