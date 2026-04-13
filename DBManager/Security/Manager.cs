@@ -28,51 +28,51 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
             return false;
-            
+
         }
 
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            
+
         }
 
         public void RevokePrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            
+
         }
 
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
-            
+
             return false;
-            
+
         }
 
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
-            
+
         }
 
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
-            
+
             return null;
-            
+
         }
 
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-            
+
             return null;
-            
+
         }
 
         public Profile ProfileByUser(string username)
@@ -89,7 +89,7 @@ namespace DbManager.Security
                 }
             }
             return null;
-            
+
         }
 
         public bool RemoveProfile(string profileName)
@@ -106,101 +106,111 @@ namespace DbManager.Security
             return false;
         }
 
+
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
-
             Manager manager = new Manager(username);
             if (!Directory.Exists(databaseName))
             {
-                return null;
+                return manager;
             }
-            String[] files = Directory.GetFiles(databaseName, "*-profile.txt");
-            foreach(String file in files)
+            string[] files = Directory.GetFiles(databaseName, "*-profile.txt");
+            foreach (string file in files)
             {
-                
                 StreamReader reader = new StreamReader(file);
-                String[] fullFileName = Path.GetFileNameWithoutExtension(file).Split("-");
-                String profileName = fullFileName[0];
+
+                string profileName = Path.GetFileNameWithoutExtension(file).Replace("-profile", "");
                 Profile p = new Profile();
                 p.Name = profileName;
-                String line;
-                List<Profile> profiles = new List<Profile>();
-                line = reader.ReadLine();
-                if (line.Equals("{TABLE} || {PRIVILEGES}"))
+
+                string line = reader.ReadLine();
+
+                // Primera parte: Leer tablas y privilegios
+                while ((line = reader.ReadLine()) != null)
                 {
-                    break;
-                }
-                while ((line = reader.ReadLine())!="{USERNAME} || {PASSWORD}")
-                {
-                    String[] parts = line.Split(":");
-                    List<Privilege> privilegesList = new List<Privilege>();
-                    String[] privileges = parts[1].Split(" ");
-                    foreach(String s in privileges)
+                    if (line == "{USERNAME} || {PASSWORD}")
                     {
-                        Privilege privilegeparse;
-                        switch (s)
-                        {
-                            case "Delete":
-                                 privilegeparse = Privilege.Delete;
-                                break;
-                            case "Insert":
-                                privilegeparse = Privilege.Insert;
-                                break;
-                            case "Update":
-                                privilegeparse = Privilege.Update;
-                                break;
-                            case "Select":
-                                privilegeparse = Privilege.Select;
-                                break;
-                            default:
-                                privilegeparse = Privilege.Select;
-                                break;
-                        }
-                        privilegesList.Add(privilegeparse);
+                        break;
                     }
-                    p.PrivilegesOn.Add(parts[0], privilegesList);
+
+                    string[] parts = line.Split(':');
+                    if (parts.Length >= 2)
+                    {
+                        List<Privilege> privilegesList = new List<Privilege>();
+                        string[] privileges = parts[1].Trim().Split(' ');
+
+                        foreach (string s in privileges)
+                        {
+                            Privilege privilegeparse;
+                            switch (s)
+                            {
+                                case "Delete": privilegeparse = Privilege.Delete;
+                                   break;
+                                case "Insert": privilegeparse = Privilege.Insert;
+                                   break;
+                                case "Update": privilegeparse = Privilege.Update;
+                                   break;
+                                case "Select": privilegeparse = Privilege.Select;
+                                   break;
+                                default: privilegeparse = Privilege.Select;
+                                   break;
+                            }
+                            privilegesList.Add(privilegeparse);
+                        }
+                        p.PrivilegesOn.Add(parts[0], privilegesList);
+                    }
                 }
-                while (reader.ReadLine() != null)
+
+                // Segunda parte: Leer usuarios
+                while ((line = reader.ReadLine()) != null)
                 {
-                    //ME SALTO UN USUARIO ENTRE EL FINAL DEL ANTERIOR WHILE Y EL COMIENZO DE ESTE
+                    string[] userinfo = line.Split(" || ");
+                    User u = new User(userinfo[0], userinfo[1]);
+                    p.Users.Add(u);
                 }
+                manager.Profiles.Add(p);
+                reader.Close();
             }
-            
-            
+            return manager;
         }
+
+
+
 
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            if (Directory.Exists(databaseName))
+            if (!Directory.Exists(databaseName))
             {
                 Directory.CreateDirectory(databaseName);
             }
-            foreach(Profile p in Profiles)
+
+            foreach (Profile p in Profiles)
             {
-                TextWriter writer = null;
-                try
+                string filePath = databaseName + "\\" + p.Name + "-profile.txt";
+                StreamWriter writer = new StreamWriter(filePath);
+
+                writer.WriteLine("{TABLE} || {PRIVILEGES}");
+                foreach (var entry in p.PrivilegesOn)
                 {
-                    writer = File.CreateText(databaseName + "\\" + p.Name + "-profile.txt");
-                    writer.WriteLine("{TABLE} || {PRIVILEGES}");
-                    foreach (var privilege in p.PrivilegesOn)
+                    writer.Write(entry.Key + ":");
+                    for (int i = 0; i < entry.Value.Count; i++)
                     {
-                        foreach(Privilege pr in privilege.Value)
+                        writer.Write(entry.Value[i]);
+                        if (i < entry.Value.Count - 1)
                         {
-                            writer.WriteLine(privilege.Key+":");
-                            writer.Write(pr+" ");
+                            writer.Write(" ");
                         }
-                        
                     }
-                    writer.WriteLine("{USERNAME} || {PASSWORD}");
-                    foreach (User u in p.Users)
-                    {
-                        writer.WriteLine(u.Username + " || " + u.EncryptedPassword);
-                    }
-                    writer.Close();
+                    writer.WriteLine();
                 }
-                catch (Exception ex) { }
+                writer.WriteLine("{USERNAME} || {PASSWORD}");
+                foreach (User u in p.Users)
+                {
+                    writer.WriteLine(u.Username + " || " + u.EncryptedPassword);
+                }
+                writer.Close();
             }
         }
     }

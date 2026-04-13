@@ -4,10 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DbManager
 {
@@ -29,6 +25,7 @@ namespace DbManager
         {
             //DEADLINE 1.B: Initalize the member variables
             this.m_username = adminUsername;
+            SecurityManager = new Manager(adminUsername);
         }
 
         public bool AddTable(Table table)
@@ -231,11 +228,13 @@ namespace DbManager
                     writer.Close();
                  
                 }
+                
                 catch (Exception ex)
                 {
                     return false;
                 }
             }
+            SecurityManager.Save(databaseName);
             return true;
         }
 
@@ -247,6 +246,7 @@ namespace DbManager
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
             Boolean exists = false;
             Database database = new Database();
+            database.m_username = username;
             try
             {
             exists=Directory.Exists(databaseName);
@@ -257,7 +257,7 @@ namespace DbManager
                     foreach (String file in files)
                     {
                         TextReader reader = File.OpenText(file);
-                        String tableName = Path.GetFileNameWithoutExtension(file);
+                        String tableName = Path.GetFileNameWithoutExtension(file).Replace("-table","");
                         String Line;
                         List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
                         
@@ -280,12 +280,15 @@ namespace DbManager
                         }
                         reader.Close();
                     }
+                    database.SecurityManager = Manager.Load(databaseName, username);
+                    if (!database.SecurityManager.IsPasswordCorrect(username, password))
+                    {
+                        return null;
+                    }
                 }
             }
             catch (Exception ex)
             {
-
-                
                 return null;
             }
             return database;

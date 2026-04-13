@@ -185,7 +185,7 @@ public class DatabaseTests
         Database dbOld = CreateTestDatabase1();
         dbOld.Save("test");
 
-        Database dbNew = Database.Load("test", "", "");
+        Database dbNew = Database.Load("test", "User", "User");
 
         Assert.NotNull(dbNew);
 
