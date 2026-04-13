@@ -180,6 +180,7 @@ namespace OurTests
         {
             List<string> valores = new List<string>{"val1", "val2"};
             List<string> valores2 = new List<string>{"val3", "val4"};
+            List<string> valoresEspacios = new List<string> {"val5 val5", "val6 val6 val6", "val8" };
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
             columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "col1"));
             columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "col2"));
@@ -189,10 +190,13 @@ namespace OurTests
             Insert insertTest1 = new Insert("table1",valores);
             Insert insertTest2 = new Insert("table1", valores);
             Insert insertTest3 = new Insert("table2", valores2);
+            Insert insertTest4 = new Insert("table2", valoresEspacios);
 
             Assert.Equal(insertTest1, MiniSQLParser.Parse("INSERT INTO table1 VALUES ('val1','val2')"));
             Assert.Equal(insertTest2, MiniSQLParser.Parse("INSERT  INTO   table1   VALUES('val1','val2')"));
             Assert.Equal(insertTest3, MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3','val4')"));
+            Assert.Equal(insertTest4, MiniSQLParser.Parse("INSERT     INTO    table2     VALUES   ('val5 val5','val6 val6 val6','val8')"));
+
             Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3')"));
             Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3','a','-53.543')"));
             Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('null')"));

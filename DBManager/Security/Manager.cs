@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,15 +22,31 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
+            if(ProfileByUser(m_username).Name == Profile.AdminProfileName)
+            {
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
             
-            return false;
+            
         }
 
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
+
+            if (Encryption.Encrypt(password).Equals(UserByName(username).EncryptedPassword))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
             
-            return false;
             
         }
 
@@ -64,7 +81,16 @@ namespace DbManager.Security
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
-            
+            foreach (Profile p in Profiles)
+            {
+                foreach(User u in p.Users)
+                {
+                    if(u.Username == username)
+                    {
+                        return u;
+                    }
+                }
+            }
             return null;
             
         }
@@ -72,7 +98,13 @@ namespace DbManager.Security
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-            
+            foreach (Profile p in Profiles)
+            {
+                if (profileName == p.Name)
+                {
+                    return p;
+                }
+            }
             return null;
             
         }
@@ -80,9 +112,18 @@ namespace DbManager.Security
         public Profile ProfileByUser(string username)
         {
             //TODO DEADLINE 5: Return the profile by user. If the user doesn't exist, return null
-            
+            foreach (Profile p in Profiles)
+            {
+                foreach (User u in p.Users)
+                {
+                    if (u.Username.Equals(username))
+                    {
+                        return p;
+                    }
+                }
+            }
             return null;
-            
+
         }
 
         public bool RemoveProfile(string profileName)
