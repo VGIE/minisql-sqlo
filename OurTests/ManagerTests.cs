@@ -11,11 +11,11 @@ namespace OurTests
         {
             List<User> lista =
             [
-                new User("nombre", Encryption.Encrypt("contrasena")),
-                new User("Igor", Encryption.Encrypt("1234")),
-                new User("Eustakia", Encryption.Encrypt("admin")),
-                new User("Josefina", Encryption.Encrypt("password")),
-                new User("Joritz", Encryption.Encrypt("pasi")),
+                new User("nombre","contrasena"),
+                new User("Igor", "1234"),
+                new User("Eustakia", "admin"),
+                new User("Josefina", "password"),
+                new User("Joritz", "pasi"),
             ];
             return lista;
         }
@@ -23,11 +23,11 @@ namespace OurTests
         {
             List<User> lista =
             [
-                new User(Profile.AdminProfileName, Encryption.Encrypt("lobo")),
-                new User("Txitx", Encryption.Encrypt("rip")),
-                new User("Jere", Encryption.Encrypt("BDLover1")),
-                new User("Fabian", Encryption.Encrypt("qwerty")),
-                new User("Ainhoa", Encryption.Encrypt("BDLover1")),
+                new User(Profile.AdminProfileName, "lobo"),
+                new User("Txitx", "rip"),
+                new User("Jere", "BDLover1"),
+                new User("Fabian", "qwerty"),
+                new User("Ainhoa", "BDLover1"),
             ];
             return lista;
         }
@@ -56,5 +56,66 @@ namespace OurTests
             Assert.True(m.IsUserAdmin());
             Assert.False(m2.IsUserAdmin());
         }
+        [Fact]
+        public void IsPasswordCorrectTest()
+        {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
+            Profile pTest2 = new Profile
+            {
+                Name = "josefran",
+                Users = createUserTestList2()
+            };
+            Manager m = new Manager("Hector");
+            m.Profiles.Add(pTest1);
+            m.Profiles.Add(pTest2);
+
+            Assert.True(m.IsPasswordCorrect("Igor", "1234"));
+            Assert.True(m.IsPasswordCorrect("Fabian", "qwerty"));
+            Assert.False(m.IsPasswordCorrect("Ainhoa", "BDlover1")); //pwd is wrong on purpose
+        }
+        [Fact]
+        public void UserByNameTest()
+        {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
+            Profile pTest2 = new Profile
+            {
+                Name = "josefran",
+                Users = createUserTestList2()
+            };
+            Manager m = new Manager("Borja");
+            m.Profiles.Add(pTest1);
+            m.Profiles.Add(pTest2);
+
+            Assert.Equal("Fabian",m.UserByName("Fabian").Username);
+            Assert.Equal(Encryption.Encrypt("qwerty"), m.UserByName("Fabian").EncryptedPassword);
+
+            Assert.Equal(Profile.AdminProfileName, m.UserByName(Profile.AdminProfileName).Username);
+            Assert.Equal(Encryption.Encrypt("lobo"), m.UserByName(Profile.AdminProfileName).EncryptedPassword);
+
+            Assert.Equal("Joritz", m.UserByName("Joritz").Username);
+            Assert.Equal(Encryption.Encrypt("pasi"), m.UserByName("Joritz").EncryptedPassword);
+
+            Assert.NotEqual("Administrator", m.UserByName(Profile.AdminProfileName).Username);
+            Assert.NotEqual(Encryption.Encrypt(" "), m.UserByName(Profile.AdminProfileName).EncryptedPassword);
+
+            Assert.NotEqual(Profile.AdminProfileName, m.UserByName("Joritz").Username);
+            Assert.NotEqual(Encryption.Encrypt("1234"), m.UserByName("Joritz").EncryptedPassword);
+        }
+        /*
+        [Fact]
+        public void ProfileByName()
+        {
+
+        }
+        */
+        
     }
 }
