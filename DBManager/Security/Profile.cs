@@ -17,7 +17,11 @@ namespace DbManager.Security
         public bool GrantPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
-            
+            if (PrivilegesOn.ContainsKey(table))
+            {
+                PrivilegesOn[table].Add(privilege);
+                return true;
+            }
             return false;
             
         }
@@ -25,15 +29,26 @@ namespace DbManager.Security
         public bool RevokePrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
-            
+
+            if (PrivilegesOn.ContainsKey(table))
+            {
+                    PrivilegesOn[table].Remove(privilege);
+                    return true;    
+            }
             return false;
-            
         }
 
         public bool IsGrantedPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return whether this profile is granted this privilege on this table
-            
+            if (Name.Equals(AdminProfileName))
+            {
+                return true;
+            }
+            if (PrivilegesOn[table].Contains(privilege))
+            {
+                return true;
+            }
             return false;
         }
     }
