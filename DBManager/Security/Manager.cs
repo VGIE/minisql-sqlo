@@ -37,8 +37,11 @@ namespace DbManager.Security
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
-
-            if (Encryption.Encrypt(password).Equals(UserByName(username).EncryptedPassword))
+            if(UserByName(username)==null)
+            {
+                return false;
+            }
+            else if (Encryption.Encrypt(password).Equals(UserByName(username).EncryptedPassword))
             {
                 return true;
             }

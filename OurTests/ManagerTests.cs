@@ -76,6 +76,7 @@ namespace OurTests
             Assert.True(m.IsPasswordCorrect("Igor", "1234"));
             Assert.True(m.IsPasswordCorrect("Fabian", "qwerty"));
             Assert.False(m.IsPasswordCorrect("Ainhoa", "BDlover1")); //pwd is wrong on purpose
+            Assert.False(m.IsPasswordCorrect("Aihnoa", "BDLover1")); //usr is wrong on purpose
         }
         [Fact]
         public void UserByNameTest()
@@ -108,14 +109,57 @@ namespace OurTests
 
             Assert.NotEqual(Profile.AdminProfileName, m.UserByName("Joritz").Username);
             Assert.NotEqual(Encryption.Encrypt("1234"), m.UserByName("Joritz").EncryptedPassword);
+
+            Assert.Null(m.UserByName("FakeUser1234"));
         }
-        /*
+        
         [Fact]
         public void ProfileByName()
         {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
+            Profile pTest2 = new Profile
+            {
+                Name = "profileTest",
+                Users = createUserTestList2()
+            };
+            Manager m = new Manager("test");
+            m.Profiles.Add(pTest1);
+            m.Profiles.Add(pTest2);
+
+            Assert.Equal(Profile.AdminProfileName, m.ProfileByName(Profile.AdminProfileName).Name);
+            Assert.Equal("profileTest", m.ProfileByName("profileTest").Name);
+
+            Assert.Null(m.ProfileByName("FakeProfile1234"));
 
         }
-        */
-        
+
+        [Fact]
+        public void ProfileByUser()
+        {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
+            Profile pTest2 = new Profile
+            {
+                Name = "profileTest",
+                Users = createUserTestList2()
+            };
+            Manager m = new Manager("test");
+            m.Profiles.Add(pTest1);
+            m.Profiles.Add(pTest2);
+
+            Assert.Equal(Profile.AdminProfileName, m.ProfileByUser("Igor").Name);
+            Assert.Equal("profileTest", m.ProfileByUser("Fabian").Name);
+
+            Assert.Null(m.ProfileByUser("FakeProfile1234"));
+
+        }
+
     }
 }
