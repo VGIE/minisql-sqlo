@@ -23,6 +23,7 @@ namespace DbManager
             if (!database.SecurityManager.IsUserAdmin())
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            
             }
             database.DropTable(Table);
              if(database.LastErrorMessage!=null)

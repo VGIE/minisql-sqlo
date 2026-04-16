@@ -16,8 +16,6 @@ namespace DbManager.Security
 
         private string m_username;
 
-        //public string CurrentUsername { get; set; }
-
         public Manager(string username)
         {
             m_username = username;

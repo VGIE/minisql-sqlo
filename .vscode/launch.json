@@ -5,27 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Build and run SecurityParsing tests",
+            "name": "Client",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "test",
-            "program": "${workspaceFolder}/Tests/CITests/bin/Debug/net9/SecurityParsingTests.sln",
+            "program": "${workspaceFolder}/Samples/ClientConsole/bin/Debug/net9/ClientConsole.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
+            "preLaunchTask": "buildClient"
         },
+
         {
-            "name": "Build and run DbManagerConsole",
+            "name": "Server",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Apps/DbManagerConsole/bin/Debug/net9/DbManagerConsole.exe",
+            "program": "${workspaceFolder}/Samples/ServerConsole/bin/Debug/net9/ServerConsole.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
+            "preLaunchTask": "buildServer"
         },
-        
+    ],
+    "compounds": [
+        {
+            "name": "Server/Client",
+            "configurations": ["Server", "Client"]
+        }
     ]
 }

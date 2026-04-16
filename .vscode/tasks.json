@@ -4,16 +4,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label" : "build",
+            "label" : "buildClient",
             "command" : "dotnet",
             "args":
-            ["build","ABD.sln","-c","Debug","-f","net9"]
+            ["build","Samples/ClientConsole/ClientConsole.csproj","-c","Debug","-f","net9"]
         },
         {
-            "label" : "test",
+            "label" : "buildServer",
             "command" : "dotnet",
             "args":
-            ["test","ABD.sln"]
+            ["build","Samples/ServerConsole/ServerConsole.csproj","-c","Debug","-f","net9"]
         }
     ]
 }

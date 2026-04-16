@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,23 @@ namespace DbManager.Network
         {
             //DEADLINE 6: Connect the tcp client to the given ip/port
             //Return false if something goes wrong, true otherwise (try/catch)
+
+            try
+            {
+                if (m_tcpClient.Connected)
+                {
+                    m_tcpClient.Close();
+                    TcpClient newClient = new TcpClient();
+                }
+                m_tcpClient.Connect(ipAddress, port);
+                return true;
+                
+            }catch
+            {
+                
+                return false;
             
-            return false;
-            
+            }
         }
 
         private string SendString(string message)
@@ -31,7 +46,7 @@ namespace DbManager.Network
             //Here, we do not do any Xml formatting, we just send the string as it comes and return the string as it comes
             //This private method should be used from Open/SendQuery/Close
             //Have a look at the project ClientConsole to see how we can use the TcpClient class
-            
+ 
             return null;
             
         }
@@ -39,9 +54,20 @@ namespace DbManager.Network
         public bool Open(string database, string username, string password, out string error)
         {
             //DEADLINE 6: Send an Open command to the server using SendString
-            
+
             error = null;
-            return false;
+            string request= $"<Open Database=\"{database}\" User=\"{username}\" Password=\"{password}\"/>";
+            string response = SendString(request);
+
+            if (response==null)
+            {
+                error="An error message from Constants.cs";
+                return false;
+            }
+
+            bool success= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+           
+            return success;
             
         }
 
