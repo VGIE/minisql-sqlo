@@ -31,7 +31,7 @@ namespace DbManager
         public override bool Equals(Object obj)
         {
             Insert other = (Insert)obj;
-            //First we compare extreme cases where 'WHERE' clause is null in one side (we also discard different table names)
+            //First we compare extreme cases where 'VALUES' clause is null in one side (we also discard different table names)
             if (Table != other.Table || (Values != null && other.Values == null || Values == null && other.Values != null))
             {
                 return false;

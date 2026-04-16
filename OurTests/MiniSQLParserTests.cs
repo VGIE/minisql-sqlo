@@ -89,7 +89,7 @@ namespace OurTests
 
             Assert.Equal(table, MiniSQLParser.Parse("CREATE TABLE Table (Nombre TEXT,Edad INT,Altura DOUBLE)"));
 
-            Assert.Null(MiniSQLParser.Parse("CREATE TABLE table"));
+            Assert.Equal(new CreateTable("table",new List<ColumnDefinition>()),MiniSQLParser.Parse("CREATE TABLE table ()"));
             Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota int)"));
             Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota INT nombre TEXT"));
 
@@ -106,36 +106,8 @@ namespace OurTests
         [Fact]
         public void UpdateTests()
         {
-            Update result = (Update)MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'");
-
-            Assert.Equal("tabla", result.Table);
-
-            Assert.Equal(2, result.Columns.Count);
-            Assert.Equal("column1", result.Columns[0].ColumnName);
-            Assert.Equal("1", result.Columns[0].Value);
-            Assert.Equal("column2", result.Columns[1].ColumnName);
-            Assert.Equal("2", result.Columns[1].Value);
-
-            Assert.NotNull(result.Where);
-            Assert.Equal("columna", result.Where.ColumnName);
-            Assert.Equal("=", result.Where.Operator);
-            Assert.Equal("valor", result.Where.LiteralValue);
-
-            // update has /s 
-            Update result2 = (Update)MiniSQLParser.Parse("UPDATE    tabla    SET    column1='Hola',column2='2.5'    WHERE     columna>'3.4'");
-
-            Assert.Equal("tabla", result2.Table);
-
-            Assert.Equal(2, result2.Columns.Count);
-            Assert.Equal("column1", result2.Columns[0].ColumnName);
-            Assert.Equal("Hola", result2.Columns[0].Value);
-            Assert.Equal("column2", result2.Columns[1].ColumnName);
-            Assert.Equal("2.5", result2.Columns[1].Value);
-
-            Assert.NotNull(result2.Where);
-            Assert.Equal("columna", result2.Where.ColumnName);
-            Assert.Equal(">", result2.Where.Operator);
-            Assert.Equal("3.4", result2.Where.LiteralValue);
+            Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "1"), new SetValue("column2", "2") }, new Condition("columna", "=", "valor")), MiniSQLParser.Parse("UPDATE tabla SET column1='1',column2='2' WHERE columna='valor'"));
+            Assert.Equal(new Update("tabla", new List<SetValue>() { new SetValue("column1", "Hola"), new SetValue("column2", "2.5") }, new Condition("columna", ">", "3.4")), MiniSQLParser.Parse("UPDATE    tabla    SET    column1='Hola',column2='2.5'    WHERE     columna>'3.4'"));
         }
 
         [Fact]
@@ -208,6 +180,7 @@ namespace OurTests
         {
             List<string> valores = new List<string>{"val1", "val2"};
             List<string> valores2 = new List<string>{"val3", "val4"};
+            List<string> valoresEspacios = new List<string> {"val5 val5", "val6 val6 val6", "val8" };
             List<ColumnDefinition> columnas = new List<ColumnDefinition>();
             columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "col1"));
             columnas.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "col2"));
@@ -217,10 +190,13 @@ namespace OurTests
             Insert insertTest1 = new Insert("table1",valores);
             Insert insertTest2 = new Insert("table1", valores);
             Insert insertTest3 = new Insert("table2", valores2);
+            Insert insertTest4 = new Insert("table2", valoresEspacios);
 
             Assert.Equal(insertTest1, MiniSQLParser.Parse("INSERT INTO table1 VALUES ('val1','val2')"));
             Assert.Equal(insertTest2, MiniSQLParser.Parse("INSERT  INTO   table1   VALUES('val1','val2')"));
             Assert.Equal(insertTest3, MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3','val4')"));
+            Assert.Equal(insertTest4, MiniSQLParser.Parse("INSERT     INTO    table2     VALUES   ('val5 val5','val6 val6 val6','val8')"));
+
             Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3')"));
             Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('val3','a','-53.543')"));
             Assert.NotNull(MiniSQLParser.Parse("INSERT INTO table2 VALUES ('null')"));

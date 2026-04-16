@@ -88,6 +88,14 @@ namespace OurTests
 
             insert = new Insert("TestTable", new List<string>() { "Igor", "21" });
             Assert.Equal(Constants.ColumnCountsDontMatch, insert.Execute(database));
+
+            Assert.Equal(Constants.InsertSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("INSERT INTO TestTable VALUES ('Izan','20','-5.9')"));
+            Assert.Equal(Constants.InsertSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("INSERT INTO TestTable VALUES ('Izan Ascasso','20','-5.9')"));
+            Assert.NotNull(Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("INSERT INTO    table1 VALUES('val5 val5','val6 val6 val6')"));
+            
         }
         [Fact]
         public void UpdateTableTest() 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,14 +22,32 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            return false;
+            if(ProfileByUser(m_username).Name == Profile.AdminProfileName)
+            {
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
+            
+            
         }
 
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
-            return false;
 
+            if (Encryption.Encrypt(password).Equals(UserByName(username).EncryptedPassword))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+            
         }
 
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
@@ -56,13 +75,23 @@ namespace DbManager.Security
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
+            Profiles.Add(profile);
 
         }
 
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
-
+            foreach (Profile p in Profiles)
+            {
+                foreach(User u in p.Users)
+                {
+                    if(u.Username == username)
+                    {
+                        return u;
+                    }
+                }
+            }
             return null;
 
         }
@@ -70,7 +99,13 @@ namespace DbManager.Security
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-
+            foreach (Profile p in Profiles)
+            {
+                if (profileName == p.Name)
+                {
+                    return p;
+                }
+            }
             return null;
 
         }
@@ -166,7 +201,9 @@ namespace DbManager.Security
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] userinfo = line.Split(" || ");
-                    User u = new User(userinfo[0], userinfo[1]);
+                    User u = new User();
+                    u.Username = userinfo[0];
+                    u.EncryptedPassword = userinfo[1];
                     p.Users.Add(u);
                 }
                 manager.Profiles.Add(p);
