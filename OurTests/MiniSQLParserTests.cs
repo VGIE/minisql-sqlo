@@ -89,7 +89,7 @@ namespace OurTests
 
             Assert.Equal(table, MiniSQLParser.Parse("CREATE TABLE Table (Nombre TEXT,Edad INT,Altura DOUBLE)"));
 
-            Assert.Null(MiniSQLParser.Parse("CREATE TABLE table"));
+            Assert.Equal(new CreateTable("table",new List<ColumnDefinition>()),MiniSQLParser.Parse("CREATE TABLE table ()"));
             Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota int)"));
             Assert.Null(MiniSQLParser.Parse("CREATE TABLE table (nota INT nombre TEXT"));
 

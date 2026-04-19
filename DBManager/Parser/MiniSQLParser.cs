@@ -20,7 +20,7 @@ namespace DbManager
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)\)";
+            const string createTablePattern = @"CREATE\s+TABLE\s+([\w+]+)\s+\(([\w]+\s+(?:INT|DOUBLE|TEXT)(?:,[\w+]+\s+(?:INT|DOUBLE|TEXT))*)?\)";
 
             const string updateTablePattern = @"UPDATE\s*([\w]+)\s+SET\s+([\w]+='(?:-?\d+(?:\.?\d+)?|[a-zA-Z]+(?:\s+[a-zA-Z]+)*)'(?:,(?:[\w]+)='(?:-?\d+(?:\.?\d+)?|[a-zA-Z]+)')*)\s+WHERE\s+([\w]+)([=<>])'(-?\d+(?:\.?\d+)?|[a-zA-Z]+(?:\s+[a-zA-Z]+)*)'";
 
@@ -90,6 +90,10 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, createTablePattern);
             if (match.Success && match.Length == miniSQLQuery.Length)
             {
+                if (match.Groups.Count == 3 && match.Groups[2].Length == 0)
+                {
+                    return new CreateTable(match.Groups[1].Value,new List<ColumnDefinition>());
+                }
                 List<ColumnDefinition> columns = new List<ColumnDefinition>();
                 string[] columnWithValue = match.Groups[2].Value.Split(",");
                 foreach (string s in columnWithValue)
