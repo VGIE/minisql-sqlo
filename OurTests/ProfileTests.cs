@@ -15,7 +15,7 @@ namespace OurTests
             users.Add(new User("Geisgor", "cabezabuque23"));
             return users;
         }
-        public Profile Profile4Tests() {
+        public Profile AdminProfile4Tests() {
             Profile profile = new Profile()
             {
                 Name = Profile.AdminProfileName,
@@ -23,16 +23,61 @@ namespace OurTests
             };
             return profile;
         }
-    [Fact]
-    public void GrantAndIsGrantedPrivilegeTests()
+        public Profile Profile4Tests()
         {
-            
-
-        
+            Profile profile = new Profile()
+            {
+                Name = "AndresitoDonNadie",
+                Users = Users4Tests()
+            };
+            return profile;
         }
-    public void RevokeAndIsGrantedPrivilegeTests()
+        public Dictionary<string, List<Privilege>> FakeTables4Tests()
         {
-
+            Dictionary<string, List<Privilege>> fakeTables =new Dictionary<string, List<Privilege>>();
+            fakeTables.Add("Users", new List<Privilege>
+            {
+                Privilege.Select,
+                Privilege.Insert
+            });
+            fakeTables.Add("Clients", new List<Privilege>
+            {
+                Privilege.Insert,
+                Privilege.Select,
+                Privilege.Delete,
+                Privilege.Update
+            });
+            return fakeTables ;
+        }
+        [Fact]
+    public void ProfileMethodTests()
+        {
+            Profile AdminProfile = AdminProfile4Tests();
+            Profile NormalProfile = Profile4Tests();
+            AdminProfile.setListOfPrivileges4Testing(FakeTables4Tests());
+            NormalProfile.setListOfPrivileges4Testing(FakeTables4Tests());
+            //admintesting
+            Assert.True(AdminProfile.IsGrantedPrivilege("Users",Privilege.Insert));
+            Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Update));
+            Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Delete));
+            Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Select));
+            //normalusertesting
+            Assert.True(NormalProfile.IsGrantedPrivilege("Users", Privilege.Select));
+            Assert.True(NormalProfile.IsGrantedPrivilege("Users", Privilege.Insert));
+            Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Update));
+            Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Delete));
+            //adding the privileges for testing
+            NormalProfile.GrantPrivilege("Users",Privilege.Update);
+            NormalProfile.GrantPrivilege("Users", Privilege.Delete);
+            //checking if privilege was added
+            Assert.True(NormalProfile.IsGrantedPrivilege("Users", Privilege.Update));
+            Assert.True(NormalProfile.IsGrantedPrivilege("Users", Privilege.Delete));
+            //Revoking privileges
+            NormalProfile.RevokePrivilege("Users",Privilege.Update);
+            NormalProfile.RevokePrivilege("Users", Privilege.Delete);
+            //checking if privilege was succesfully revoked
+            Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Update));
+            Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Delete));
         }
     }
 }

@@ -51,5 +51,9 @@ namespace DbManager.Security
             }
             return false;
         }
+        public void setListOfPrivileges4Testing(Dictionary<string, List<Privilege>> FakePrivilegesOn)
+        {
+            this.PrivilegesOn = FakePrivilegesOn;
+        }
     }
 }
