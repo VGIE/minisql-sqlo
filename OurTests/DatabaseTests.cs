@@ -5,6 +5,8 @@ using DbManager.Parser;
 using DbManager;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
+using DbManager.Security;
+
 public class DatabaseTests
 {
     //TODO DEADLINE 1B : Create your own tests for Database
@@ -42,6 +44,13 @@ public class DatabaseTests
         Row r2 = new(columns, row2);
         db.TableByName("Students").AddRow(r1);
         db.TableByName("Students").AddRow(r2);
+
+        DbManager.Security.Profile profile1 = new DbManager.Security.Profile();
+        profile1.Name = "PerfilUsuario";
+        DbManager.Security.User user = new DbManager.Security.User("User", "User");
+        profile1.Users.Add(user);
+        db.SecurityManager.Profiles.Add(profile1);
+
         return db;
     }
     [Fact]
@@ -185,7 +194,7 @@ public class DatabaseTests
         Database dbOld = CreateTestDatabase1();
         dbOld.Save("test");
 
-        Database dbNew = Database.Load("test", "", "");
+        Database dbNew = Database.Load("test", "User", "User");
 
         Assert.NotNull(dbNew);
 
@@ -206,7 +215,7 @@ public class DatabaseTests
         newValues.Add(new SetValue("Name", "John:ConDelimitador"));
 
         dbOld.Save("test_delimiter");
-        Database dbNew = Database.Load("test_delimiter", "", "");
+        Database dbNew = Database.Load("test_delimiter", "User", "User");
 
         Assert.NotNull(dbNew);
 
