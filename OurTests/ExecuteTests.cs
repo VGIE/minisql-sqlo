@@ -1,12 +1,36 @@
 ﻿
 using DbManager;
 using DbManager.Parser;
+using DbManager.Security;
 using Xunit;
 namespace OurTests
 {
     public class ExecuteTests
     {
-        
+        private List<User> createUserTestList()
+        {
+            List<User> lista =
+            [
+                new User("nombre","contrasena"),
+                new User("Igor", "1234"),
+                new User("Eustakia", "admin"),
+                new User("Josefina", "password"),
+                new User("Joritz", "pasi"),
+            ];
+            return lista;
+        }
+        private List<User> createUserTestList2()
+        {
+            List<User> lista =
+            [
+                new User(Profile.AdminProfileName, "lobo"),
+                new User("Txitx", "rip"),
+                new User("Jere", "BDLover1"),
+                new User("Fabian", "qwerty"),
+                new User("Ainhoa", "BDLover1"),
+            ];
+            return lista;
+        }
         [Fact]
         public void DeleteTests()
         {
@@ -21,8 +45,65 @@ namespace OurTests
             Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable1 WHERE Wage='-52.85'"));
         }
-        
+        /*
+        [Fact]
+        public void GrantTests()
+        {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
 
+            pTest1.GrantPrivilege("TestTable", Privilege.Insert);
+            pTest1.GrantPrivilege("TestTable1", Privilege.Delete);
+
+            Profile pTest2 = new Profile
+            {
+                Name = "noname",
+                Users = createUserTestList2()
+            };
+
+            pTest2.GrantPrivilege("TestTable", Privilege.Select);
+            pTest2.GrantPrivilege("TestTable1", Privilege.Update);
+
+            Database db = Database.CreateTestDatabase();
+
+            db.SecurityManager.AddProfile(pTest1);
+            db.SecurityManager.AddProfile(pTest2);
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("GRANT INSERT ON TestTable"));
+            
+        }
+        public void RevokeTests()
+        {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
+
+            pTest1.GrantPrivilege("TestTable", Privilege.Insert);
+            pTest1.GrantPrivilege("TestTable1", Privilege.Delete);
+
+            Profile pTest2 = new Profile
+            {
+                Name = "noname",
+                Users = createUserTestList2()
+            };
+
+            pTest2.GrantPrivilege("TestTable", Privilege.Select);
+            pTest2.GrantPrivilege("TestTable1", Privilege.Update);
+
+            Database db = Database.CreateTestDatabase();
+
+            db.SecurityManager.AddProfile(pTest1);
+            db.SecurityManager.AddProfile(pTest2);
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
+                ExecuteMiniSQLQuery("GRANT INSERT FROM TestTable WHERE Age='25'"));
+
+        }
+        */
         [Fact]
         public void SelectTests()
         {
