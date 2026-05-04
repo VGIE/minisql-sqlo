@@ -40,7 +40,8 @@ namespace DbManager.Security
     public override bool Equals(object obj)
         {
             Profile other = (Profile)obj;
-            if (Name.Equals(other.Name) && (Users.SequenceEqual(other.Users))){
+            if (Name.Equals(other.Name) && (Users.SequenceEqual(other.Users)))
+            {
                 foreach(string tabla in PrivilegesOn.Keys)
                 {
                     if (!other.PrivilegesOn.ContainsKey(tabla))
