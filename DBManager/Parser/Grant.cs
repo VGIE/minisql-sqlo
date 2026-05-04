@@ -27,27 +27,11 @@ namespace DbManager
 
             if (database.SecurityManager.ProfileByName(ProfileName) == null)
             {
-                
                 return Constants.SecurityProfileDoesNotExistError;
             }
-            Privilege privilegeObj;
             Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
+            Privilege privilegeObj = PrivilegeUtils.FromPrivilegeName(PrivilegeName);
 
-            switch (PrivilegeName)
-            {
-                case "Delete":
-                    privilegeObj = Privilege.Delete;
-                    break;
-                case "Update":
-                    privilegeObj = Privilege.Update;
-                    break;
-                case "Insert":
-                    privilegeObj = Privilege.Insert;
-                    break;
-                default:
-                    privilegeObj = Privilege.Select;
-                    break;
-            }
             if (profileObj.PrivilegesOn[TableName].Contains(privilegeObj))
             {
                 //error 1

@@ -17,7 +17,7 @@ namespace DbManager.Security
         public bool GrantPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
-
+         
             return false;
 
         }
