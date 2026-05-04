@@ -57,22 +57,76 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-
+            if (IsUserAdmin())
+            {
+                Profile p = ProfileByName(profileName);
+                if (p != null && table != null)
+                {
+                    if (p.PrivilegesOn.ContainsKey(table))
+                    {
+                        if (!p.PrivilegesOn[table].Contains(privilege))
+                        {
+                            p.PrivilegesOn[table].Add(privilege);
+                        }
+                    }
+                    else
+                    {
+                        List<Privilege> privilegesList = new List<Privilege>();
+                        privilegesList.Add(privilege);
+                        p.PrivilegesOn.Add(table, privilegesList);
+                    }
+                }
+            }
+            
         }
 
         public void RevokePrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-
+            if (IsUserAdmin())
+            {
+                Profile p = ProfileByName(profileName);
+                if (p != null && table != null)
+                {
+                    if (p.PrivilegesOn.ContainsKey(table))
+                    {
+                        if (p.PrivilegesOn[table].Contains(privilege))
+                        {
+                            p.PrivilegesOn[table].Remove(privilege);
+                        }
+                    }
+                }
+            }
+            
         }
 
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
-
-            return false;
-
+            
+            Profile p = ProfileByUser(username);
+            if (p != null && table != null)
+            {
+                if (p.PrivilegesOn.ContainsKey(table))
+                {
+                    if (p.PrivilegesOn[table].Contains(privilege))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }else
+            {
+                return false;
+            }
         }
 
         public void AddProfile(Profile profile)
