@@ -51,6 +51,7 @@ public class DatabaseTests
         profile1.Users.Add(user);
         db.SecurityManager.Profiles.Add(profile1);
 
+
         return db;
     }
     [Fact]

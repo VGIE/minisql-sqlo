@@ -17,24 +17,63 @@ namespace DbManager.Security
         public bool GrantPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
-            
+
+            if (PrivilegesOn.ContainsKey(table))
+            {
+                if (!PrivilegesOn[table].Contains(privilege))
+                {
+                    PrivilegesOn[table].Add(privilege);
+                    return true;
+                }
+            }
+            else
+            {
+                List<Privilege> privilegesList = new List<Privilege>();
+                privilegesList.Add(privilege);
+                PrivilegesOn.Add(table, privilegesList);
+                return true;
+            }
             return false;
-            
         }
+            
+            
+        
 
         public bool RevokePrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
-            
+
+            if (PrivilegesOn.ContainsKey(table))
+            {
+                if (PrivilegesOn[table].Contains(privilege))
+                {
+                    PrivilegesOn[table].Remove(privilege);
+                    return true;
+                }
+            }
             return false;
-            
+
         }
 
         public bool IsGrantedPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return whether this profile is granted this privilege on this table
-            
-            return false;
+
+            if (PrivilegesOn.ContainsKey(table))
+            {
+                if (PrivilegesOn[table].Contains(privilege))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

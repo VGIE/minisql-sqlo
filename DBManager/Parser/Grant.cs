@@ -30,18 +30,22 @@ namespace DbManager
                 
                 return Constants.SecurityProfileDoesNotExistError;
             }
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            }
             Privilege privilegeObj;
             Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
 
             switch (PrivilegeName)
             {
-                case "Delete":
+                case "DELETE":
                     privilegeObj = Privilege.Delete;
                     break;
-                case "Update":
+                case "UPDATE":
                     privilegeObj = Privilege.Update;
                     break;
-                case "Insert":
+                case "INSERT":
                     privilegeObj = Privilege.Insert;
                     break;
                 default:
