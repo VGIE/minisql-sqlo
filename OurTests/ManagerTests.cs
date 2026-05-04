@@ -162,6 +162,36 @@ namespace OurTests
         }
 
         [Fact]
+        public void GrantPrivilegeIsGrantedPrivilegeTest()
+        {
+            Profile pTest1 = new Profile
+            {
+                Name = Profile.AdminProfileName,
+                Users = createUserTestList()
+            };
+            Profile pTest2 = new Profile
+            {
+                Name = "profileTest",
+                Users = createUserTestList2()
+            };
+            Manager m = new Manager("Igor");
+            Manager m2 = new Manager("Jere");
+            m.Profiles.Add(pTest1);
+            m.Profiles.Add(pTest2);
+            m2.Profiles.Add(pTest2);
+            List<ColumnDefinition> columns = new List<ColumnDefinition>() { new ColumnDefinition(ColumnDefinition.DataType.String,"col1"), new ColumnDefinition(ColumnDefinition.DataType.String, "col2") };
+            Table tabla = new Table("table1", columns);
+
+            m.GrantPrivilege("profileTest", "table1", Privilege.Select);
+            Assert.True(m.IsGrantedPrivilege("Fabian","table1", Privilege.Select));
+            Assert.False(m.IsGrantedPrivilege("Ainhoa","table1", Privilege.Insert));
+            m.GrantPrivilege("profileTest", "table1", Privilege.Delete);
+            Assert.True(m.IsGrantedPrivilege("Fabian","table1", Privilege.Delete));
+            m2.GrantPrivilege("profileTest", "table1", Privilege.Insert);
+            Assert.False(m2.IsGrantedPrivilege("Jere","table1", Privilege.Insert));
+        }
+
+        [Fact]
         public void SaveAndLoadTest()
         {
             Manager manager1 = new Manager("admin");
