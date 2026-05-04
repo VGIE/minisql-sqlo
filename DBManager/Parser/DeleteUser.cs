@@ -22,7 +22,7 @@ namespace DbManager
             //UsersProfileIsNotGrantedRequiredPrivilege, UserDoesNotExistError, DeleteUserSuccess
             if (!(database.SecurityManager.IsUserAdmin()))
             {
-                return Constants.SecurityProfileDoesNotExistError;
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
             if (database.SecurityManager.UserByName(Username) == null)
             {
