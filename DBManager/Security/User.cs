@@ -18,5 +18,15 @@ namespace DbManager.Security
         }
 
         public User() { }
+
+        public override bool Equals(object obj)
+        {
+            User other = (User)obj;
+            if(Username.Equals(other.Username) && (EncryptedPassword.Equals(other.EncryptedPassword)))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

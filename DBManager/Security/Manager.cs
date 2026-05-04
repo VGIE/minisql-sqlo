@@ -253,5 +253,15 @@ namespace DbManager.Security
                 writer.Close();
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            Manager other = (Manager)obj;
+            if(Profiles.SequenceEqual(other.Profiles) && m_username.Equals(other.m_username))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
