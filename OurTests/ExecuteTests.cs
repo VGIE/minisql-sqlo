@@ -186,5 +186,16 @@ namespace OurTests
             Assert.NotEqual("UpdateSuccess", Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor"));
         }
+
+        [Fact]
+        public void AddUserTest()
+        {
+            Database db = Database.CreateTestDatabase();
+            Profile p = new Profile();
+            p.Name = "Becario";
+            db.SecurityManager.AddProfile(p);
+
+            Assert.Equal(Constants.AddUserSuccess, db.ExecuteMiniSQLQuery("ADD USER (mortis,mortis,Becario)"));
+        }
     }
 }
