@@ -37,8 +37,7 @@ namespace DbManager
             }
             User user = new User(Username, Password);
             database.SecurityManager.ProfileByName(ProfileName).Users.Add(user);
-            return Constants.AddUserSuccess;
-            
+            return Constants.AddUserSuccess;   
         }
 
         public override bool Equals(object obj)

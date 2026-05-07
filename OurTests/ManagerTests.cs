@@ -194,7 +194,15 @@ namespace OurTests
         [Fact]
         public void SaveAndLoadTest()
         {
+            User admin = new User("admin", "adminPassword");
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(admin);
             Manager manager1 = new Manager("admin");
+            manager1.Profiles.Add(adminProfile);
+            
+            
+            
 
             Profile profile = new Profile { Name = "Mod" };
             profile.PrivilegesOn.Add("Libros", new List<Privilege> { Privilege.Select, Privilege.Update });

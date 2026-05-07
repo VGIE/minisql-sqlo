@@ -22,7 +22,7 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            if(ProfileByUser(m_username).Name == Profile.AdminProfileName)
+            if(ProfileByUser(m_username) != null && ProfileByUser(m_username).Name == Profile.AdminProfileName)
             {
                 return true;
             }
@@ -132,8 +132,10 @@ namespace DbManager.Security
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
-            Profiles.Add(profile);
-
+            if (IsUserAdmin())
+            {
+                Profiles.Add(profile);
+            }
         }
 
         public User UserByName(string username)
@@ -187,15 +189,19 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            foreach (Profile p in Profiles)
+            if (IsUserAdmin())
             {
-
-                if (p.Name.Equals(profileName))
+                foreach (Profile p in Profiles)
                 {
-                    Profiles.Remove(p);
+
+                    if (p.Name.Equals(profileName))
+                    {
+                        Profiles.Remove(p);
+                    }
                 }
+                return false;
             }
-            return false;
+            return false;   
         }
 
 
@@ -221,7 +227,8 @@ namespace DbManager.Security
                 // Primera parte: Leer tablas y privilegios
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line == "{USERNAME} || {PASSWORD}")
+                    string separator = "{USERNAME} || {PASSWORD}";
+                    if (line == separator)
                     {
                         break;
                     }
