@@ -197,5 +197,35 @@ namespace OurTests
             Assert.False(m2.IsGrantedPrivilege("Jere","table1", Privilege.Insert));
         }
 
+        [Fact]
+        public void SaveAndLoadTest()
+        {
+            User admin = new User("admin", "adminPassword");
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(admin);
+            Manager manager1 = new Manager("admin");
+            manager1.Profiles.Add(adminProfile);
+            
+            
+            
+
+            Profile profile = new Profile { Name = "Mod" };
+            profile.PrivilegesOn.Add("Libros", new List<Privilege> { Privilege.Select, Privilege.Update });
+            profile.PrivilegesOn.Add("Autores", new List<Privilege> { Privilege.Insert, Privilege.Delete });
+
+            User user = new User("Josebas", "Carglass123");
+            profile.Users.Add(user);
+
+            manager1.AddProfile(profile);
+
+            manager1.Save("manager_test");
+            Manager managerCargado = Manager.Load("manager_test", "admin");
+
+            Assert.NotNull(managerCargado);
+            Assert.Equal(manager1, managerCargado);
+
+        }
+
     }
 }
