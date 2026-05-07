@@ -223,7 +223,8 @@ namespace DbManager.Security
                 // Primera parte: Leer tablas y privilegios
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line == "{USERNAME} || {PASSWORD}")
+                    string separator = "{USERNAME} || {PASSWORD}";
+                    if (line == separator)
                     {
                         break;
                     }
