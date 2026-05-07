@@ -329,9 +329,6 @@ namespace DbManager
         public static Database CreateTestDatabase()
         {
             Database database = new Database(AdminUsername, AdminPassword);
-            
-
-
             database.Tables.Add(Table.CreateTestTable());
           
             return database;
