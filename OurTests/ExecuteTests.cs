@@ -1,6 +1,7 @@
 ﻿
 using DbManager;
 using DbManager.Parser;
+using DbManager.Security;
 using Xunit;
 namespace OurTests
 {
@@ -104,6 +105,17 @@ namespace OurTests
                 ExecuteMiniSQLQuery("UPDATE TestTable SET Height='1.56',Age='52' WHERE Name='Pepe'"));
             Assert.NotEqual("UpdateSuccess", Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor"));
+        }
+
+        [Fact]
+        public void AddUserTest()
+        {
+            Database db = Database.CreateTestDatabase();
+            Profile p = new Profile();
+            p.Name = "Becario";
+            db.SecurityManager.AddProfile(p);
+
+            Assert.Equal(Constants.AddUserSuccess, db.ExecuteMiniSQLQuery("ADD USER (mortis,mortis,Becario)"));
         }
     }
 }
