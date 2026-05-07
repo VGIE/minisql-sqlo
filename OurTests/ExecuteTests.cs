@@ -156,8 +156,16 @@ namespace OurTests
 
             db.SecurityManager.AddProfile(pTest1);
             db.SecurityManager.AddProfile(pTest2);
-            Assert.Equal(Constants.DeleteSuccess, db.
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
                 ExecuteMiniSQLQuery("GRANT INSERT ON TestTable TO "+Profile.AdminProfileName));
+            Assert.Equal(Constants.ProfileAlreadyHasPrivilege, db.
+                ExecuteMiniSQLQuery("GRANT DELETE ON TestTable TO " + Profile.AdminProfileName));
+            Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, db.
+                ExecuteMiniSQLQuery("GRANT INSERT ON TestTable TO noname"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT SELECT ON TestTable1 TO " + Profile.AdminProfileName));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT UPDATE ON TestTable1 TO " + Profile.AdminProfileName));
 
         }
         [Fact]
