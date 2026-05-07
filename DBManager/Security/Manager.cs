@@ -189,15 +189,19 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            foreach (Profile p in Profiles)
+            if (IsUserAdmin())
             {
-
-                if (p.Name.Equals(profileName))
+                foreach (Profile p in Profiles)
                 {
-                    Profiles.Remove(p);
+
+                    if (p.Name.Equals(profileName))
+                    {
+                        Profiles.Remove(p);
+                    }
                 }
+                return false;
             }
-            return false;
+            return false;   
         }
 
 
