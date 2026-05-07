@@ -27,7 +27,6 @@ namespace DbManager
 
             if (database.SecurityManager.ProfileByName(ProfileName) == null)
             {
-                
                 return Constants.SecurityProfileDoesNotExistError;
             }
             if (!database.SecurityManager.IsUserAdmin())
@@ -36,6 +35,7 @@ namespace DbManager
             }
             Privilege privilegeObj;
             Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
+            Privilege privilegeObj = PrivilegeUtils.FromPrivilegeName(PrivilegeName);
 
             switch (PrivilegeName)
             {

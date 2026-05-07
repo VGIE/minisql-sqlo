@@ -34,10 +34,8 @@ namespace DbManager.Security
                 return true;
             }
             return false;
+            
         }
-            
-            
-        
 
         public bool RevokePrivilege(string table, Privilege privilege)
         {
@@ -59,6 +57,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return whether this profile is granted this privilege on this table
 
+
             if (PrivilegesOn.ContainsKey(table))
             {
                 if (PrivilegesOn[table].Contains(privilege))
@@ -74,6 +73,28 @@ namespace DbManager.Security
             {
                 return false;
             }
+        }
+        public override bool Equals(object obj)
+        {
+            Profile other = (Profile)obj;
+            if (Name.Equals(other.Name) && (Users.SequenceEqual(other.Users)))
+            {
+                foreach (string tabla in PrivilegesOn.Keys)
+                {
+                    if (!other.PrivilegesOn.ContainsKey(tabla))
+                    {
+                        return false;
+                    }
+                    List<Privilege> listaMia = PrivilegesOn[tabla];
+                    List<Privilege> listaOtra = other.PrivilegesOn[tabla];
+                    if (!listaMia.SequenceEqual(listaOtra))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

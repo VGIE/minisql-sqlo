@@ -26,6 +26,12 @@ namespace DbManager
             //DEADLINE 1.B: Initalize the member variables
             this.m_username = adminUsername;
             SecurityManager = new Manager(adminUsername);
+
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            User adminUser = new User("admin", "adminPassword");
+            adminProfile.Users.Add(adminUser);
+            SecurityManager.Profiles.Add(adminProfile);
         }
 
         public bool AddTable(Table table)
@@ -323,9 +329,8 @@ namespace DbManager
         public static Database CreateTestDatabase()
         {
             Database database = new Database(AdminUsername, AdminPassword);
-
             database.Tables.Add(Table.CreateTestTable());
-
+          
             return database;
         }
 

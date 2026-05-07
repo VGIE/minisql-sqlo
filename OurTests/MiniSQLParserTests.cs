@@ -206,5 +206,6 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("INSERT INTO table1 VALUES (val1, val2)"));
         }
 
+
     }
 }

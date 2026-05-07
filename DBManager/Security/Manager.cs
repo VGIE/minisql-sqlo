@@ -22,18 +22,13 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            if(ProfileByUser(m_username) == null) 
+            if(ProfileByUser(m_username) != null && ProfileByUser(m_username).Name == Profile.AdminProfileName)
             {
-                return false;
-                
+                return true;
             }
             else 
             {
-                if (ProfileByUser(m_username).Name != Profile.AdminProfileName)
-                {
-                    return false;
-                }
-                return true;
+                return false;
             }
             
             
@@ -137,8 +132,10 @@ namespace DbManager.Security
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
-            Profiles.Add(profile);
-
+            if (IsUserAdmin())
+            {
+                Profiles.Add(profile);
+            }
         }
 
         public User UserByName(string username)
@@ -311,6 +308,16 @@ namespace DbManager.Security
                 }
                 writer.Close();
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            Manager other = (Manager)obj;
+            if(Profiles.SequenceEqual(other.Profiles) && m_username.Equals(other.m_username))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
