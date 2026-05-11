@@ -162,7 +162,7 @@ namespace OurTests
         }
 
         [Fact]
-        public void GrantPrivilegeIsGrantedPrivilegeTest()
+        public void GrantRevokePrivilegeIsGrantedPrivilegeTest()
         {
             Profile pTest1 = new Profile
             {
@@ -186,8 +186,14 @@ namespace OurTests
             Assert.True(m.IsGrantedPrivilege("Fabian","table1", Privilege.Select));
             Assert.False(m.IsGrantedPrivilege("Ainhoa","table1", Privilege.Insert));
             m.GrantPrivilege("profileTest", "table1", Privilege.Delete);
+            m.GrantPrivilege("Fabian", null, Privilege.Update);
             Assert.True(m.IsGrantedPrivilege("Fabian","table1", Privilege.Delete));
+            Assert.False(m.IsGrantedPrivilege("Fabian","table1", Privilege.Update));
             m2.GrantPrivilege("profileTest", "table1", Privilege.Insert);
+            Assert.False(m2.IsGrantedPrivilege("Jere","table1", Privilege.Insert));
+            m.RevokePrivilege("profileTest", "table1", Privilege.Select);
+            Assert.False(m.IsGrantedPrivilege("Fabian","table1", Privilege.Select));
+            m2.RevokePrivilege("profileTest", "table1", Privilege.Insert);
             Assert.False(m2.IsGrantedPrivilege("Jere","table1", Privilege.Insert));
         }
 

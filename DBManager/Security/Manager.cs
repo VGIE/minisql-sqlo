@@ -189,16 +189,17 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            foreach (Profile p in Profiles)
+            if (IsUserAdmin())
             {
-
-                if (p.Name.Equals(profileName))
-                {
-                    Profiles.Remove(p);
+                Profile p = ProfileByName(profileName);
+                    if (p != null)
+                    {
+                        Profiles.Remove(p);
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
-        }
 
 
         public static Manager Load(string databaseName, string username)
@@ -223,7 +224,8 @@ namespace DbManager.Security
                 // Primera parte: Leer tablas y privilegios
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line == "{USERNAME} || {PASSWORD}")
+                    string separator = "{USERNAME} || {PASSWORD}";
+                    if (line == separator)
                     {
                         break;
                     }

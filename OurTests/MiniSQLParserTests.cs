@@ -54,6 +54,9 @@ namespace OurTests
             Assert.Equal(new Select("tabla", columns, condition), 
                 MiniSQLParser.Parse("SELECT Column1,Column2 FROM tabla WHERE Column1='Hola'"));
 
+            Assert.Equal(new Select("tabla", new List<string> { "nombre" }, new Condition("nombre", "=", "Adolfo Suarez")), 
+                MiniSQLParser.Parse("SELECT nombre FROM tabla WHERE nombre='Adolfo Suarez'"));
+
             //UNA columna y SIN condición
 
             Assert.Equal(new Select("tabla", new List<string> { "Column1" }, null),
