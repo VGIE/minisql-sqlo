@@ -50,14 +50,14 @@ namespace OurTests
             return fakeTables ;
         }
         [Fact]
-    public void ProfileMethodTests()
+        public void ProfileMethodTests()
         {
             Profile AdminProfile = AdminProfile4Tests();
             Profile NormalProfile = Profile4Tests();
             AdminProfile.setListOfPrivileges4Testing(FakeTables4Tests());
             NormalProfile.setListOfPrivileges4Testing(FakeTables4Tests());
             //admintesting
-            Assert.True(AdminProfile.IsGrantedPrivilege("Users",Privilege.Insert));
+            Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Insert));
             Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Update));
             Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Delete));
             Assert.True(AdminProfile.IsGrantedPrivilege("Users", Privilege.Select));
@@ -67,17 +67,45 @@ namespace OurTests
             Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Update));
             Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Delete));
             //adding the privileges for testing
-            NormalProfile.GrantPrivilege("Users",Privilege.Update);
+            NormalProfile.GrantPrivilege("Users", Privilege.Update);
             NormalProfile.GrantPrivilege("Users", Privilege.Delete);
             //checking if privilege was added
             Assert.True(NormalProfile.IsGrantedPrivilege("Users", Privilege.Update));
             Assert.True(NormalProfile.IsGrantedPrivilege("Users", Privilege.Delete));
             //Revoking privileges
-            NormalProfile.RevokePrivilege("Users",Privilege.Update);
+            NormalProfile.RevokePrivilege("Users", Privilege.Update);
             NormalProfile.RevokePrivilege("Users", Privilege.Delete);
             //checking if privilege was succesfully revoked
             Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Update));
             Assert.False(NormalProfile.IsGrantedPrivilege("Users", Privilege.Delete));
+        }
+        [Fact]
+        public void equalsTest()
+        {
+            Profile profile1 = Profile4Tests();
+            profile1.setListOfPrivileges4Testing(FakeTables4Tests());
+
+            Profile profile2 = Profile4Tests();
+            profile2.setListOfPrivileges4Testing(FakeTables4Tests());
+
+            Assert.True(profile1.Equals(profile2));
+
+            Assert.False(profile1.Equals(null));
+
+            Assert.False(profile1.Equals(new object()));
+
+            profile2.Name = "OtroNombre";
+            Assert.False(profile1.Equals(profile2));
+
+            profile2 = Profile4Tests();
+            profile2.setListOfPrivileges4Testing(FakeTables4Tests());
+            profile2.RevokePrivilege("Users", Privilege.Insert);
+            Assert.False(profile1.Equals(profile2));
+
+            profile2 = Profile4Tests();
+            profile2.setListOfPrivileges4Testing(FakeTables4Tests());
+            profile2.Users.RemoveAt(0);
+            Assert.False(profile1.Equals(profile2));
         }
     }
 }
