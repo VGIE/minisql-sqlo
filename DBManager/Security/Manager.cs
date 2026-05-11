@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -314,15 +313,43 @@ namespace DbManager.Security
                 writer.Close();
             }
         }
-
         public override bool Equals(object obj)
         {
-            Manager other = (Manager)obj;
-            if(Profiles.SequenceEqual(other.Profiles) && m_username.Equals(other.m_username))
+            if (!(obj is Manager other))
             {
-                return true;
+                return false;
             }
-            return false;
+
+            if (this.m_username != other.m_username)
+            {
+                return false;
+            }
+
+            if (this.Profiles == null && other.Profiles != null) return false;
+            if (this.Profiles != null && other.Profiles == null) return false;
+
+            if (this.Profiles != null && other.Profiles != null)
+            {
+                if (this.Profiles.Count != other.Profiles.Count)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < this.Profiles.Count; i++)
+                {
+                    Profile p1 = this.Profiles[i];
+                    Profile p2 = other.Profiles[i];
+
+                    if (p1 == null && p2 != null) return false;
+
+                    if (p1 != null && !p1.Equals(p2))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
