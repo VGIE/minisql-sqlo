@@ -211,7 +211,41 @@ namespace OurTests
                 ExecuteMiniSQLQuery("REVOKE UPDATE ON TestTable1 TO nombre"));
             Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.
                 ExecuteMiniSQLQuery("REVOKE UPDATE ON TestTable1 TO pancakes"));
+        }
+            [Fact]
+            public void DeleteUserTest()
+            {
+                Database db = Database.CreateTestDatabase();
+                User user = new User("ejemplo", "123");
+                Profile p = new Profile();
+                p.Name = "Becario";
+                db.SecurityManager.AddProfile(p);
+                p.Users.Add(user);
 
+                Assert.Equal(Constants.DeleteUserSuccess, db.ExecuteMiniSQLQuery("DELETE USER ejemplo"));
+                Assert.Equal(Constants.UserDoesNotExistError, db.ExecuteMiniSQLQuery("DELETE USER ejemplo"));
+            }
+
+            [Fact]
+            public void CreateSecruityProfileTest()
+            {
+                Database db = Database.CreateTestDatabase();
+                Assert.Equal(Constants.CreateSecurityProfileSuccess, db.ExecuteMiniSQLQuery("CREATE SECURITY PROFILE Mod"));
+
+
+            }
+
+        [Fact]
+        public void AddUserTest()
+        {
+            Database db = Database.CreateTestDatabase();
+            Profile p = new Profile();
+            p.Name = "Becario";
+            db.SecurityManager.AddProfile(p);
+
+            Assert.Equal(Constants.AddUserSuccess, db.ExecuteMiniSQLQuery("ADD USER (mortis,mortis,Becario)"));
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.ExecuteMiniSQLQuery("ADD USER (mortis,mortis,Beca)"));
+        
         }
 
     }
