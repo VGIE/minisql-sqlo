@@ -191,18 +191,15 @@ namespace DbManager.Security
             //TODO DEADLINE 5: Remove this profile
             if (IsUserAdmin())
             {
-                foreach (Profile p in Profiles)
-                {
-
-                    if (p.Name.Equals(profileName))
+                Profile p = ProfileByName(profileName);
+                    if (p != null)
                     {
                         Profiles.Remove(p);
+                        return true;
                     }
                 }
                 return false;
             }
-            return false;   
-        }
 
 
         public static Manager Load(string databaseName, string username)
