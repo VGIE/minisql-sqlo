@@ -1,8 +1,9 @@
+using DbManager.Parser;
+using DbManager.Security;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DbManager.Parser;
-using DbManager.Security;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DbManager
 {
@@ -26,38 +27,40 @@ namespace DbManager
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
             if (database.SecurityManager.ProfileByName(ProfileName) == null)
             {
-
                 return Constants.SecurityProfileDoesNotExistError;
+            }
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
             Privilege privilegeObj;
             Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
 
+            bool error = false;
             switch (PrivilegeName)
             {
-                case "Delete":
+                case "DELETE":
                     privilegeObj = Privilege.Delete;
                     break;
-                case "Update":
+                case "UPDATE":
                     privilegeObj = Privilege.Update;
                     break;
-                case "Insert":
+                case "INSERT":
                     privilegeObj = Privilege.Insert;
                     break;
                 default:
                     privilegeObj = Privilege.Select;
                     break;
             }
-            if (profileObj.PrivilegesOn[TableName].Contains(privilegeObj))
+            if (error)
             {
-                //error 1
-                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+                return Constants.PrivilegeDoesNotExistError;
             }
-            else
-            {
-                //Execute 
-                database.SecurityManager.RevokePrivilege(ProfileName, TableName, privilegeObj);
-                return Constants.RevokePrivilegeSuccess;
-            }
+
+
+            //Execute 
+            database.SecurityManager.RevokePrivilege(ProfileName, TableName, privilegeObj);
+            return Constants.RevokePrivilegeSuccess;
 
         }
 

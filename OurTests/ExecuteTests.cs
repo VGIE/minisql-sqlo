@@ -133,68 +133,84 @@ namespace OurTests
         [Fact]
         public void GrantTests()
         {
-            Profile pTest1 = new Profile
-            {
-                Name = Profile.AdminProfileName,
-                Users = createUserTestList()
-            };
+            Database db = Database.CreateTestDatabase();
 
-            pTest1.GrantPrivilege("TestTable", Privilege.Insert);
-            pTest1.GrantPrivilege("TestTable", Privilege.Delete);
-            pTest1.GrantPrivilege("TestTable1", Privilege.Delete);
 
             Profile pTest2 = new Profile
             {
                 Name = "noname",
                 Users = createUserTestList2()
             };
+            Profile pTest3 = new Profile
+            {
+                Name = "nombre",
+                Users = createUserTestList()
 
-            pTest2.GrantPrivilege("TestTable", Privilege.Select);
+            };
+
+            pTest2.GrantPrivilege("TestTable", Privilege.Delete);
             pTest2.GrantPrivilege("TestTable1", Privilege.Update);
 
-            Database db = Database.CreateTestDatabase();
+            
 
-            db.SecurityManager.AddProfile(pTest1);
+
             db.SecurityManager.AddProfile(pTest2);
+            db.SecurityManager.AddProfile(pTest3);
+
             Assert.Equal(Constants.GrantPrivilegeSuccess, db.
-                ExecuteMiniSQLQuery("GRANT INSERT ON TestTable TO "+Profile.AdminProfileName));
-            Assert.Equal(Constants.ProfileAlreadyHasPrivilege, db.
-                ExecuteMiniSQLQuery("GRANT DELETE ON TestTable TO " + Profile.AdminProfileName));
-            Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, db.
                 ExecuteMiniSQLQuery("GRANT INSERT ON TestTable TO noname"));
             Assert.Equal(Constants.GrantPrivilegeSuccess, db.
-                ExecuteMiniSQLQuery("GRANT SELECT ON TestTable1 TO " + Profile.AdminProfileName));
+                ExecuteMiniSQLQuery("GRANT DELETE ON TestTable TO noname"));
             Assert.Equal(Constants.GrantPrivilegeSuccess, db.
-                ExecuteMiniSQLQuery("GRANT UPDATE ON TestTable1 TO " + Profile.AdminProfileName));
-
+                ExecuteMiniSQLQuery("GRANT SELECT ON TestTable1 TO noname"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT SELECT ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT UPDATE ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.
+                ExecuteMiniSQLQuery("GRANT INSERT ON TestTable1 TO pancakes"));
         }
         [Fact]
         public void RevokeTests()
         {
-            Profile pTest1 = new Profile
-            {
-                Name = Profile.AdminProfileName,
-                Users = createUserTestList()
-            };
+            Database db = Database.CreateTestDatabase();
 
-            pTest1.GrantPrivilege("TestTable", Privilege.Insert);
-            pTest1.GrantPrivilege("TestTable1", Privilege.Delete);
 
             Profile pTest2 = new Profile
             {
                 Name = "noname",
                 Users = createUserTestList2()
             };
+            Profile pTest3 = new Profile
+            {
+                Name = "nombre",
+                Users = createUserTestList()
 
-            pTest2.GrantPrivilege("TestTable", Privilege.Select);
+            };
+
+            pTest2.GrantPrivilege("TestTable", Privilege.Delete);
             pTest2.GrantPrivilege("TestTable1", Privilege.Update);
 
-            Database db = Database.CreateTestDatabase();
+            pTest3.GrantPrivilege("TestTable", Privilege.Delete);
+            pTest3.GrantPrivilege("TestTable", Privilege.Select);
+            pTest3.GrantPrivilege("TestTable", Privilege.Insert);
+            pTest3.GrantPrivilege("TestTable", Privilege.Update);
 
-            db.SecurityManager.AddProfile(pTest1);
             db.SecurityManager.AddProfile(pTest2);
-            Assert.Equal(Constants.DeleteSuccess, db.
-                ExecuteMiniSQLQuery("GRANT INSERT FROM TestTable WHERE Age='25'"));
+            db.SecurityManager.AddProfile(pTest3);
+
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE INSERT ON TestTable TO noname")); //Table doesnt have the privilege
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE DELETE ON TestTable TO noname")); //Normal execution
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE SELECT ON TestTable1 TO noname"));
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE SELECT ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE UPDATE ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.
+                ExecuteMiniSQLQuery("REVOKE UPDATE ON TestTable1 TO pancakes"));
 
         }
 

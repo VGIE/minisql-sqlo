@@ -2,6 +2,7 @@ using DbManager.Parser;
 using DbManager.Security;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace DbManager
@@ -35,8 +36,8 @@ namespace DbManager
             }
             Privilege privilegeObj;
             Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
-            Privilege privilegeObj = PrivilegeUtils.FromPrivilegeName(PrivilegeName);
 
+            bool error = false;
             switch (PrivilegeName)
             {
                 case "DELETE":
@@ -52,17 +53,10 @@ namespace DbManager
                     privilegeObj = Privilege.Select;
                     break;
             }
-            if (profileObj.PrivilegesOn[TableName].Contains(privilegeObj))
-            {
-                //error 1
-                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
-            }
-            else
-            {
-                //Execute 
-                database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilegeObj);
-                return Constants.GrantPrivilegeSuccess;
-            }
+            
+            //Execute 
+            database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilegeObj);
+            return Constants.GrantPrivilegeSuccess;
 
         }
 
