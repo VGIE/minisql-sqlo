@@ -23,7 +23,7 @@ namespace DbManager.Security
                 return true;
             }
             return false;
-
+            
         }
 
         public bool RevokePrivilege(string table, Privilege privilege)

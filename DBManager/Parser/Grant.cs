@@ -2,6 +2,7 @@ using DbManager.Parser;
 using DbManager.Security;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace DbManager
@@ -29,20 +30,33 @@ namespace DbManager
             {
                 return Constants.SecurityProfileDoesNotExistError;
             }
-            Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
-            Privilege privilegeObj = PrivilegeUtils.FromPrivilegeName(PrivilegeName);
-
-            if (profileObj.PrivilegesOn[TableName].Contains(privilegeObj))
+            if (!database.SecurityManager.IsUserAdmin())
             {
-                //error 1
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
-            else
+            Privilege privilegeObj;
+            Profile profileObj = database.SecurityManager.ProfileByName(ProfileName);
+
+            bool error = false;
+            switch (PrivilegeName)
             {
-                //Execute 
-                database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilegeObj);
-                return Constants.GrantPrivilegeSuccess;
+                case "DELETE":
+                    privilegeObj = Privilege.Delete;
+                    break;
+                case "UPDATE":
+                    privilegeObj = Privilege.Update;
+                    break;
+                case "INSERT":
+                    privilegeObj = Privilege.Insert;
+                    break;
+                default:
+                    privilegeObj = Privilege.Select;
+                    break;
             }
+            
+            //Execute 
+            database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilegeObj);
+            return Constants.GrantPrivilegeSuccess;
 
         }
 

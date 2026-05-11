@@ -7,11 +7,35 @@ namespace OurTests
 {
     public class ExecuteTests
     {
-        
+        private List<User> createUserTestList()
+        {
+            List<User> lista =
+            [
+                new User("nombre","contrasena"),
+                new User("Igor", "1234"),
+                new User("Eustakia", "admin"),
+                new User("Josefina", "password"),
+                new User("Joritz", "pasi"),
+            ];
+            return lista;
+        }
+        private List<User> createUserTestList2()
+        {
+            List<User> lista =
+            [
+                new User(Profile.AdminProfileName, "lobo"),
+                new User("Txitx", "rip"),
+                new User("Jere", "BDLover1"),
+                new User("Fabian", "qwerty"),
+                new User("Ainhoa", "BDLover1"),
+            ];
+            return lista;
+        }
+
         [Fact]
         public void DeleteTests()
         {
-            Assert.Equal(Constants.DeleteSuccess,Database.CreateTestDatabase().
+            Assert.Equal(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable WHERE Age='25'"));
             Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable"));
@@ -22,7 +46,7 @@ namespace OurTests
             Assert.NotEqual(Constants.DeleteSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("DELETE FROM TestTable1 WHERE Wage='-52.85'"));
         }
-        
+
 
         [Fact]
         public void SelectTests()
@@ -35,7 +59,7 @@ namespace OurTests
             Assert.Equal(database.Select("TestTable", new List<string>()
             {
                 "Name","Height"
-            },null).ToString(),select.Execute(database));
+            }, null).ToString(), select.Execute(database));
 
 
             select = new Select("TablaMal", new List<string>() { });
@@ -45,8 +69,8 @@ namespace OurTests
             select = new Select("TestTable", new List<string>() { "NoExiste" });
             result = select.Execute(database);
             Assert.Equal(Constants.ColumnDoesNotExistError, database.LastErrorMessage);
-        }   
-        
+        }
+
         [Fact]
         public void CreateTableTest()
         {
@@ -64,7 +88,7 @@ namespace OurTests
 
 
         }
-        
+
         [Fact]
         public void DropTableTest()
         {
@@ -76,7 +100,7 @@ namespace OurTests
             string result = dropTable.Execute(database);
             Assert.Equal(Constants.TableDoesNotExistError, dropTable.Execute(database));
         }
-        
+
         [Fact]
         public void InsertTest()
         {
@@ -96,16 +120,120 @@ namespace OurTests
                 ExecuteMiniSQLQuery("INSERT INTO TestTable VALUES ('Izan Ascasso','20','-5.9')"));
             Assert.NotNull(Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("INSERT INTO    table1 VALUES('val5 val5','val6 val6 val6')"));
-            
+
         }
         [Fact]
-        public void UpdateTableTest() 
+        public void UpdateTableTest()
         {
             Assert.Equal(Constants.UpdateSuccess, Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("UPDATE TestTable SET Height='1.56',Age='52' WHERE Name='Pepe'"));
             Assert.NotEqual("UpdateSuccess", Database.CreateTestDatabase().
                 ExecuteMiniSQLQuery("UPDATE tabla SET column1=1,column2=2 WHERE columna=valor"));
         }
+        [Fact]
+        public void GrantTests()
+        {
+            Database db = Database.CreateTestDatabase();
+
+
+            Profile pTest2 = new Profile
+            {
+                Name = "noname",
+                Users = createUserTestList2()
+            };
+            Profile pTest3 = new Profile
+            {
+                Name = "nombre",
+                Users = createUserTestList()
+
+            };
+
+            pTest2.GrantPrivilege("TestTable", Privilege.Delete);
+            pTest2.GrantPrivilege("TestTable1", Privilege.Update);
+
+            
+
+
+            db.SecurityManager.AddProfile(pTest2);
+            db.SecurityManager.AddProfile(pTest3);
+
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT INSERT ON TestTable TO noname"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT DELETE ON TestTable TO noname"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT SELECT ON TestTable1 TO noname"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT SELECT ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.GrantPrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("GRANT UPDATE ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.
+                ExecuteMiniSQLQuery("GRANT INSERT ON TestTable1 TO pancakes"));
+        }
+        [Fact]
+        public void RevokeTests()
+        {
+            Database db = Database.CreateTestDatabase();
+
+
+            Profile pTest2 = new Profile
+            {
+                Name = "noname",
+                Users = createUserTestList2()
+            };
+            Profile pTest3 = new Profile
+            {
+                Name = "nombre",
+                Users = createUserTestList()
+
+            };
+
+            pTest2.GrantPrivilege("TestTable", Privilege.Delete);
+            pTest2.GrantPrivilege("TestTable1", Privilege.Update);
+
+            pTest3.GrantPrivilege("TestTable", Privilege.Delete);
+            pTest3.GrantPrivilege("TestTable", Privilege.Select);
+            pTest3.GrantPrivilege("TestTable", Privilege.Insert);
+            pTest3.GrantPrivilege("TestTable", Privilege.Update);
+
+            db.SecurityManager.AddProfile(pTest2);
+            db.SecurityManager.AddProfile(pTest3);
+
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE INSERT ON TestTable TO noname")); //Table doesnt have the privilege
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE DELETE ON TestTable TO noname")); //Normal execution
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE SELECT ON TestTable1 TO noname"));
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE SELECT ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.RevokePrivilegeSuccess, db.
+                ExecuteMiniSQLQuery("REVOKE UPDATE ON TestTable1 TO nombre"));
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.
+                ExecuteMiniSQLQuery("REVOKE UPDATE ON TestTable1 TO pancakes"));
+        }
+            [Fact]
+            public void DeleteUserTest()
+            {
+                Database db = Database.CreateTestDatabase();
+                User user = new User("ejemplo", "123");
+                Profile p = new Profile();
+                p.Name = "Becario";
+                db.SecurityManager.AddProfile(p);
+                p.Users.Add(user);
+
+                Assert.Equal(Constants.DeleteUserSuccess, db.ExecuteMiniSQLQuery("DELETE USER ejemplo"));
+                Assert.Equal(Constants.UserDoesNotExistError, db.ExecuteMiniSQLQuery("DELETE USER ejemplo"));
+            }
+
+            [Fact]
+            public void CreateSecruityProfileTest()
+            {
+                Database db = Database.CreateTestDatabase();
+                Assert.Equal(Constants.CreateSecurityProfileSuccess, db.ExecuteMiniSQLQuery("CREATE SECURITY PROFILE Mod"));
+
+
+            }
 
         [Fact]
         public void AddUserTest()
@@ -117,29 +245,8 @@ namespace OurTests
 
             Assert.Equal(Constants.AddUserSuccess, db.ExecuteMiniSQLQuery("ADD USER (mortis,mortis,Becario)"));
             Assert.Equal(Constants.SecurityProfileDoesNotExistError, db.ExecuteMiniSQLQuery("ADD USER (mortis,mortis,Beca)"));
+        
         }
 
-        [Fact]
-        public void DeleteUserTest()
-        {
-            Database db = Database.CreateTestDatabase();
-            User user = new User("ejemplo", "123");
-            Profile p = new Profile();
-            p.Name = "Becario";
-            db.SecurityManager.AddProfile(p);
-            p.Users.Add(user);
-
-            Assert.Equal(Constants.DeleteUserSuccess, db.ExecuteMiniSQLQuery("DELETE USER ejemplo"));
-            Assert.Equal(Constants.UserDoesNotExistError, db.ExecuteMiniSQLQuery("DELETE USER ejemplo"));
-        }
-
-        [Fact]
-        public void CreateSecruityProfileTest()
-        {
-            Database db = Database.CreateTestDatabase();
-            Assert.Equal(Constants.CreateSecurityProfileSuccess, db.ExecuteMiniSQLQuery("CREATE SECURITY PROFILE Mod"));
-
-
-        }
     }
 }
